@@ -1,0 +1,28 @@
+[2026-08-14T20:21:06+07:00] KE_HOACH_HOC_TAP_90_NGAY.md: Tạo mới tệp lộ trình học tập Tiếng Anh Điều dưỡng 90 ngày chi tiết dựa trên giáo trình Oxford English for Careers Nursing 1 cho chị Phạm Huyền.
+[2026-08-14T20:24:27+07:00] KE_HOACH_HOC_TAP_90_NGAY.md: Cập nhật lộ trình 90 ngày tập trung sâu vào Phát âm IPA, Kỹ thuật Shadowing & Luyện Nói thực hành trong môi trường khoa Tiệt trùng Trung tâm (CSSD) cho chị Phạm Huyền.
+[2026-08-14T20:30:11+07:00] data.js: Tạo mới cơ sở dữ liệu 90 ngày học Tiếng Anh Điều dưỡng, phát âm IPA và câu thoại CSSD Self-Talk.
+[2026-08-14T20:30:18+07:00] styles.css: Tạo mới bộ stylesheet giao diện Web App chuyên nghiệp chuẩn y khoa, hỗ trợ Dark/Light Theme.
+[2026-08-14T20:30:24+07:00] app.js: Tạo tệp xử lý logic Web App, tích hợp máy phát âm tự động Web Speech API, theo dõi tiến độ và lưu trữ LocalStorage.
+[2026-08-14T20:30:28+07:00] index.html: Tạo tệp trang web chính cho Cổng thông tin Tự học Tiếng Anh Điều dưỡng 90 Ngày dành riêng cho chị Phạm Huyền.
+[2026-08-14T20:52:36+07:00] styles.css: Bổ sung hiệu ứng lật thẻ Flashcard 3D, phòng thu âm ghi âm micro và bộ điều hướng 3 tab chính.
+[2026-08-14T20:52:46+07:00] index.html: Bổ sung giao diện Trò chơi lật thẻ Flashcard 3D và Phòng Ghi Âm Luyện Nói Micro trực tiếp.
+[2026-08-14T20:52:56+07:00] app.js: Cập nhật logic xử lý trò chơi lật thẻ Flashcard, đếm từ vựng thuộc/chưa thuộc, và tính năng ghi âm Micro MediaRecorder kèm nhận dạng giọng nói.
+[2026-08-14T21:09:12+07:00] data.js: Bổ sung bộ câu hỏi điền từ kiểm tra trí nhớ Fill-in-the-blank Quiz cho tất cả 90 ngày học.
+[2026-08-14T21:09:20+07:00] styles.css: Bổ sung giao diện và hiệu ứng cho bài tập điền từ kiểm tra trí nhớ và dropdown phân loại Flashcards theo từng Ngày.
+[2026-08-14T21:09:26+07:00] index.html: Thêm menu tab Bài tập Điền từ và dropdown phân loại Flashcards theo từng Ngày học cụ thể.
+[2026-08-14T21:09:33+07:00] app.js: Xây dựng bộ máy kiểm tra điền từ tự động kèm chấm điểm, hỗ trợ phát âm và lọc Flashcard theo Ngày.
+[2026-08-14T21:14:02+07:00] data.js: Khởi tạo 100% câu hỏi Bài tập điền từ tương ứng 1-1 với từng từ vựng trong ngày và loại bỏ hoàn toàn phần gợi ý hint theo yêu cầu.
+[2026-08-14T21:14:10+07:00] app.js: Cập nhật logic hiển thị Bài tập điền từ không gợi ý, đảm bảo Ngày 1 có đúng 5 câu tương ứng với 5 từ vựng mới.
+[2026-08-14T21:23:11+07:00] styles.css: Sửa nút audio-btn-pill giúp giao diện nút Nghe Mẫu không bị tràn chữ.
+[2026-08-14T21:23:18+07:00] index.html: Áp dụng lớp nút nghe mẫu audio-btn-pill mới cho phòng ghi âm.
+[2026-08-14T21:23:27+07:00] app.js: Xóa bỏ lỗi chấm điểm sai nhận dạng giọng nói, thay thế bằng thuật toán so sánh chính xác từng từ (%) và tô màu đỏ/xanh cho từ phát âm đúng/sai.
+[2026-08-14T21:30:40+07:00] english-nurse.zip: Đóng gói toàn bộ mã nguồn trang web thành tệp nén zip giúp chị Phạm Huyền dễ dàng tải lên hosting đưa thành trang web Online.
+[2026-08-14T21:42:45+07:00] styles.css: Bổ sung kiểu dáng nút Đồng bộ Tiến độ (sync-btn) hỗ trợ chuyển kết quả học giữa máy nhà và máy cơ quan.
+[2026-08-14T21:42:59+07:00] index.html: Bổ sung các nút Copy Tiến Độ và Dán Tiến Độ ở góc thanh tiêu đề.
+[2026-08-14T21:43:11+07:00] app.js: Xây dựng hàm exportProgressCode và importProgressCode giúp chị Phạm Huyền sao chép 1 đoạn mã để dán sang máy cơ quan là xong.
+[2026-08-14T21:43:21+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chuẩn cấu trúc phẳng (Flat ZIP) giúp đưa lên Netlify Drop hoặc Tiiny.host tự động mở đúng trang chủ index.html.
+[2026-08-14T22:08:00+07:00] app.js: Khắc phục lỗi giọng đọc bị ngọng Tiếng Việt trên điện thoại Android/iOS bằng thuật toán tự động ép bộ phát âm giọng đọc Anh-Mỹ/Anh-Anh bản xứ (en-US / en-GB).
+[2026-08-14T22:08:15+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa bộ sửa lỗi giọng đọc bản xứ cho điện thoại.
+[2026-08-14T22:15:17+07:00] index.html: Bổ sung ô chọn Giọng Đọc Bản Xứ (Voice Selector Studio) và nút Nghe Thử Giọng ngay trên thanh tiêu đề.
+[2026-08-14T22:15:26+07:00] app.js: Thêm bộ quét và phân loại toàn bộ giọng phát âm Tiếng Anh chuẩn (Mỹ Nữ/Nam, Anh-Anh Nữ/Nam, Úc) cho phép chị Phạm Huyền chọn và lưu giọng đọc yêu thích.
+[2026-08-14T22:15:45+07:00] english-nurse.zip: Cập nhật tệp nén zip chứa tính năng Bộ Chọn Giọng Đọc Bản Xứ.

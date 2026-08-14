@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENGLISH NURSE 90-DAY PORTAL | Bộ Chọn Giọng Đọc & Flashcards</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="logo-container">
+      <span class="logo-icon">🩺</span>
+      <div>
+        <div class="logo-title">ENGLISH NURSE 90-DAY PORTAL</div>
+        <div class="logo-subtitle">Lựa Chọn Giọng Đọc Bản Xứ, Flashcards & Bài Tập Điền Từ</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="main-nav-tabs">
+      <button class="nav-tab-btn active" data-view="roadmap" onclick="switchMainView('roadmap')">🗓️ Lộ Trình 90 Ngày</button>
+      <button class="nav-tab-btn" data-view="flashcard" onclick="switchMainView('flashcard')">🎴 Flashcard Theo Ngày</button>
+      <button class="nav-tab-btn" data-view="quiz" onclick="switchMainView('quiz')">✏️ Bài Tập Điền Từ</button>
+      <button class="nav-tab-btn" data-view="recorder" onclick="switchMainView('recorder')">🎙️ Ghi Âm Luyện Nói</button>
+    </nav>
+
+    <div class="header-actions">
+      <!-- Voice Selection Dropdown & Test Button -->
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <select id="headerVoiceSelect" class="unit-select" style="max-width: 180px; font-size: 0.85rem;" onchange="changeSelectedVoice()"></select>
+        <button class="sync-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="testSelectedVoice()">🔊 Nghe Thử Giọng</button>
+      </div>
+
+      <button class="sync-btn" onclick="exportProgressCode()" title="Copy mã tiến độ để dán sang máy cơ quan">📋 Copy Tiến Độ</button>
+      <button class="sync-btn" onclick="importProgressCode()" title="Dán mã tiến độ từ máy nhà sang">📥 Dán Tiến Độ</button>
+      <button id="themeToggleBtn" class="theme-toggle-btn">🌙 Giao diện Tối</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+
+    <!-- VIEW 1: ROADMAP SECTION -->
+    <section id="roadmapView" class="app-view-section active">
+      <!-- Progress Hero Banner -->
+      <section class="hero-banner">
+        <div class="hero-info">
+          <h1>🏥 Chào chị Phạm Huyền!</h1>
+          <p>Duy trì 15–20 phút luyện phát âm thành tiếng & chọn giọng đọc bản xứ hay nhất dành riêng cho chị!</p>
+          
+          <div class="progress-bar-container">
+            <div id="progressFill" class="progress-bar-fill"></div>
+          </div>
+          <div class="progress-stats">
+            <span>Tiến độ: <strong id="completedCountText">0 / 90 Ngày</strong></span>
+            <span>Hoàn thành: <strong id="completedPercentText">0%</strong></span>
+          </div>
+        </div>
+
+        <div class="hero-badges">
+          <div class="badge-item">
+            <span class="badge-icon">🔥</span>
+            <div>
+              <div style="font-weight: 700;">Chuỗi Kiên Trì</div>
+              <div id="streakText" style="font-size: 0.85rem; opacity: 0.9;">0 Ngày</div>
+            </div>
+          </div>
+          <div class="badge-item">
+            <span class="badge-icon">🎙️</span>
+            <div>
+              <div style="font-weight: 700;">Giọng Đọc Đang Dùng</div>
+              <div id="activeVoiceNameText" style="font-size: 0.85rem; opacity: 0.9;">English US Native</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="quick-jump-btn" onclick="jumpToToday()" style="flex: 1;">🚀 Bài Học Hôm Nay</button>
+            <button class="sync-btn" onclick="testSelectedVoice()" style="background: rgba(255,255,255,0.25); color: white; border: 1px solid white;">🔊 Thử Giọng</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Controls & Filter Section -->
+      <section class="controls-section">
+        <select id="unitSelect" class="unit-select">
+          <option value="all">📚 Tất Cả 15 Bài (Units 1 - 15)</option>
+        </select>
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Tìm bài học, ngày, từ vựng...">
+        </div>
+
+        <button class="quick-jump-btn" onclick="jumpToToday()">👉 Bài Tiếp Theo</button>
+      </section>
+
+      <!-- Grid of Days -->
+      <section id="daysGrid" class="days-grid">
+        <!-- Generated dynamically by app.js -->
+      </section>
+    </section>
+
+    <!-- VIEW 2: FLASHCARD GAME SECTION (CHIA THEO NGÀY) -->
+    <section id="flashcardView" class="app-view-section">
+      <div class="flashcard-game-container">
+        <div class="flashcard-deck-header">
+          <div>
+            <h2 style="color: var(--secondary);">🎴 TRÒ CHƠI LẬT THẺ FLASHCARD</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Học từ mới được chia theo từng Ngày học!</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <select id="flashcardDeckSelect" class="unit-select" onchange="initFlashcardGame()">
+              <option value="all">📚 Tất cả từ vựng (90 Ngày)</option>
+              <option value="cssd">🧼 Từ vựng Tiệt trùng CSSD</option>
+              <!-- Day options dynamically added by app.js -->
+            </select>
+            <div class="flashcard-counter" id="flashcardCounter">Thẻ 1 / 10</div>
+          </div>
+        </div>
+
+        <!-- 3D Flip Card -->
+        <div id="flashcardWrapper" class="flashcard-3d-wrapper" onclick="flipFlashcard()">
+          <div class="flashcard-inner">
+            <!-- Front Face (English) -->
+            <div class="flashcard-face flashcard-front">
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 8px;">TIẾNG ANH (NHẤN ĐỂ LẬT THẺ)</span>
+              <div id="flashWord" class="flash-word-text">Scrub nurse</div>
+              <div id="flashIpa" class="flash-ipa-text">/skrʌb nɜːs/</div>
+              <button class="audio-btn-pill" style="margin-top: 10px;" onclick="event.stopPropagation(); playCurrentFlashcardAudio()">🔊 Nghe Đọc</button>
+            </div>
+            <!-- Back Face (Vietnamese Meaning & Example) -->
+            <div class="flashcard-face flashcard-back">
+              <span style="font-size: 0.85rem; font-weight: 700; color: #5eead4; margin-bottom: 8px;">NGHĨA TIẾNG VIỆT & VÍ DỤ</span>
+              <div id="flashMeaning" class="flash-meaning-text">Điều dưỡng dụng cụ phòng mổ</div>
+              <div id="flashExample" class="flash-example-text">"I am a scrub nurse in the operating theatre."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flashcard Game Action Buttons -->
+        <div class="flashcard-game-actions">
+          <button class="game-btn btn-again" onclick="markFlashcardScore(false)">❌ Chưa Thuộc (Học Lại)</button>
+          <button class="game-btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border);" onclick="flipFlashcard()">🔄 Lật Thẻ</button>
+          <button class="game-btn btn-know" onclick="markFlashcardScore(true)">✅ Đã Thuộc (Đạt)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: FILL-IN-THE-BLANK QUIZ SECTION (BÀI TẬP ĐIỀN TỪ HÀNG NGÀY) -->
+    <section id="quizView" class="app-view-section">
+      <div class="quiz-container">
+        <div class="quiz-header-banner">
+          <div>
+            <h2 style="color: var(--secondary);">✏️ BÀI TẬP ĐIỀN TỪ KIỂM TRA TRÍ NHỚ</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Gõ đáp án đúng vào ô trống để kiểm tra mức độ thuộc từ vựng của chị!</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="quizDaySelect" class="unit-select" onchange="loadQuizForSelectedDay()">
+              <option value="all">📚 Bài tập Điền từ (Tất cả ngày)</option>
+              <!-- Day options dynamically added by app.js -->
+            </select>
+            <div class="flashcard-counter" id="quizScoreText">Điểm: 0 / 0</div>
+          </div>
+        </div>
+
+        <!-- Quiz List Cards Container -->
+        <div id="quizCardsContainer" style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Generated dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: AUDIO RECORDER STUDIO SECTION -->
+    <section id="recorderView" class="app-view-section">
+      <div class="recorder-studio-container">
+        <div>
+          <h2 style="color: var(--secondary); margin-bottom: 0.25rem;">🎙️ PHÒNG GHI ÂM & CHẤM PHÁT ÂM</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Ghi âm giọng nói của chị, nghe lại và so sánh trực tiếp với giọng đọc chuẩn bản xứ!</p>
+        </div>
+
+        <!-- Sample Sentence Selector for Recording -->
+        <div style="background: var(--bg-main); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border);">
+          <label style="font-weight: 700; display: block; margin-bottom: 6px;">Chọn mẫu câu luyện ghi âm hôm nay:</label>
+          <select id="recorderSentenceSelect" class="unit-select" style="width: 100%;" onchange="updateRecorderSentence()">
+            <option value="I am a scrub nurse working in the CSSD department.">"I am a scrub nurse working in the CSSD department."</option>
+            <option value="I clean, inspect, and sterilize surgical instruments.">"I clean, inspect, and sterilize surgical instruments."</option>
+            <option value="Loading the autoclave. Temperature set to 134 degrees.">"Loading the autoclave. Temperature set to 134 degrees."</option>
+            <option value="The chemical indicator changed color. The tray is sterile.">"The chemical indicator changed color. The tray is sterile."</option>
+            <option value="Please pass me the sterile surgical forceps.">"Please pass me the sterile surgical forceps."</option>
+          </select>
+
+          <div style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div id="targetSentenceDisplay" style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark);">
+              "I am a scrub nurse working in the CSSD department."
+            </div>
+            <button class="audio-btn-pill" onclick="playTargetSentenceAudio()">🔊 Nghe Mẫu</button>
+          </div>
+        </div>
+
+        <!-- Recording Mic Box -->
+        <div class="recorder-mic-box">
+          <button id="bigMicBtn" class="big-mic-btn" onclick="toggleMicRecording()">🎙️</button>
+          <div id="recordingStatusText" class="recording-status-text">Bấm vào biểu tượng Micro để Bắt Đầu Ghi Âm</div>
+
+          <!-- Recorded Audio Player -->
+          <div id="audioPlaybackContainer" style="display: none; width: 100%; text-align: center; margin-top: 1rem;">
+            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 6px;">🎧 Giọng nói vừa ghi âm của chị Huyền:</div>
+            <audio id="recordedAudioPlayer" controls class="recorded-audio-player"></audio>
+          </div>
+
+          <!-- Speech Recognition Result -->
+          <div id="speechRecognizedBox" style="display: none; margin-top: 1rem; background: var(--bg-card); padding: 1.2rem; border-radius: 12px; width: 100%; border: 1px solid var(--border); text-align: left;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-muted); text-transform: uppercase;">Văn bản nhận dạng từ giọng nói của chị:</div>
+            <div id="recognizedTextOutput" style="font-size: 1.15rem; font-weight: 800; color: var(--secondary); margin: 8px 0; line-height: 1.5;">...</div>
+            <div id="speechFeedbackText" style="font-weight: 800; font-size: 1rem; margin-top: 8px;">...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Lesson Detail Modal -->
+  <div id="lessonModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal-btn" onclick="closeLessonModal()">&times;</button>
+      
+      <div>
+        <h2 id="modalDayTitle" style="color: var(--secondary); margin-bottom: 0.25rem;">Tiêu đề Bài Học</h2>
+        <p id="modalDayGoal" style="color: var(--text-muted); font-size: 0.95rem;">Mục tiêu bài học</p>
+      </div>
+
+      <!-- Navigation Tabs inside Modal -->
+      <div class="modal-tabs">
+        <button class="tab-btn active" data-tab="vocab" onclick="switchTab('vocab')">🗣️ Từ Vựng & IPA</button>
+        <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz')">✏️ Bài Tập Điền Từ</button>
+        <button class="tab-btn" data-tab="shadowing" onclick="switchTab('shadowing')">🎧 Shadowing</button>
+        <button class="tab-btn" data-tab="cssd" onclick="switchTab('cssd')">🧼 CSSD Self-Talk</button>
+        <button class="tab-btn" data-tab="ai" onclick="switchTab('ai')">🤖 Luyện Nói Với AI</button>
+      </div>
+
+      <!-- Tab Content Container -->
+      <div id="tabContentContainer">
+        <!-- Content inserted dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
