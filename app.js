@@ -1,4 +1,4 @@
-// 🚀 ENGLISH NURSE 90-DAY LEARNING PORTAL, FLASHCARDS, QUIZ & VOICE STUDIO LOGIC
+// 🚀 ENGLISH NURSE 90-DAY LEARNING PORTAL, FLASHCARDS, QUIZ & IPA STUDIO LOGIC
 
 const STORAGE_KEY = "ENGLISH_NURSE_HUYEN_PROGRESS_V1";
 const MASTERED_VOCAB_KEY = "ENGLISH_NURSE_MASTERED_VOCAB";
@@ -16,6 +16,31 @@ let slowMode = false;
 // Voice Studio State
 let availableEnglishVoices = [];
 let selectedVoice = null;
+
+// Global IPA Dictionary for Audio Error Correction
+let GLOBAL_IPA_MAP = {
+  scrub: "/skrʌb/",
+  nurse: "/nɜːs/",
+  working: "/ˈwɜː.kɪŋ/",
+  cssd: "/ˌsiː.es.esˈdiː/",
+  department: "/dɪˈpɑːt.mənt/",
+  clean: "/kliːn/",
+  inspect: "/ɪnˈspekt/",
+  sterilize: "/ˈster.ə.laɪz/",
+  surgical: "/ˈsɜː.dʒɪ.kəl/",
+  instruments: "/ˈɪn.strə.mənts/",
+  autoclave: "/ˈɔː.tə.kleɪv/",
+  temperature: "/ˈtem.prə.tʃər/",
+  chemical: "/ˈkem.ɪ.kəl/",
+  indicator: "/ˈɪn.dɪ.keɪ.tər/",
+  changed: "/tʃeɪndʒd/",
+  color: "/ˈkʌl.ər/",
+  tray: "/treɪ/",
+  sterile: "/ˈster.aɪl/",
+  please: "/pliːz/",
+  pass: "/pɑːs/",
+  forceps: "/ˈfɔː.seps/"
+};
 
 // Flashcard Game State
 let currentFlashcardDeck = [];
@@ -35,6 +60,7 @@ let speechRecognition = null;
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initUnitFilter();
+  buildGlobalIpaMap();
   populateDayOptionsDropdowns();
   renderDaysGrid();
   updateProgressStats();
@@ -44,6 +70,21 @@ document.addEventListener("DOMContentLoaded", () => {
   initEnglishVoiceStudio();
   bindEvents();
 });
+
+// Build Global IPA Dictionary from Curriculum Data
+function buildGlobalIpaMap() {
+  if (typeof CURRICULUM_DATA === "undefined") return;
+  CURRICULUM_DATA.forEach((day) => {
+    if (day.vocab) {
+      day.vocab.forEach((v) => {
+        const cleanW = v.word.toLowerCase().replace(/[^\w]/g, "");
+        if (cleanW && v.ipa) {
+          GLOBAL_IPA_MAP[cleanW] = v.ipa;
+        }
+      });
+    }
+  });
+}
 
 // 🎙️ VOICE STUDIO ENGINE (Bộ Chọn Giọng Đọc Bản Xứ)
 function initEnglishVoiceStudio() {
@@ -73,7 +114,6 @@ function initEnglishVoiceStudio() {
       const opt = document.createElement("option");
       opt.value = idx;
 
-      // Friendly Label Category
       let flag = "🇺🇸";
       let gender = "";
       if (voice.lang.includes("GB") || voice.name.includes("UK") || voice.name.includes("British")) flag = "🇬🇧";
@@ -143,6 +183,102 @@ function speakText(text) {
 
   utterance.rate = slowMode ? 0.75 : 0.95;
   speechSynth.speak(utterance);
+}
+
+// 🎙️ IPA PHONETIC CORRECTION ENGINE (Chữa Lỗi Phát Âm Theo Phiên Âm IPA)
+function calculateSentenceSimilarityWithIPA(targetSentence, spokenSentence) {
+  const clean = (str) =>
+    str
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+  const targetWords = clean(targetSentence);
+  const spokenWords = clean(spokenSentence);
+
+  if (targetWords.length === 0) return { accuracy: 0, diffHtml: spokenSentence, ipaFixCardsHtml: "" };
+
+  let matchCount = 0;
+  const spokenSet = new Set(spokenWords);
+  const targetSet = new Set(targetWords);
+
+  // Highlighting spoken output
+  const diffHtml = spokenWords
+    .map((word) => {
+      if (targetSet.has(word)) {
+        matchCount++;
+        return `<span style="color: #22c55e; font-weight: 800;">${word}</span>`;
+      } else {
+        return `<span style="color: #e11d48; font-weight: 800; text-decoration: line-through;">${word}</span>`;
+      }
+    })
+    .join(" ");
+
+  // Find missed or mispronounced target words for IPA feedback
+  let missedWords = targetWords.filter((w) => !spokenSet.has(w));
+
+  let ipaFixCardsHtml = "";
+  if (missedWords.length > 0) {
+    ipaFixCardsHtml += `<div class="ipa-fix-container">
+      <div style="font-weight: 800; font-size: 0.9rem; color: var(--accent); display: flex; align-items: center; gap: 6px;">
+        💡 CHỮA LỖI PHÁT ÂM THEO PHIÊN ÂM IPA (Bấm nút 🔊 để nghe chuẩn từ này):
+      </div>`;
+
+    missedWords.forEach((word) => {
+      const ipa = GLOBAL_IPA_MAP[word] || `/${word}/`;
+      ipaFixCardsHtml += `
+        <div class="ipa-fix-card">
+          <div>
+            <span class="ipa-word-target">❌ Từ cần sửa: <strong>${word}</strong></span>
+            <span class="ipa-tag" style="margin-left: 8px;">IPA: ${ipa}</span>
+          </div>
+          <button class="audio-btn-pill" style="padding: 4px 12px; font-size: 0.8rem;" onclick="speakText('${word}')">🔊 Nghe Mẫu</button>
+        </div>
+      `;
+    });
+
+    ipaFixCardsHtml += `</div>`;
+  }
+
+  const accuracy = Math.min(100, Math.round((matchCount / targetWords.length) * 100));
+  return { accuracy, diffHtml, ipaFixCardsHtml };
+}
+
+function initSpeechRecognition() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) return;
+
+  speechRecognition = new SpeechRec();
+  speechRecognition.lang = "en-US";
+  speechRecognition.interimResults = false;
+
+  speechRecognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    const recognizedBox = document.getElementById("speechRecognizedBox");
+    const outputEl = document.getElementById("recognizedTextOutput");
+    const feedbackEl = document.getElementById("speechFeedbackText");
+
+    const targetText = document.getElementById("recorderSentenceSelect").value;
+    const { accuracy, diffHtml, ipaFixCardsHtml } = calculateSentenceSimilarityWithIPA(targetText, transcript);
+
+    if (recognizedBox && outputEl && feedbackEl) {
+      recognizedBox.style.display = "block";
+      outputEl.innerHTML = `"${diffHtml}"`;
+
+      let feedbackMsg = "";
+      if (accuracy >= 85) {
+        feedbackMsg = `<span style="color: #22c55e;">🎉 Xuất sắc! Nhận dạng chính xác ${accuracy}%! Giọng đọc của chị phát âm rất chuẩn.</span>`;
+      } else if (accuracy >= 60) {
+        feedbackMsg = `<span style="color: #f59e0b;">👍 Khá tốt! Độ chính xác: ${accuracy}%. Chị hãy xem bảng sửa phiên âm IPA bên dưới nhé!</span>`;
+      } else {
+        feedbackMsg = `<span style="color: #e11d48;">⚠️ Độ chính xác: ${accuracy}%. Phát âm chưa khớp với câu mẫu. Chị hãy xem hướng dẫn phiên âm IPA dưới đây để chỉnh phát âm nhé!</span>`;
+      }
+
+      feedbackEl.innerHTML = feedbackMsg + ipaFixCardsHtml;
+    }
+  };
 }
 
 // Sync Progress across devices (Home PC <-> Work PC)
@@ -599,74 +735,6 @@ async function toggleMicRecording() {
     micBtn.classList.remove("recording");
     statusText.textContent = "✅ Ghi âm hoàn tất! Hãy nghe lại bên dưới ⬇️";
   }
-}
-
-// Calculate Accurate Sentence Similarity & Word Breakdown
-function calculateSentenceSimilarity(targetSentence, spokenSentence) {
-  const clean = (str) =>
-    str
-      .toLowerCase()
-      .replace(/[^\w\s]/g, "")
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean);
-
-  const targetWords = clean(targetSentence);
-  const spokenWords = clean(spokenSentence);
-
-  if (targetWords.length === 0) return { accuracy: 0, diffHtml: spokenSentence };
-
-  let matchCount = 0;
-  const targetSet = new Set(targetWords);
-
-  const diffHtml = spokenWords
-    .map((word) => {
-      if (targetSet.has(word)) {
-        matchCount++;
-        return `<span style="color: #22c55e; font-weight: 800;">${word}</span>`;
-      } else {
-        return `<span style="color: #e11d48; font-weight: 800; text-decoration: line-through;">${word}</span>`;
-      }
-    })
-    .join(" ");
-
-  const accuracy = Math.min(100, Math.round((matchCount / targetWords.length) * 100));
-  return { accuracy, diffHtml };
-}
-
-function initSpeechRecognition() {
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRec) return;
-
-  speechRecognition = new SpeechRec();
-  speechRecognition.lang = "en-US";
-  speechRecognition.interimResults = false;
-
-  speechRecognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    const recognizedBox = document.getElementById("speechRecognizedBox");
-    const outputEl = document.getElementById("recognizedTextOutput");
-    const feedbackEl = document.getElementById("speechFeedbackText");
-
-    const targetText = document.getElementById("recorderSentenceSelect").value;
-    const { accuracy, diffHtml } = calculateSentenceSimilarity(targetText, transcript);
-
-    if (recognizedBox && outputEl && feedbackEl) {
-      recognizedBox.style.display = "block";
-      outputEl.innerHTML = `"${diffHtml}"`;
-
-      if (accuracy >= 85) {
-        feedbackEl.innerHTML = `🎉 Xuất sắc! Nhận dạng chính xác ${accuracy}%! Giọng đọc của chị phát âm rất chuẩn.`;
-        feedbackEl.style.color = "#22c55e";
-      } else if (accuracy >= 60) {
-        feedbackEl.innerHTML = `👍 Khá tốt! Độ chính xác: ${accuracy}%. (Từ gạch đỏ là từ đọc chưa chuẩn).`;
-        feedbackEl.style.color = "#f59e0b";
-      } else {
-        feedbackEl.innerHTML = `⚠️ Độ chính xác: ${accuracy}%. Phát âm chưa khớp với câu mẫu (từ gạch đỏ là từ đọc nhầm). Chị hãy bấm "Nghe Mẫu" 🔊 và thử đọc lại nhé!`;
-        feedbackEl.style.color = "#e11d48";
-      }
-    }
-  };
 }
 
 // Modal Lesson Detail

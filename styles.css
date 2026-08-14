@@ -768,6 +768,50 @@ header.app-header {
   margin-top: 1rem;
 }
 
+/* 🔤 IPA PHONETIC CORRECTION CARDS */
+.ipa-fix-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.ipa-fix-card {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-left: 5px solid var(--accent);
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+[data-theme="dark"] .ipa-fix-card {
+  background: #451a03;
+  border-color: #78350f;
+}
+
+.ipa-word-target {
+  font-weight: 800;
+  color: var(--accent-danger);
+}
+
+.ipa-tag {
+  font-family: monospace;
+  font-weight: 700;
+  color: #d97706;
+  background: #fef3c7;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+[data-theme="dark"] .ipa-tag {
+  background: #78350f;
+  color: #fde68a;
+}
+
 /* Modal Drawer for Lesson Detail */
 .modal-overlay {
   position: fixed;

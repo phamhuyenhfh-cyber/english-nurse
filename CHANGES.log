@@ -26,3 +26,5 @@
 [2026-08-14T22:15:17+07:00] index.html: Bổ sung ô chọn Giọng Đọc Bản Xứ (Voice Selector Studio) và nút Nghe Thử Giọng ngay trên thanh tiêu đề.
 [2026-08-14T22:15:26+07:00] app.js: Thêm bộ quét và phân loại toàn bộ giọng phát âm Tiếng Anh chuẩn (Mỹ Nữ/Nam, Anh-Anh Nữ/Nam, Úc) cho phép chị Phạm Huyền chọn và lưu giọng đọc yêu thích.
 [2026-08-14T22:15:45+07:00] english-nurse.zip: Cập nhật tệp nén zip chứa tính năng Bộ Chọn Giọng Đọc Bản Xứ.
+[2026-08-14T22:40:23+07:00] .agents/skills/english-nurse-trainer/SKILL.md: Đóng gói toàn bộ cấu trúc Skill tùy chỉnh cho hệ thống Tiếng Anh Điều Dưỡng & CSSD 90 Ngày theo chuẩn YAML frontmatter.
+[2026-08-14T22:40:26+07:00] .agents/skills/english-nurse-trainer/references/curriculum_summary.md: Tạo tệp tài liệu tham khảo tổng quan 15 Unit và quy chuẩn bài học 90 ngày.
