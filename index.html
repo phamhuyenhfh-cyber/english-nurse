@@ -175,19 +175,23 @@
     <section id="recorderView" class="app-view-section">
       <div class="recorder-studio-container">
         <div>
-          <h2 style="color: var(--secondary); margin-bottom: 0.25rem;">🎙️ PHÒNG GHI ÂM & CHẤM PHÁT ÂM</h2>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">Ghi âm giọng nói của chị, nghe lại và so sánh trực tiếp với giọng đọc chuẩn bản xứ!</p>
+          <h2 style="color: var(--secondary); margin-bottom: 0.25rem;">🎙️ PHÒNG GHI ÂM & CHẤM PHÁT ÂM THEO NGÀY</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Ghi âm giọng nói của chị theo từng Ngày học (1 - 90), nghe lại và so sánh trực tiếp với giọng đọc chuẩn bản xứ!</p>
         </div>
 
         <!-- Sample Sentence Selector for Recording -->
         <div style="background: var(--bg-main); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border);">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; align-items: center;">
+            <label style="font-weight: 700; white-space: nowrap;">🗓️ Chọn Ngày Luyện Ghi Âm:</label>
+            <select id="recorderDaySelect" class="unit-select" style="flex-grow: 1;" onchange="loadRecorderSentencesForSelectedDay()">
+              <option value="all">📚 Tất cả 90 Ngày học</option>
+              <!-- Day options dynamically added by app.js -->
+            </select>
+          </div>
+
           <label style="font-weight: 700; display: block; margin-bottom: 6px;">Chọn mẫu câu luyện ghi âm hôm nay:</label>
           <select id="recorderSentenceSelect" class="unit-select" style="width: 100%;" onchange="updateRecorderSentence()">
-            <option value="I am a scrub nurse working in the CSSD department.">"I am a scrub nurse working in the CSSD department."</option>
-            <option value="I clean, inspect, and sterilize surgical instruments.">"I clean, inspect, and sterilize surgical instruments."</option>
-            <option value="Loading the autoclave. Temperature set to 134 degrees.">"Loading the autoclave. Temperature set to 134 degrees."</option>
-            <option value="The chemical indicator changed color. The tray is sterile.">"The chemical indicator changed color. The tray is sterile."</option>
-            <option value="Please pass me the sterile surgical forceps.">"Please pass me the sterile surgical forceps."</option>
+            <!-- Dynamic sentences added by app.js -->
           </select>
 
           <div style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">

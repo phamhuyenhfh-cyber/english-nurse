@@ -67,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateProgressStats();
   initFlashcardGame();
   loadQuizForSelectedDay();
+  loadRecorderSentencesForSelectedDay();
   initSpeechRecognition();
   initEnglishVoiceStudio();
   bindEvents();
@@ -95,7 +96,6 @@ function initEnglishVoiceStudio() {
     const rawVoices = speechSynth.getVoices();
     if (!rawVoices || rawVoices.length === 0) return;
 
-    // Filter all English voices
     availableEnglishVoices = rawVoices.filter(
       (v) => v.lang.startsWith("en") && !v.name.includes("Vietnamese")
     );
@@ -184,6 +184,113 @@ function speakText(text) {
 
   utterance.rate = slowMode ? 0.75 : 0.95;
   speechSynth.speak(utterance);
+}
+
+// Populate Day Options Dropdowns for Flashcard, Quiz & Recorder
+function populateDayOptionsDropdowns() {
+  const flashSelect = document.getElementById("flashcardDeckSelect");
+  const quizSelect = document.getElementById("quizDaySelect");
+  const recSelect = document.getElementById("recorderDaySelect");
+
+  CURRICULUM_DATA.forEach((d) => {
+    const optLabel = `🗓️ Ngày ${d.day}: ${d.title.split(":")[1] || d.title}`;
+    
+    if (flashSelect) {
+      const opt = document.createElement("option");
+      opt.value = `day_${d.day}`;
+      opt.textContent = optLabel;
+      flashSelect.appendChild(opt);
+    }
+
+    if (quizSelect) {
+      const opt = document.createElement("option");
+      opt.value = `day_${d.day}`;
+      opt.textContent = optLabel;
+      quizSelect.appendChild(opt);
+    }
+
+    if (recSelect) {
+      const opt = document.createElement("option");
+      opt.value = `day_${d.day}`;
+      opt.textContent = optLabel;
+      recSelect.appendChild(opt);
+    }
+  });
+}
+
+// Dynamic Recorder Sentences Loader By Day (TẤT CẢ 90 NGÀY)
+function loadRecorderSentencesForSelectedDay() {
+  const daySelect = document.getElementById("recorderDaySelect");
+  const sentenceSelect = document.getElementById("recorderSentenceSelect");
+  if (!sentenceSelect) return;
+
+  const selectedKey = daySelect ? daySelect.value : "all";
+  sentenceSelect.innerHTML = "";
+
+  let sentencesList = [];
+
+  const extractSentencesFromDay = (d) => {
+    // Vocab examples
+    if (d.vocab) {
+      d.vocab.forEach((v) => {
+        if (v.example) {
+          sentencesList.push({
+            day: d.day,
+            label: `[Ngày ${d.day}] ${v.word}: "${v.example}"`,
+            text: v.example
+          });
+        }
+      });
+    }
+    // Shadowing dialogue lines
+    if (d.shadowing) {
+      d.shadowing.forEach((s) => {
+        if (s.sentence) {
+          sentencesList.push({
+            day: d.day,
+            label: `[Ngày ${d.day}] ${s.speaker}: "${s.sentence}"`,
+            text: s.sentence
+          });
+        }
+      });
+    }
+    // CSSD Self-talk phrases
+    if (d.cssdSelfTalk) {
+      d.cssdSelfTalk.forEach((c) => {
+        if (c.englishText) {
+          sentencesList.push({
+            day: d.day,
+            label: `[Ngày ${d.day}] ${c.action}: "${c.englishText}"`,
+            text: c.englishText
+          });
+        }
+      });
+    }
+  };
+
+  if (selectedKey.startsWith("day_")) {
+    const dayNum = parseInt(selectedKey.replace("day_", ""));
+    const dayObj = CURRICULUM_DATA.find((d) => d.day === dayNum);
+    if (dayObj) extractSentencesFromDay(dayObj);
+  } else {
+    CURRICULUM_DATA.forEach((d) => extractSentencesFromDay(d));
+  }
+
+  if (sentencesList.length === 0) {
+    const defaultOpt = document.createElement("option");
+    defaultOpt.value = "I am a scrub nurse working in the CSSD department.";
+    defaultOpt.textContent = '"I am a scrub nurse working in the CSSD department."';
+    sentenceSelect.appendChild(defaultOpt);
+  } else {
+    sentencesList.forEach((item) => {
+      const opt = document.createElement("option");
+      opt.value = item.text;
+      opt.textContent = item.label;
+      sentenceSelect.appendChild(opt);
+    });
+  }
+
+  updateRecorderSentence();
 }
 
 // 🎙️ IPA PHONETIC CORRECTION ENGINE (Chữa Lỗi Phát Âm Theo Phiên Âm IPA)
@@ -333,7 +440,6 @@ async function toggleMicRecording() {
 
   if (!isRecording) {
     try {
-      // 1. Request microphone permissions cleanly
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -361,7 +467,7 @@ async function toggleMicRecording() {
 
           if (player) {
             player.src = audioUrl;
-            player.load(); // Force reload audio player element for iOS
+            player.load();
           }
           if (audioContainer) {
             audioContainer.style.display = "block";
@@ -371,14 +477,12 @@ async function toggleMicRecording() {
         }
       };
 
-      // Start recording
-      mediaRecorder.start(100); // 100ms time slice for better mobile chunking
+      mediaRecorder.start(100);
       isRecording = true;
 
       micBtn.classList.add("recording");
       statusText.textContent = "🔴 Đang Ghi Âm... (Bấm nút để DỪNG)";
 
-      // Start Speech Recognition if available
       if (speechRecognition) {
         try {
           speechRecognition.start();
@@ -394,7 +498,6 @@ async function toggleMicRecording() {
       );
     }
   } else {
-    // Stop recording
     if (mediaRecorder && mediaRecorder.state !== "inactive") {
       try {
         mediaRecorder.stop();
@@ -475,31 +578,9 @@ function switchMainView(viewName) {
     initFlashcardGame();
   } else if (viewName === "quiz") {
     loadQuizForSelectedDay();
+  } else if (viewName === "recorder") {
+    loadRecorderSentencesForSelectedDay();
   }
-}
-
-// Populate Day Options Dropdowns for Flashcard & Quiz
-function populateDayOptionsDropdowns() {
-  const flashSelect = document.getElementById("flashcardDeckSelect");
-  const quizSelect = document.getElementById("quizDaySelect");
-
-  CURRICULUM_DATA.forEach((d) => {
-    const optLabel = `🗓️ Ngày ${d.day}: ${d.title.split(":")[1] || d.title}`;
-    
-    if (flashSelect) {
-      const opt = document.createElement("option");
-      opt.value = `day_${d.day}`;
-      opt.textContent = optLabel;
-      flashSelect.appendChild(opt);
-    }
-
-    if (quizSelect) {
-      const opt = document.createElement("option");
-      opt.value = `day_${d.day}`;
-      opt.textContent = optLabel;
-      quizSelect.appendChild(opt);
-    }
-  });
 }
 
 // Theme Controls

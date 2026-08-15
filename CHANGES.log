@@ -30,3 +30,5 @@
 [2026-08-14T22:40:26+07:00] .agents/skills/english-nurse-trainer/references/curriculum_summary.md: Tạo tệp tài liệu tham khảo tổng quan 15 Unit và quy chuẩn bài học 90 ngày.
 [2026-08-14T22:46:27+07:00] styles.css: Bổ sung giao diện Thẻ Chữa Lỗi Phát Âm Theo Phiên Âm Quốc Tế IPA (ipa-fix-card).
 [2026-08-14T22:46:36+07:00] app.js: Xây dựng thuật toán calculateSentenceSimilarityWithIPA giúp phát hiện từ phát âm chưa đúng và hiển thị ngay thẻ phiên âm IPA chuẩn kèm nút nghe lại riêng lẻ.
+[2026-08-16T05:52:35+07:00] app.js: Sửa triệt để lỗi ghi âm trên điện thoại (tự động nhận diện định dạng âm thanh audio/mp4 cho iPhone iOS Safari và audio/webm cho Android Chrome, khắc phục lỗi file âm thanh không phát được).
+[2026-08-16T05:52:39+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa bản sửa lỗi ghi âm di động.
