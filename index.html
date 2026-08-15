@@ -2,9 +2,9 @@
 <html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ENGLISH NURSE 90-DAY PORTAL | Bộ Chọn Giọng Đọc & Ghi Âm Theo Ngày</title>
-  <link rel="stylesheet" href="styles.css?v=2.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ENGLISH NURSE 90-DAY PORTAL | Giao Diện UI/UX Pro Max</title>
+  <link rel="stylesheet" href="styles.css?v=3.0">
 </head>
 <body>
 
@@ -18,19 +18,19 @@
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
+    <!-- Navigation Tabs (Desktops & Fixed Bottom Dock on Phones) -->
     <nav class="main-nav-tabs">
-      <button class="nav-tab-btn active" data-view="roadmap" onclick="switchMainView('roadmap')">🗓️ Lộ Trình 90 Ngày</button>
-      <button class="nav-tab-btn" data-view="flashcard" onclick="switchMainView('flashcard')">🎴 Flashcard Theo Ngày</button>
-      <button class="nav-tab-btn" data-view="quiz" onclick="switchMainView('quiz')">✏️ Bài Tập Điền Từ</button>
-      <button class="nav-tab-btn" data-view="recorder" onclick="switchMainView('recorder')">🎙️ Ghi Âm Luyện Nói</button>
+      <button class="nav-tab-btn active" data-view="roadmap" onclick="switchMainView('roadmap')">🗓️ Lộ Trình</button>
+      <button class="nav-tab-btn" data-view="flashcard" onclick="switchMainView('flashcard')">🎴 Flashcard</button>
+      <button class="nav-tab-btn" data-view="quiz" onclick="switchMainView('quiz')">✏️ Điền Từ</button>
+      <button class="nav-tab-btn" data-view="recorder" onclick="switchMainView('recorder')">🎙️ Ghi Âm</button>
     </nav>
 
     <div class="header-actions">
       <!-- Voice Selection Dropdown & Test Button -->
       <div style="display: flex; align-items: center; gap: 6px;">
-        <select id="headerVoiceSelect" class="unit-select" style="max-width: 180px; font-size: 0.85rem;" onchange="changeSelectedVoice()"></select>
-        <button class="sync-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="testSelectedVoice()">🔊 Nghe Thử Giọng</button>
+        <select id="headerVoiceSelect" class="unit-select" style="max-width: 170px; font-size: 0.85rem;" onchange="changeSelectedVoice()"></select>
+        <button class="sync-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="testSelectedVoice()">🔊 Thử Giọng</button>
       </div>
 
       <button class="sync-btn" onclick="exportProgressCode()" title="Copy mã tiến độ để dán sang máy cơ quan">📋 Copy Tiến Độ</button>
@@ -251,7 +251,7 @@
     </div>
   </div>
 
-  <script src="data.js?v=2.0"></script>
-  <script src="app.js?v=2.0"></script>
+  <script src="data.js?v=3.0"></script>
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>

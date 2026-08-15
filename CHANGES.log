@@ -35,3 +35,8 @@
 [2026-08-16T06:14:53+07:00] index.html: Bổ sung ô chọn Ngày Luyện Ghi Âm (recorderDaySelect) hỗ trợ lọc mẫu câu của từng Ngày trong toàn bộ 90 Ngày học.
 [2026-08-16T06:15:02+07:00] app.js: Xây dựng hàm loadRecorderSentencesForSelectedDay trích xuất tự động toàn bộ mẫu câu từ vựng, hội thoại Shadowing và CSSD Self-Talk cho từng Ngày học.
 [2026-08-16T06:15:04+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa tính năng luyện ghi âm theo ngày.
+[2026-08-16T06:18:58+07:00] index.html: Thêm tham số làm tươi bộ nhớ đệm trình duyệt (?v=2.0) giúp ép trình duyệt di động và máy tính tự động tải lại phiên bản ghi âm theo ngày.
+[2026-08-16T06:19:02+07:00] english-nurse.zip: Đóng gói lại tệp nén zip với phiên bản v=2.0.
+[2026-08-16T06:35:39+07:00] .agents/skills/english-nurse-trainer/SKILL.md: Cập nhật Skill Workspace chứa đầy đủ tính năng chọn giọng đọc bản xứ, chữa lỗi phát âm IPA, ghi âm theo từng ngày và phát hành Cloud 24/7.
+[2026-08-16T06:35:43+07:00] C:/Users/APC/.gemini/config/skills/english-nurse-trainer/SKILL.md: Lưu Skill chính thức vào thư mục Global Skill của Antigravity hệ thống.
+[2026-08-16T06:35:46+07:00] C:/Users/APC/.gemini/config/skills/english-nurse-trainer/references/curriculum_summary.md: Lưu tệp tài liệu tham khảo giáo trình 90 ngày vào thư mục Global Skill.
