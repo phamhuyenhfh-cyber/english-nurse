@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ENGLISH NURSE 90-DAY PORTAL | Bộ Chọn Giọng Đọc & Flashcards</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>ENGLISH NURSE 90-DAY PORTAL | Bộ Chọn Giọng Đọc & Ghi Âm Theo Ngày</title>
+  <link rel="stylesheet" href="styles.css?v=2.0">
 </head>
 <body>
 
@@ -182,7 +182,7 @@
         <!-- Sample Sentence Selector for Recording -->
         <div style="background: var(--bg-main); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border);">
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; align-items: center;">
-            <label style="font-weight: 700; white-space: nowrap;">🗓️ Chọn Ngày Luyện Ghi Âm:</label>
+            <label style="font-weight: 800; white-space: nowrap; color: var(--primary-dark);">🗓️ Chọn Ngày Luyện Ghi Âm:</label>
             <select id="recorderDaySelect" class="unit-select" style="flex-grow: 1;" onchange="loadRecorderSentencesForSelectedDay()">
               <option value="all">📚 Tất cả 90 Ngày học</option>
               <!-- Day options dynamically added by app.js -->
@@ -251,7 +251,7 @@
     </div>
   </div>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="data.js?v=2.0"></script>
+  <script src="app.js?v=2.0"></script>
 </body>
 </html>

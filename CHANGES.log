@@ -32,3 +32,6 @@
 [2026-08-14T22:46:36+07:00] app.js: Xây dựng thuật toán calculateSentenceSimilarityWithIPA giúp phát hiện từ phát âm chưa đúng và hiển thị ngay thẻ phiên âm IPA chuẩn kèm nút nghe lại riêng lẻ.
 [2026-08-16T05:52:35+07:00] app.js: Sửa triệt để lỗi ghi âm trên điện thoại (tự động nhận diện định dạng âm thanh audio/mp4 cho iPhone iOS Safari và audio/webm cho Android Chrome, khắc phục lỗi file âm thanh không phát được).
 [2026-08-16T05:52:39+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa bản sửa lỗi ghi âm di động.
+[2026-08-16T06:14:53+07:00] index.html: Bổ sung ô chọn Ngày Luyện Ghi Âm (recorderDaySelect) hỗ trợ lọc mẫu câu của từng Ngày trong toàn bộ 90 Ngày học.
+[2026-08-16T06:15:02+07:00] app.js: Xây dựng hàm loadRecorderSentencesForSelectedDay trích xuất tự động toàn bộ mẫu câu từ vựng, hội thoại Shadowing và CSSD Self-Talk cho từng Ngày học.
+[2026-08-16T06:15:04+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa tính năng luyện ghi âm theo ngày.
