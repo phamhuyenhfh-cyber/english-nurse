@@ -28,3 +28,5 @@
 [2026-08-14T22:15:45+07:00] english-nurse.zip: Cập nhật tệp nén zip chứa tính năng Bộ Chọn Giọng Đọc Bản Xứ.
 [2026-08-14T22:40:23+07:00] .agents/skills/english-nurse-trainer/SKILL.md: Đóng gói toàn bộ cấu trúc Skill tùy chỉnh cho hệ thống Tiếng Anh Điều Dưỡng & CSSD 90 Ngày theo chuẩn YAML frontmatter.
 [2026-08-14T22:40:26+07:00] .agents/skills/english-nurse-trainer/references/curriculum_summary.md: Tạo tệp tài liệu tham khảo tổng quan 15 Unit và quy chuẩn bài học 90 ngày.
+[2026-08-14T22:46:27+07:00] styles.css: Bổ sung giao diện Thẻ Chữa Lỗi Phát Âm Theo Phiên Âm Quốc Tế IPA (ipa-fix-card).
+[2026-08-14T22:46:36+07:00] app.js: Xây dựng thuật toán calculateSentenceSimilarityWithIPA giúp phát hiện từ phát âm chưa đúng và hiển thị ngay thẻ phiên âm IPA chuẩn kèm nút nghe lại riêng lẻ.

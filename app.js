@@ -55,6 +55,7 @@ let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
 let speechRecognition = null;
+let currentAudioMimeType = "";
 
 // DOM Initialization
 document.addEventListener("DOMContentLoaded", () => {
@@ -250,35 +251,169 @@ function initSpeechRecognition() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRec) return;
 
-  speechRecognition = new SpeechRec();
-  speechRecognition.lang = "en-US";
-  speechRecognition.interimResults = false;
+  try {
+    speechRecognition = new SpeechRec();
+    speechRecognition.lang = "en-US";
+    speechRecognition.interimResults = false;
+    speechRecognition.maxAlternatives = 1;
 
-  speechRecognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    const recognizedBox = document.getElementById("speechRecognizedBox");
-    const outputEl = document.getElementById("recognizedTextOutput");
-    const feedbackEl = document.getElementById("speechFeedbackText");
+    speechRecognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      const recognizedBox = document.getElementById("speechRecognizedBox");
+      const outputEl = document.getElementById("recognizedTextOutput");
+      const feedbackEl = document.getElementById("speechFeedbackText");
 
-    const targetText = document.getElementById("recorderSentenceSelect").value;
-    const { accuracy, diffHtml, ipaFixCardsHtml } = calculateSentenceSimilarityWithIPA(targetText, transcript);
+      const targetText = document.getElementById("recorderSentenceSelect").value;
+      const { accuracy, diffHtml, ipaFixCardsHtml } = calculateSentenceSimilarityWithIPA(targetText, transcript);
 
-    if (recognizedBox && outputEl && feedbackEl) {
-      recognizedBox.style.display = "block";
-      outputEl.innerHTML = `"${diffHtml}"`;
+      if (recognizedBox && outputEl && feedbackEl) {
+        recognizedBox.style.display = "block";
+        outputEl.innerHTML = `"${diffHtml}"`;
 
-      let feedbackMsg = "";
-      if (accuracy >= 85) {
-        feedbackMsg = `<span style="color: #22c55e;">🎉 Xuất sắc! Nhận dạng chính xác ${accuracy}%! Giọng đọc của chị phát âm rất chuẩn.</span>`;
-      } else if (accuracy >= 60) {
-        feedbackMsg = `<span style="color: #f59e0b;">👍 Khá tốt! Độ chính xác: ${accuracy}%. Chị hãy xem bảng sửa phiên âm IPA bên dưới nhé!</span>`;
-      } else {
-        feedbackMsg = `<span style="color: #e11d48;">⚠️ Độ chính xác: ${accuracy}%. Phát âm chưa khớp với câu mẫu. Chị hãy xem hướng dẫn phiên âm IPA dưới đây để chỉnh phát âm nhé!</span>`;
+        let feedbackMsg = "";
+        if (accuracy >= 85) {
+          feedbackMsg = `<span style="color: #22c55e;">🎉 Xuất sắc! Nhận dạng chính xác ${accuracy}%! Giọng đọc của chị phát âm rất chuẩn.</span>`;
+        } else if (accuracy >= 60) {
+          feedbackMsg = `<span style="color: #f59e0b;">👍 Khá tốt! Độ chính xác: ${accuracy}%. Chị hãy xem bảng sửa phiên âm IPA bên dưới nhé!</span>`;
+        } else {
+          feedbackMsg = `<span style="color: #e11d48;">⚠️ Độ chính xác: ${accuracy}%. Phát âm chưa khớp với câu mẫu. Chị hãy xem hướng dẫn phiên âm IPA dưới đây để chỉnh phát âm nhé!</span>`;
+        }
+
+        feedbackEl.innerHTML = feedbackMsg + ipaFixCardsHtml;
+      }
+    };
+
+    speechRecognition.onerror = (event) => {
+      console.warn("Speech recognition error:", event.error);
+    };
+  } catch (e) {
+    console.warn("Speech recognition init error:", e);
+  }
+}
+
+// Dynamic Audio MIME Type Detection for Mobile (iOS Safari & Android Chrome)
+function getSupportedAudioMimeType() {
+  const types = [
+    "audio/mp4",
+    "audio/aac",
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/ogg",
+    "audio/wav"
+  ];
+  if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
+    for (const t of types) {
+      if (MediaRecorder.isTypeSupported(t)) {
+        return t;
+      }
+    }
+  }
+  return "";
+}
+
+// 🎙️ AUDIO RECORDER STUDIO LOGIC & MOBILE COMPATIBILITY FIX
+function updateRecorderSentence() {
+  const select = document.getElementById("recorderSentenceSelect");
+  const targetDisplay = document.getElementById("targetSentenceDisplay");
+  if (select && targetDisplay) {
+    targetDisplay.textContent = `"${select.value}"`;
+  }
+}
+
+function playTargetSentenceAudio() {
+  const select = document.getElementById("recorderSentenceSelect");
+  if (select) speakText(select.value);
+}
+
+async function toggleMicRecording() {
+  const micBtn = document.getElementById("bigMicBtn");
+  const statusText = document.getElementById("recordingStatusText");
+  const audioContainer = document.getElementById("audioPlaybackContainer");
+  const player = document.getElementById("recordedAudioPlayer");
+
+  if (!isRecording) {
+    try {
+      // 1. Request microphone permissions cleanly
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true
+        }
+      });
+
+      audioChunks = [];
+      currentAudioMimeType = getSupportedAudioMimeType();
+
+      const options = currentAudioMimeType ? { mimeType: currentAudioMimeType } : {};
+      mediaRecorder = new MediaRecorder(stream, options);
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        try {
+          const blobType = currentAudioMimeType || (audioChunks[0] && audioChunks[0].type) || "audio/mp4";
+          const audioBlob = new Blob(audioChunks, { type: blobType });
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          if (player) {
+            player.src = audioUrl;
+            player.load(); // Force reload audio player element for iOS
+          }
+          if (audioContainer) {
+            audioContainer.style.display = "block";
+          }
+        } catch (err) {
+          console.error("Audio Blob playback error:", err);
+        }
+      };
+
+      // Start recording
+      mediaRecorder.start(100); // 100ms time slice for better mobile chunking
+      isRecording = true;
+
+      micBtn.classList.add("recording");
+      statusText.textContent = "🔴 Đang Ghi Âm... (Bấm nút để DỪNG)";
+
+      // Start Speech Recognition if available
+      if (speechRecognition) {
+        try {
+          speechRecognition.start();
+        } catch (e) {
+          console.warn("Recognition start skip:", e);
+        }
       }
 
-      feedbackEl.innerHTML = feedbackMsg + ipaFixCardsHtml;
+    } catch (err) {
+      console.error("Microphone access error:", err);
+      alert(
+        "💡 CHÚ Ý TRÊN ĐIỆN THOẠI:\n\nKhông thể truy cập Microphone! Chị vui lòng kiểm tra cài đặt điện thoại:\n- Vào Cài đặt điện thoại ➔ Chọn Safari/Chrome ➔ Cho phép truy cập 'Microphone'."
+      );
     }
-  };
+  } else {
+    // Stop recording
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      try {
+        mediaRecorder.stop();
+      } catch (e) {}
+      if (mediaRecorder.stream) {
+        mediaRecorder.stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+
+    if (speechRecognition) {
+      try {
+        speechRecognition.stop();
+      } catch (e) {}
+    }
+
+    isRecording = false;
+    micBtn.classList.remove("recording");
+    statusText.textContent = "✅ Ghi âm hoàn tất! Hãy bấm nút ▶️ bên dưới để nghe lại ⬇️";
+  }
 }
 
 // Sync Progress across devices (Home PC <-> Work PC)
@@ -662,78 +797,6 @@ function updateQuizScoreText(score, total) {
   const scoreEl = document.getElementById("quizScoreText");
   if (scoreEl) {
     scoreEl.textContent = `Điểm: ${score} / ${total} câu đúng`;
-  }
-}
-
-// 🎙️ AUDIO RECORDER STUDIO LOGIC & ACCURATE SIMILARITY ENGINE
-function updateRecorderSentence() {
-  const select = document.getElementById("recorderSentenceSelect");
-  const targetDisplay = document.getElementById("targetSentenceDisplay");
-  if (select && targetDisplay) {
-    targetDisplay.textContent = `"${select.value}"`;
-  }
-}
-
-function playTargetSentenceAudio() {
-  const select = document.getElementById("recorderSentenceSelect");
-  if (select) speakText(select.value);
-}
-
-async function toggleMicRecording() {
-  const micBtn = document.getElementById("bigMicBtn");
-  const statusText = document.getElementById("recordingStatusText");
-  const audioContainer = document.getElementById("audioPlaybackContainer");
-  const player = document.getElementById("recordedAudioPlayer");
-
-  if (!isRecording) {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioChunks = [];
-      mediaRecorder = new MediaRecorder(stream);
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        player.src = audioUrl;
-        audioContainer.style.display = "block";
-      };
-
-      mediaRecorder.start();
-      isRecording = true;
-
-      micBtn.classList.add("recording");
-      statusText.textContent = "🔴 Đang Ghi Âm... (Bấm nút để DỪNG)";
-
-      if (speechRecognition) {
-        try {
-          speechRecognition.start();
-        } catch (e) {}
-      }
-
-    } catch (err) {
-      alert("Không thể truy cập Microphone! Vui lòng cho phép quyền sử dụng Mic trên trình duyệt.");
-    }
-  } else {
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-      mediaRecorder.stop();
-      mediaRecorder.stream.getTracks().forEach((track) => track.stop());
-    }
-
-    if (speechRecognition) {
-      try {
-        speechRecognition.stop();
-      } catch (e) {}
-    }
-
-    isRecording = false;
-    micBtn.classList.remove("recording");
-    statusText.textContent = "✅ Ghi âm hoàn tất! Hãy nghe lại bên dưới ⬇️";
   }
 }
 
