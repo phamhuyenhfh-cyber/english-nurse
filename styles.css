@@ -1,4 +1,6 @@
-/* 🏥 ENGLISH NURSE 90-DAY LEARNING PORTAL - UI/UX PRO MAX DESIGN SYSTEM */
+/* 🏥 ENGLISH NURSE 90-DAY LEARNING PORTAL - APPLE TYPOGRAPHY & UI/UX PRO MAX DESIGN SYSTEM */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
   --primary: #0d9488;
   --primary-dark: #0f766e;
@@ -12,11 +14,11 @@
   --bg-main: #f8fafc;
   --bg-card: #ffffff;
   --bg-glass: rgba(255, 255, 255, 0.85);
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-main: #1d1d1f; /* Apple Carbon Dark */
+  --text-muted: #86868b; /* Apple Muted Gray */
   --border: #e2e8f0;
   
-  --radius: 18px;
+  --radius: 20px;
   --radius-sm: 12px;
   --radius-pill: 40px;
   
@@ -28,15 +30,19 @@
   
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Apple Font Family Stack */
+  --font-apple: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
 [data-theme="dark"] {
-  --bg-main: #090d16;
-  --bg-card: #131c2e;
-  --bg-glass: rgba(19, 28, 46, 0.88);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border: #1e293b;
+  --bg-main: #000000; /* Apple Pure OLED Dark */
+  --bg-card: #1c1c1e; /* Apple System Gray 6 */
+  --bg-glass: rgba(28, 28, 30, 0.85);
+  --text-main: #f5f5f7; /* Apple Off-White */
+  --text-muted: #86868b;
+  --border: #2c2c2e;
   --primary-light: #134e4a;
   --accent-light: #451a03;
   --accent-danger-light: #4c0519;
@@ -46,32 +52,44 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-apple);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
-  line-height: 1.6;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: -0.011em;
   transition: background-color 0.3s, color 0.3s;
-  padding-bottom: 90px; /* Space for Mobile Bottom Dock */
+  padding-bottom: 95px; /* Space for Mobile Bottom Dock */
 }
 
-/* 🌟 GLASSMOPHIC STICKY HEADER */
+/* APPLE TYPOGRAPHY SYSTEM */
+h1, h2, h3, h4, .hero-info h1 {
+  font-family: var(--font-apple);
+  letter-spacing: -0.025em; /* Apple Tight Headline Tracking */
+  line-height: 1.15;
+}
+
+/* 🌟 APPLE-STYLE GLASSMORPHIC HEADER */
 header.app-header {
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
-  padding: 0.9rem 2rem;
+  padding: 0.9rem 2.2rem;
   position: sticky;
   top: 0;
   z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .logo-container {
@@ -85,14 +103,14 @@ header.app-header {
   background: linear-gradient(135deg, #ccfbf1 0%, #0d9488 100%);
   padding: 8px;
   border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.25);
 }
 
 .logo-title {
-  font-size: 1.25rem;
+  font-size: 1.22rem;
   font-weight: 800;
   color: var(--secondary);
-  letter-spacing: -0.4px;
+  letter-spacing: -0.022em;
 }
 [data-theme="dark"] .logo-title {
   color: #38bdf8;
@@ -101,6 +119,8 @@ header.app-header {
 .logo-subtitle {
   font-size: 0.8rem;
   color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: -0.006em;
 }
 
 /* 🌟 MAIN NAV TABS HEADER (DESKTOP) */
@@ -108,7 +128,7 @@ header.app-header {
   display: flex;
   gap: 6px;
   background: var(--bg-card);
-  padding: 6px;
+  padding: 5px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
@@ -117,10 +137,11 @@ header.app-header {
 .nav-tab-btn {
   background: transparent;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border-radius: 30px;
   font-size: 0.92rem;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--text-muted);
   cursor: pointer;
   display: flex;
@@ -137,6 +158,7 @@ header.app-header {
 .nav-tab-btn.active {
   background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
   color: white;
+  font-weight: 700;
   box-shadow: var(--shadow-teal);
 }
 
@@ -150,11 +172,12 @@ header.app-header {
   background: var(--primary-light);
   color: var(--primary-dark);
   border: 1px solid var(--primary);
-  padding: 8px 14px;
+  padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.85rem;
+  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -175,7 +198,8 @@ header.app-header {
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -189,7 +213,7 @@ header.app-header {
 
 /* 🌟 MAIN CONTAINER */
 .main-container {
-  max-width: 1280px;
+  max-width: 1240px;
   margin: 2rem auto;
   padding: 0 1.5rem;
 }
@@ -197,24 +221,24 @@ header.app-header {
 /* App View Sections */
 .app-view-section {
   display: none;
-  animation: fadeInView 0.35s ease-out;
+  animation: fadeInView 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeInView {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(12px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .app-view-section.active {
   display: block;
 }
 
-/* 🌟 HERO PROGRESS BANNER */
+/* 🌟 APPLE HERO BANNER */
 .hero-banner {
   background: linear-gradient(135deg, #0f4c5c 0%, #0d9488 100%);
   color: white;
-  border-radius: 24px;
-  padding: 2.2rem;
+  border-radius: 28px;
+  padding: 2.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-lg);
   display: grid;
@@ -228,31 +252,34 @@ header.app-header {
 .hero-banner::before {
   content: "";
   position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 300px;
-  height: 300px;
+  top: -40%;
+  right: -15%;
+  width: 320px;
+  height: 320px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   pointer-events: none;
 }
 
 .hero-info h1 {
-  font-size: 1.85rem;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.5px;
+  font-size: 2.1rem;
+  font-weight: 800;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.03em;
 }
 
 .hero-info p {
   opacity: 0.92;
-  font-size: 1rem;
-  margin-bottom: 1.2rem;
+  font-size: 1.05rem;
+  font-weight: 400;
+  margin-bottom: 1.4rem;
+  letter-spacing: -0.01em;
 }
 
 .progress-bar-container {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.22);
   border-radius: 12px;
-  height: 16px;
+  height: 14px;
   width: 100%;
   overflow: hidden;
   margin-bottom: 0.6rem;
@@ -263,15 +290,16 @@ header.app-header {
   background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
   height: 100%;
   width: 0%;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
 }
 
 .progress-stats {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .hero-badges {
@@ -279,10 +307,10 @@ header.app-header {
   flex-direction: column;
   gap: 12px;
   background: rgba(255, 255, 255, 0.14);
-  padding: 1.4rem;
-  border-radius: 20px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  padding: 1.5rem;
+  border-radius: 22px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
@@ -291,6 +319,7 @@ header.app-header {
   align-items: center;
   gap: 12px;
   font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .badge-icon {
@@ -304,9 +333,9 @@ header.app-header {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.6rem;
   background: var(--bg-card);
-  padding: 1.2rem;
+  padding: 1.25rem;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -318,8 +347,9 @@ header.app-header {
   border: 1px solid var(--border);
   background: var(--bg-main);
   color: var(--text-main);
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   outline: none;
   cursor: pointer;
   transition: var(--transition-fast);
@@ -333,7 +363,7 @@ header.app-header {
 .search-box {
   position: relative;
   flex-grow: 1;
-  max-width: 350px;
+  max-width: 360px;
 }
 
 .search-input {
@@ -344,7 +374,8 @@ header.app-header {
   background: var(--bg-main);
   color: var(--text-main);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   transition: var(--transition-fast);
 }
 
@@ -366,9 +397,10 @@ header.app-header {
   background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border-radius: 12px;
   font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
   transition: var(--transition-fast);
   box-shadow: var(--shadow-teal);
@@ -376,21 +408,21 @@ header.app-header {
 
 .quick-jump-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(13, 148, 136, 0.35);
+  box-shadow: 0 10px 22px rgba(13, 148, 136, 0.35);
 }
 
 /* 🌟 GRID OF DAYS */
 .days-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.25rem;
+  gap: 1.35rem;
 }
 
 .day-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.35rem;
+  padding: 1.45rem;
   box-shadow: var(--shadow);
   transition: var(--transition);
   display: flex;
@@ -426,6 +458,7 @@ header.app-header {
   color: var(--primary-dark);
   font-size: 0.8rem;
   font-weight: 800;
+  letter-spacing: 0.02em;
   padding: 4px 12px;
   border-radius: 20px;
 }
@@ -441,16 +474,19 @@ header.app-header {
 }
 
 .day-title {
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
   color: var(--text-main);
 }
 
 .day-goal {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
-  margin-bottom: 1rem;
+  font-weight: 400;
+  line-height: 1.55;
+  margin-bottom: 1.1rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -461,14 +497,15 @@ header.app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 0.85rem;
+  padding-top: 0.9rem;
   border-top: 1px solid var(--border);
 }
 
 .unit-label {
   font-size: 0.8rem;
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .open-lesson-btn {
@@ -479,6 +516,7 @@ header.app-header {
   border-radius: 10px;
   font-size: 0.88rem;
   font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
   transition: var(--transition-fast);
 }
@@ -517,6 +555,7 @@ header.app-header {
 .flashcard-counter {
   font-size: 1.1rem;
   font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--primary-dark);
 }
 [data-theme="dark"] .flashcard-counter {
@@ -552,14 +591,14 @@ header.app-header {
   height: 100%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border-radius: 24px;
-  padding: 2rem;
+  border-radius: 26px;
+  padding: 2.2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   border: 2px solid var(--primary);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .flashcard-front {
@@ -574,8 +613,9 @@ header.app-header {
 }
 
 .flash-word-text {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 900;
+  letter-spacing: -0.03em;
   margin-bottom: 0.5rem;
   color: var(--secondary);
 }
@@ -584,23 +624,26 @@ header.app-header {
 }
 
 .flash-ipa-text {
-  font-family: monospace;
-  font-size: 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
   color: var(--accent);
   margin-bottom: 1rem;
 }
 
 .flash-meaning-text {
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 800;
+  letter-spacing: -0.02em;
   margin-bottom: 1rem;
 }
 
 .flash-example-text {
   font-size: 1.05rem;
   font-style: italic;
-  opacity: 0.9;
+  opacity: 0.92;
   max-width: 90%;
+  line-height: 1.5;
 }
 
 .flashcard-game-actions {
@@ -616,14 +659,15 @@ header.app-header {
   padding: 14px 20px;
   border-radius: 30px;
   font-size: 1.05rem;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   transition: var(--transition-fast);
 }
 
@@ -677,10 +721,11 @@ header.app-header {
 }
 
 .quiz-sentence {
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-size: 1.28rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--secondary);
-  line-height: 1.7;
+  line-height: 1.65;
 }
 [data-theme="dark"] .quiz-sentence {
   color: #38bdf8;
@@ -700,7 +745,8 @@ header.app-header {
   background: var(--bg-main);
   color: var(--text-main);
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -715,7 +761,8 @@ header.app-header {
   border: none;
   padding: 12px 24px;
   border-radius: 12px;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
   transition: var(--transition-fast);
 }
@@ -729,7 +776,7 @@ header.app-header {
   padding: 12px 18px;
   border-radius: 12px;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
   display: none;
   align-items: center;
   justify-content: space-between;
@@ -769,7 +816,8 @@ header.app-header {
   border: none;
   padding: 10px 22px;
   border-radius: 30px;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -788,7 +836,7 @@ header.app-header {
 .recorder-mic-box {
   background: var(--bg-main);
   border: 2px dashed var(--primary);
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 2.5rem 1.5rem;
   text-align: center;
   display: flex;
@@ -832,6 +880,7 @@ header.app-header {
 .recording-status-text {
   font-size: 1.1rem;
   font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--text-main);
 }
 
@@ -868,13 +917,14 @@ header.app-header {
 }
 
 .ipa-word-target {
-  font-weight: 800;
+  font-weight: 700;
   color: var(--accent-danger);
 }
 
 .ipa-tag {
-  font-family: monospace;
+  font-family: var(--font-mono);
   font-weight: 700;
+  letter-spacing: 0.04em;
   color: #d97706;
   background: #fef3c7;
   padding: 3px 10px;
@@ -894,8 +944,8 @@ header.app-header {
   right: 0;
   bottom: 0;
   background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -915,7 +965,7 @@ header.app-header {
   width: 92%;
   max-width: 900px;
   max-height: 90vh;
-  border-radius: 24px;
+  border-radius: 26px;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
   padding: 2.2rem;
@@ -962,7 +1012,8 @@ header.app-header {
   border: none;
   padding: 8px 18px;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--text-muted);
   cursor: pointer;
   border-radius: 10px;
@@ -972,14 +1023,15 @@ header.app-header {
 .tab-btn.active {
   color: var(--primary);
   background: var(--primary-light);
+  font-weight: 700;
 }
 
 /* Vocab List Items & Audio Player */
 .vocab-item {
   background: var(--bg-main);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.1rem;
+  border-radius: 16px;
+  padding: 1.15rem;
   margin-bottom: 0.85rem;
   display: flex;
   justify-content: space-between;
@@ -999,8 +1051,9 @@ header.app-header {
 }
 
 .vocab-word {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--primary-dark);
 }
 [data-theme="dark"] .vocab-word {
@@ -1008,14 +1061,15 @@ header.app-header {
 }
 
 .vocab-ipa {
-  font-family: monospace;
+  font-family: var(--font-mono);
   color: var(--accent);
   font-size: 0.95rem;
+  letter-spacing: 0.04em;
 }
 
 .vocab-meaning {
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .vocab-example {
@@ -1051,8 +1105,8 @@ header.app-header {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   border-left: 6px solid #22c55e;
-  border-radius: 14px;
-  padding: 1.35rem;
+  border-radius: 16px;
+  padding: 1.4rem;
   margin-top: 1rem;
 }
 [data-theme="dark"] .cssd-box {
@@ -1062,6 +1116,7 @@ header.app-header {
 
 .cssd-title {
   font-weight: 800;
+  letter-spacing: -0.01em;
   color: #15803d;
   margin-bottom: 0.5rem;
   display: flex;
@@ -1116,8 +1171,12 @@ header.app-header {
 
   .hero-banner {
     grid-template-columns: 1fr;
-    padding: 1.5rem;
-    border-radius: 20px;
+    padding: 1.6rem;
+    border-radius: 22px;
+  }
+
+  .hero-info h1 {
+    font-size: 1.75rem;
   }
 
   .controls-section {
@@ -1135,7 +1194,7 @@ header.app-header {
   }
 
   .flash-word-text {
-    font-size: 1.8rem;
+    font-size: 1.85rem;
   }
 
   .flash-meaning-text {
