@@ -4,13 +4,12 @@ const STORAGE_KEY = "ENGLISH_NURSE_HUYEN_PROGRESS_V1";
 const MASTERED_VOCAB_KEY = "ENGLISH_NURSE_MASTERED_VOCAB";
 const THEME_KEY = "ENGLISH_NURSE_THEME";
 const SELECTED_VOICE_KEY = "ENGLISH_NURSE_SELECTED_VOICE_NAME";
-const GEMINI_KEY_STORAGE = "ENGLISH_NURSE_GEMINI_API_KEY";
 
 let progressState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 let masteredVocabState = JSON.parse(localStorage.getItem(MASTERED_VOCAB_KEY)) || {};
 
 let activeDay = null;
-let currentTab = "flashcard";
+let currentTab = "vocab";
 let speechSynth = window.speechSynthesis;
 let slowMode = false;
 
@@ -22,16 +21,52 @@ let selectedVoice = null;
 let modalFlashcardIndex = 0;
 let modalIsCardFlipped = false;
 
-// AI Voice Studio State (PURE VOICE RECORDING)
-let aiMediaRecorder = null;
-let aiAudioChunks = [];
-let isAiVoiceRecording = false;
-let aiSpeechRecognitionEngine = null;
-let aiLastSpokenTranscript = "";
-
 // Weekly Test Matching Game State
 let selectedMatchWord = null;
 let matchedPairsCount = 0;
+
+// Medical Instrument Visual Badges Map
+const VOCAB_IMAGE_MAP = {
+  "scrub nurse": "👩‍⚕️",
+  "surgeon": "👨‍⚕️",
+  "radiographer": "🩻",
+  "head nurse": "👩‍⚕️",
+  "paramedic": "🚑",
+  "operating theatre": "🏥",
+  "sterile field": "🧼",
+  "midwife": "👶",
+  "ward nurse": "🏥",
+  "decontamination": "🧼",
+  "enzymatic cleaner": "🧪",
+  "ultrasonic washer": "🛁",
+  "autoclave": "♨️",
+  "temperature": "🌡️",
+  "chemical indicator": "🏷️",
+  "sterile tray": "📥",
+  "forceps": "✂️",
+  "scalpel": "🔪",
+  "surgical scissors": "✂️",
+  "surgical instruments": "✂️",
+  "suction catheter": "🩺",
+  "specimen jar": "🫙",
+  "dressing pack": "📦"
+};
+
+// Example Sentences Vietnamese Translation Lookup Table
+const EXAMPLE_TRANSLATIONS = {
+  "I am a scrub nurse in the operating theatre.": "Tôi là điều dưỡng dụng cụ làm việc trong phòng phẫu thuật.",
+  "The surgeon is performing the operation.": "Bác sĩ phẫu thuật đang tiến hành ca mổ.",
+  "The radiographer took an X-ray.": "Kỹ thuật viên X-quang đã chụp tấm phim X-quang.",
+  "The head nurse manages the surgical ward.": "Điều dưỡng trưởng quản lý khoa phẫu thuật.",
+  "The paramedic arrived quickly.": "Nhân viên cấp cứu ngoại viện đã đến rất nhanh.",
+  "The operating theatre is ready for surgery.": "Phòng mổ đã được chuẩn bị sẵn sàng cho ca phẫu thuật.",
+  "Do not touch the sterile field.": "Không được chạm vào vùng vô trùng.",
+  "The midwife assisted the delivery.": "Nữ hộ sinh đã hỗ trợ ca sinh nở.",
+  "The ward nurse checks vital signs.": "Điều dưỡng khoa bệnh kiểm tra chỉ số sinh tồn.",
+  "Instruments go through decontamination first.": "Dụng cụ phải trải qua bước khử khuẩn làm sạch ban đầu trước.",
+  "Soak the instruments in enzymatic cleaner.": "Ngâm dụng cụ trong dung dịch tẩy rửa enzyme.",
+  "Put the delicate tools into the ultrasonic washer.": "Đưa các dụng cụ tinh xảo vào máy rửa siêu âm."
+};
 
 // Global IPA Dictionary for Audio Error Correction
 let GLOBAL_IPA_MAP = {
@@ -539,154 +574,6 @@ async function toggleMicRecording() {
   }
 }
 
-// 🎙️ 100% PURE VOICE AI SPEAKING STUDIO (THU ÂM GIỌNG NÓI MICRO KHỔNG LỒ)
-async function toggleAiVoiceStudioRecording() {
-  const micBtn = document.getElementById("aiStudioBigMicBtn");
-  const statusText = document.getElementById("aiStudioMicStatusText");
-  const audioContainer = document.getElementById("aiStudioAudioPlaybackContainer");
-  const player = document.getElementById("aiStudioRecordedAudioPlayer");
-
-  if (!isAiVoiceRecording) {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true }
-      });
-
-      aiAudioChunks = [];
-      aiLastSpokenTranscript = "";
-      const mime = getSupportedAudioMimeType();
-      const options = mime ? { mimeType: mime } : {};
-
-      aiMediaRecorder = new MediaRecorder(stream, options);
-
-      aiMediaRecorder.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) aiAudioChunks.push(event.data);
-      };
-
-      aiMediaRecorder.onstop = () => {
-        try {
-          const blobType = mime || (aiAudioChunks[0] && aiAudioChunks[0].type) || "audio/mp4";
-          const audioBlob = new Blob(aiAudioChunks, { type: blobType });
-          const audioUrl = URL.createObjectURL(audioBlob);
-
-          if (player) {
-            player.src = audioUrl;
-            player.load();
-          }
-          if (audioContainer) audioContainer.style.display = "block";
-        } catch (e) {
-          console.warn("AI voice playback blob err:", e);
-        }
-      };
-
-      aiMediaRecorder.start(100);
-      isAiVoiceRecording = true;
-
-      if (micBtn) micBtn.classList.add("recording");
-      if (statusText) statusText.innerHTML = "🔴 <strong>ĐANG THU ÂM GIỌNG NÓI TIẾNG ANH...</strong> (Bấm nút Micro để DỪNG & GỬI AI)";
-
-      // Init speech recognition for AI Studio
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRec) {
-        try {
-          aiSpeechRecognitionEngine = new SpeechRec();
-          aiSpeechRecognitionEngine.lang = "en-US";
-          aiSpeechRecognitionEngine.interimResults = false;
-
-          aiSpeechRecognitionEngine.onresult = (event) => {
-            aiLastSpokenTranscript = event.results[0][0].transcript;
-          };
-
-          aiSpeechRecognitionEngine.start();
-        } catch (e) {
-          console.warn("AI Speech engine start skip:", e);
-        }
-      }
-
-    } catch (err) {
-      console.error("AI Mic error:", err);
-      alert("💡 KHÔNG THỂ TRUY CẬP MICROPHONE!\n\nChị vui lòng cho phép trình duyệt Safari/Chrome sử dụng 'Microphone' trong Cài Đặt điện thoại nhé!");
-    }
-  } else {
-    // STOP RECORDING & PROCESS VOICE WITH AI
-    if (aiMediaRecorder && aiMediaRecorder.state !== "inactive") {
-      try { aiMediaRecorder.stop(); } catch (e) {}
-      if (aiMediaRecorder.stream) {
-        aiMediaRecorder.stream.getTracks().forEach((track) => track.stop());
-      }
-    }
-
-    if (aiSpeechRecognitionEngine) {
-      try { aiSpeechRecognitionEngine.stop(); } catch (e) {}
-    }
-
-    isAiVoiceRecording = false;
-    if (micBtn) micBtn.classList.remove("recording");
-    if (statusText) statusText.innerHTML = "✅ <strong>ĐÃ GỬI GIỌNG NÓI CHO AI!</strong> Đang phân tích phản xạ...";
-
-    setTimeout(() => {
-      const userSpokenText = aiLastSpokenTranscript || "I am a scrub nurse preparing surgical instruments in the operating room.";
-      processSpokenTextWithAiAssistant(userSpokenText);
-    }, 600);
-  }
-}
-
-async function processSpokenTextWithAiAssistant(spokenText) {
-  const chatBox = document.getElementById("geminiChatMessagesBox");
-  const statusText = document.getElementById("aiStudioMicStatusText");
-
-  if (!chatBox) return;
-
-  // Add User Spoken Bubble
-  const userBubble = document.createElement("div");
-  userBubble.style.cssText = "background: var(--primary-light); color: var(--primary-dark); padding: 12px 16px; border-radius: 14px; margin-bottom: 8px; font-weight: 700; align-self: flex-end; max-width: 85%; border: 1.5px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.04);";
-  userBubble.innerHTML = `<div>🎙️ <strong>Chị Huyền vừa nói:</strong> "${spokenText}"</div>`;
-  chatBox.appendChild(userBubble);
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  // Generate AI Response
-  const apiKey = localStorage.getItem(GEMINI_KEY_STORAGE);
-  let replyText = "";
-
-  if (apiKey) {
-    try {
-      const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `You are a native English surgeon speaking with Scrub Nurse Huyen. Reply in 1-2 simple encouraging English sentences to: "${spokenText}"` }] }]
-        })
-      });
-      const data = await resp.json();
-      replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    } catch (e) {
-      console.warn("Gemini API call skip:", e);
-    }
-  }
-
-  if (!replyText) {
-    const simReplies = [
-      "Hello Nurse Huyen! Great pronunciation! Please pass me the sterile surgical forceps.",
-      "Excellent work Nurse Huyen! All instrument trays are properly cleaned and sterilized.",
-      "The autoclave temperature reached 134 degrees. The chemical indicators changed color!",
-      "Thank you Nurse Huyen! Let's prepare the operating theatre for the next procedure."
-    ];
-    replyText = simReplies[Math.floor(Math.random() * simReplies.length)];
-  }
-
-  // Render AI Response Speech Bubble & AUTOMATICALLY SPEAK BACK
-  const aiBubble = document.createElement("div");
-  aiBubble.style.cssText = "background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #15803d; padding: 14px 18px; border-radius: 16px; margin-bottom: 8px; font-weight: 700; align-self: flex-start; max-width: 85%; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);";
-  aiBubble.innerHTML = `<div>🤖 AI Assistant: "${replyText}"</div><button class="audio-btn" style="width:38px; height:38px; font-size:0.9rem;" onclick="speakText('${escapeQuotes(replyText)}')">🔊 Nghe</button>`;
-  chatBox.appendChild(aiBubble);
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  if (statusText) statusText.innerHTML = "🔊 <strong>AI đang phát thoại trả lời bằng giọng bản xứ...</strong> (Bấm nút Micro để nói câu tiếp theo!)";
-
-  // Automatically speak AI reply in native English voice
-  speakText(replyText);
-}
-
 // Sync Progress across devices (Home PC <-> Work PC)
 function exportProgressCode() {
   const syncData = {
@@ -1057,7 +944,7 @@ function openLessonModal(day) {
   activeDay = dayData;
   modalFlashcardIndex = 0;
   modalIsCardFlipped = false;
-  currentTab = "flashcard"; // Open 3D Flashcard tab by default inside Lesson Modal
+  currentTab = "vocab"; // Open Vocab & IPA tab by default inside Lesson Modal
 
   const modal = document.getElementById("lessonModal");
   modal.classList.add("active");
@@ -1065,7 +952,7 @@ function openLessonModal(day) {
   document.getElementById("modalDayTitle").textContent = dayData.title;
   document.getElementById("modalDayGoal").textContent = dayData.goal;
 
-  switchTab("flashcard");
+  switchTab("vocab");
 }
 
 function closeLessonModal() {
@@ -1146,7 +1033,50 @@ function renderModalTabContent() {
   const container = document.getElementById("tabContentContainer");
   if (!container || !activeDay) return;
 
-  if (currentTab === "flashcard") {
+  if (currentTab === "vocab") {
+    // 🗣️ ENHANCED VOCABULARY TAB WITH INSTRUMENT IMAGES, IPA & VIETNAMESE TRANSLATION
+    let html = `<div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="color: var(--secondary);">🗣️ Từ Vựng, Phiên Âm IPA & Hình Ảnh Minh Họa Dụng Cụ (Bấm 🔊 để nghe)</h3>
+        <button class="theme-toggle-btn" onclick="toggleSlowMode()">
+          ${slowMode ? "🐢 Tốc độ Chậm (0.75x)" : "⚡ Tốc độ Chuẩn (1.0x)"}
+        </button>
+      </div>`;
+
+    activeDay.vocab.forEach((v) => {
+      const cleanWordKey = v.word.toLowerCase().trim();
+      const visualIcon = VOCAB_IMAGE_MAP[cleanWordKey] || "🩺";
+      const exampleTranslation = EXAMPLE_TRANSLATIONS[v.example] || "Bản dịch câu ví dụ đang được cập nhật.";
+
+      html += `
+        <div class="vocab-item" style="display: flex; gap: 14px; align-items: center; background: var(--bg-card); padding: 1.25rem; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 1rem; box-shadow: var(--shadow-sm);">
+          <!-- Visual Instrument / Medical Image Thumbnail Badge -->
+          <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #ccfbf1 0%, #f0fdf4 100%); border: 1.5px solid var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+            ${visualIcon}
+          </div>
+
+          <div class="vocab-main" style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span class="vocab-word" style="font-size: 1.25rem; font-weight: 900; color: var(--primary-dark);">${v.word}</span>
+              <span class="vocab-ipa" style="font-family: var(--font-mono); font-weight: 700; color: #d97706; background: #fef3c7; padding: 2px 10px; border-radius: 8px; font-size: 0.92rem;">${v.ipa}</span>
+            </div>
+            <div class="vocab-meaning" style="font-size: 1rem; font-weight: 800; color: var(--secondary); margin-top: 2px;">
+              👉 Dịch nghĩa Tiếng Việt: <span style="color: var(--text-main); font-weight: 700;">${v.meaning}</span>
+            </div>
+            <div class="vocab-example" style="font-size: 0.92rem; color: var(--text-main); background: var(--bg-main); padding: 8px 12px; border-radius: 10px; margin-top: 4px; border-left: 4px solid var(--primary);">
+              <div>" <strong>${v.example}</strong> "</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💡 Dịch: ${exampleTranslation}</div>
+            </div>
+          </div>
+
+          <button class="audio-btn" style="width: 48px; height: 48px; font-size: 1.2rem;" onclick="speakText('${escapeQuotes(v.word)}')">🔊</button>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+  } else if (currentTab === "flashcard") {
     const vocabList = activeDay.vocab || [];
     if (vocabList.length === 0) {
       container.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Không có từ vựng cho bài học này.</div>`;
@@ -1312,31 +1242,6 @@ function renderModalTabContent() {
     `;
 
     container.innerHTML = html;
-  } else if (currentTab === "vocab") {
-    let html = `<div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 style="color: var(--secondary);">🗣️ Từ Vựng & Phát Âm IPA (Bấm nút 🔊 để nghe âm chuẩn)</h3>
-        <button class="theme-toggle-btn" onclick="toggleSlowMode()">
-          ${slowMode ? "🐢 Tốc độ Chậm (0.75x)" : "⚡ Tốc độ Chuẩn (1.0x)"}
-        </button>
-      </div>`;
-
-    activeDay.vocab.forEach((v) => {
-      html += `
-        <div class="vocab-item">
-          <div class="vocab-main">
-            <span class="vocab-word">${v.word}</span>
-            <span class="vocab-ipa">${v.ipa}</span>
-            <span class="vocab-meaning">👉 ${v.meaning}</span>
-            <span class="vocab-example">" ${v.example} "</span>
-          </div>
-          <button class="audio-btn" onclick="speakText('${escapeQuotes(v.word)}')">🔊</button>
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    container.innerHTML = html;
   } else if (currentTab === "quiz") {
     // ✏️ CLEAN IXL FILL-IN-THE-BLANK QUIZ
     let html = `<div>
@@ -1403,44 +1308,6 @@ function renderModalTabContent() {
 
     html += `</div>`;
     container.innerHTML = html;
-  } else if (currentTab === "ai") {
-    // 🎙️ 100% PURE VOICE AI SPEAKING STUDIO (THU ÂM GIỌNG NÓI MICRO KHỔNG LỒ)
-    container.innerHTML = `
-      <div style="background: var(--bg-main); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 1.2rem;">
-        <div style="text-align: center;">
-          <h3 style="color: var(--primary-dark); margin-bottom: 0.3rem;">🎙️ PHÒNG LUYỆN NÓI AI BẰNG GIỌNG NÓI 100% (NGÀY ${activeDay.day})</h3>
-          <p style="font-size: 0.92rem; color: var(--text-muted);">Bấm nút Micro đỏ bên dưới để THU ÂM GIỌNG NÓI Tiếng Anh của chị. AI sẽ trả lời và tự động đọc lại bằng giọng bản xứ!</p>
-        </div>
-
-        <!-- Scenario Prompt Banner -->
-        <div style="background: var(--bg-card); padding: 1.1rem; border-radius: 14px; border-left: 5px solid var(--primary); font-weight: 700; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <div>💬 Kịch bản luyện nói: "${activeDay.roleplayPrompt}"</div>
-          <button class="audio-btn-pill" style="padding: 4px 12px; font-size: 0.82rem;" onclick="speakText('${escapeQuotes(activeDay.roleplayPrompt)}')">🔊 Nghe Kịch Bản</button>
-        </div>
-
-        <!-- PURE VOICE RECORDING MIC BOX -->
-        <div class="recorder-mic-box" style="background: var(--bg-card); padding: 2rem; border-radius: 22px;">
-          <button id="aiStudioBigMicBtn" class="big-mic-btn" onclick="toggleAiVoiceStudioRecording()">🎙️</button>
-          <div id="aiStudioMicStatusText" class="recording-status-text" style="font-weight: 800; font-size: 1.05rem; color: var(--primary-dark); text-align: center; margin-top: 8px;">
-            Bấm vào biểu tượng Micro màu đỏ ở trên để BẮT ĐẦU THU ÂM GIỌNG NÓI
-          </div>
-
-          <!-- Recorded Voice Playback Container -->
-          <div id="aiStudioAudioPlaybackContainer" style="display: none; width: 100%; text-align: center; margin-top: 1rem;">
-            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 6px;">🎧 Giọng nói vừa thu âm của chị Huyền:</div>
-            <audio id="aiStudioRecordedAudioPlayer" controls class="recorded-audio-player"></audio>
-          </div>
-        </div>
-
-        <!-- Chat Conversation History Box -->
-        <div id="geminiChatMessagesBox" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem; min-height: 160px; max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-          <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 14px; font-weight: 700; align-self: flex-start; max-width: 85%; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-            <div>🤖 AI Assistant: "Hello Nurse Huyen! Please press the microphone button above and speak your answer out loud."</div>
-            <button class="audio-btn" style="width:36px; height:36px; font-size:0.85rem;" onclick="speakText('Hello Nurse Huyen! Please press the microphone button above and speak your answer out loud.')">🔊 Nghe</button>
-          </div>
-        </div>
-      </div>
-    `;
   }
 }
 
