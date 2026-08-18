@@ -56,3 +56,6 @@
 [2026-08-18T22:54:36+07:00] index.html: Đưa tab Ghi Âm Luyện Nói trực tiếp vào hệ thống tab bên trong cửa sổ bài học (Lesson Detail Modal).
 [2026-08-18T22:54:48+07:00] app.js: Xây dựng trọn bộ Phòng Ghi Âm Micro, nghe lại giọng nói và chấm phát âm % kèm thẻ sửa lỗi IPA màu vàng trực tiếp trong bài học.
 [2026-08-18T22:54:53+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa tính năng Phòng Ghi Âm trực tiếp trong bài học v6.0.
+[2026-08-18T23:00:29+07:00] index.html: Bổ sung ô tab Kiểm Tra Tuần & Luyện Nói Gemini AI vào cửa sổ bài học.
+[2026-08-18T23:00:48+07:00] app.js: Tích hợp bài kiểm tra đóng gói tuần (nối từ, trắc nghiệm), tính năng Ghi Âm Đọc Lại trực tiếp trong bài tập điền từ và Trợ lý Voice AI Gemini nhúng trực tiếp.
+[2026-08-18T23:00:50+07:00] english-nurse.zip: Đóng gói lại tệp nén zip v7.0.
