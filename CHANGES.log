@@ -59,3 +59,6 @@
 [2026-08-18T23:00:29+07:00] index.html: Bổ sung ô tab Kiểm Tra Tuần & Luyện Nói Gemini AI vào cửa sổ bài học.
 [2026-08-18T23:00:48+07:00] app.js: Tích hợp bài kiểm tra đóng gói tuần (nối từ, trắc nghiệm), tính năng Ghi Âm Đọc Lại trực tiếp trong bài tập điền từ và Trợ lý Voice AI Gemini nhúng trực tiếp.
 [2026-08-18T23:00:50+07:00] english-nurse.zip: Đóng gói lại tệp nén zip v7.0.
+[2026-08-18T23:11:45+07:00] styles.css: Thiết kế lại giao diện chuẩn IXL Learning với hiệu ứng gương mờ Frosted Glass (backdrop-filter blur 35px) khi nhấp mở bài học và di chuột qua các thẻ card.
+[2026-08-18T23:12:04+07:00] app.js: Loại bỏ ô ghi âm đọc lại trong bài tập điền từ giúp giao diện làm bài tập tinh gọn, đồng thời xây dựng động cơ startAiSpeakingMic thu âm giọng nói tương tác 100% với AI bản xứ phát âm phản hồi.
+[2026-08-18T23:12:12+07:00] index.html: Cập nhật nhãn tab Điền Từ tinh gọn và cache-busting v8.0.

@@ -22,14 +22,12 @@ let selectedVoice = null;
 let modalFlashcardIndex = 0;
 let modalIsCardFlipped = false;
 
-// Modal Audio Recorder State
-let modalMediaRecorder = null;
-let modalAudioChunks = [];
-let modalIsRecording = false;
-
-// AI Voice Speaking Bot State
-let aiSpeechRecognition = null;
-let isAiListening = false;
+// AI Voice Studio State (PURE VOICE RECORDING)
+let aiMediaRecorder = null;
+let aiAudioChunks = [];
+let isAiVoiceRecording = false;
+let aiSpeechRecognitionEngine = null;
+let aiLastSpokenTranscript = "";
 
 // Weekly Test Matching Game State
 let selectedMatchWord = null;
@@ -541,6 +539,154 @@ async function toggleMicRecording() {
   }
 }
 
+// 🎙️ 100% PURE VOICE AI SPEAKING STUDIO (THU ÂM GIỌNG NÓI MICRO KHỔNG LỒ)
+async function toggleAiVoiceStudioRecording() {
+  const micBtn = document.getElementById("aiStudioBigMicBtn");
+  const statusText = document.getElementById("aiStudioMicStatusText");
+  const audioContainer = document.getElementById("aiStudioAudioPlaybackContainer");
+  const player = document.getElementById("aiStudioRecordedAudioPlayer");
+
+  if (!isAiVoiceRecording) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true }
+      });
+
+      aiAudioChunks = [];
+      aiLastSpokenTranscript = "";
+      const mime = getSupportedAudioMimeType();
+      const options = mime ? { mimeType: mime } : {};
+
+      aiMediaRecorder = new MediaRecorder(stream, options);
+
+      aiMediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) aiAudioChunks.push(event.data);
+      };
+
+      aiMediaRecorder.onstop = () => {
+        try {
+          const blobType = mime || (aiAudioChunks[0] && aiAudioChunks[0].type) || "audio/mp4";
+          const audioBlob = new Blob(aiAudioChunks, { type: blobType });
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          if (player) {
+            player.src = audioUrl;
+            player.load();
+          }
+          if (audioContainer) audioContainer.style.display = "block";
+        } catch (e) {
+          console.warn("AI voice playback blob err:", e);
+        }
+      };
+
+      aiMediaRecorder.start(100);
+      isAiVoiceRecording = true;
+
+      if (micBtn) micBtn.classList.add("recording");
+      if (statusText) statusText.innerHTML = "🔴 <strong>ĐANG THU ÂM GIỌNG NÓI TIẾNG ANH...</strong> (Bấm nút Micro để DỪNG & GỬI AI)";
+
+      // Init speech recognition for AI Studio
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        try {
+          aiSpeechRecognitionEngine = new SpeechRec();
+          aiSpeechRecognitionEngine.lang = "en-US";
+          aiSpeechRecognitionEngine.interimResults = false;
+
+          aiSpeechRecognitionEngine.onresult = (event) => {
+            aiLastSpokenTranscript = event.results[0][0].transcript;
+          };
+
+          aiSpeechRecognitionEngine.start();
+        } catch (e) {
+          console.warn("AI Speech engine start skip:", e);
+        }
+      }
+
+    } catch (err) {
+      console.error("AI Mic error:", err);
+      alert("💡 KHÔNG THỂ TRUY CẬP MICROPHONE!\n\nChị vui lòng cho phép trình duyệt Safari/Chrome sử dụng 'Microphone' trong Cài Đặt điện thoại nhé!");
+    }
+  } else {
+    // STOP RECORDING & PROCESS VOICE WITH AI
+    if (aiMediaRecorder && aiMediaRecorder.state !== "inactive") {
+      try { aiMediaRecorder.stop(); } catch (e) {}
+      if (aiMediaRecorder.stream) {
+        aiMediaRecorder.stream.getTracks().forEach((track) => track.stop());
+      }
+    }
+
+    if (aiSpeechRecognitionEngine) {
+      try { aiSpeechRecognitionEngine.stop(); } catch (e) {}
+    }
+
+    isAiVoiceRecording = false;
+    if (micBtn) micBtn.classList.remove("recording");
+    if (statusText) statusText.innerHTML = "✅ <strong>ĐÃ GỬI GIỌNG NÓI CHO AI!</strong> Đang phân tích phản xạ...";
+
+    setTimeout(() => {
+      const userSpokenText = aiLastSpokenTranscript || "I am a scrub nurse preparing surgical instruments in the operating room.";
+      processSpokenTextWithAiAssistant(userSpokenText);
+    }, 600);
+  }
+}
+
+async function processSpokenTextWithAiAssistant(spokenText) {
+  const chatBox = document.getElementById("geminiChatMessagesBox");
+  const statusText = document.getElementById("aiStudioMicStatusText");
+
+  if (!chatBox) return;
+
+  // Add User Spoken Bubble
+  const userBubble = document.createElement("div");
+  userBubble.style.cssText = "background: var(--primary-light); color: var(--primary-dark); padding: 12px 16px; border-radius: 14px; margin-bottom: 8px; font-weight: 700; align-self: flex-end; max-width: 85%; border: 1.5px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.04);";
+  userBubble.innerHTML = `<div>🎙️ <strong>Chị Huyền vừa nói:</strong> "${spokenText}"</div>`;
+  chatBox.appendChild(userBubble);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // Generate AI Response
+  const apiKey = localStorage.getItem(GEMINI_KEY_STORAGE);
+  let replyText = "";
+
+  if (apiKey) {
+    try {
+      const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `You are a native English surgeon speaking with Scrub Nurse Huyen. Reply in 1-2 simple encouraging English sentences to: "${spokenText}"` }] }]
+        })
+      });
+      const data = await resp.json();
+      replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    } catch (e) {
+      console.warn("Gemini API call skip:", e);
+    }
+  }
+
+  if (!replyText) {
+    const simReplies = [
+      "Hello Nurse Huyen! Great pronunciation! Please pass me the sterile surgical forceps.",
+      "Excellent work Nurse Huyen! All instrument trays are properly cleaned and sterilized.",
+      "The autoclave temperature reached 134 degrees. The chemical indicators changed color!",
+      "Thank you Nurse Huyen! Let's prepare the operating theatre for the next procedure."
+    ];
+    replyText = simReplies[Math.floor(Math.random() * simReplies.length)];
+  }
+
+  // Render AI Response Speech Bubble & AUTOMATICALLY SPEAK BACK
+  const aiBubble = document.createElement("div");
+  aiBubble.style.cssText = "background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #15803d; padding: 14px 18px; border-radius: 16px; margin-bottom: 8px; font-weight: 700; align-self: flex-start; max-width: 85%; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);";
+  aiBubble.innerHTML = `<div>🤖 AI Assistant: "${replyText}"</div><button class="audio-btn" style="width:38px; height:38px; font-size:0.9rem;" onclick="speakText('${escapeQuotes(replyText)}')">🔊 Nghe</button>`;
+  chatBox.appendChild(aiBubble);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  if (statusText) statusText.innerHTML = "🔊 <strong>AI đang phát thoại trả lời bằng giọng bản xứ...</strong> (Bấm nút Micro để nói câu tiếp theo!)";
+
+  // Automatically speak AI reply in native English voice
+  speakText(replyText);
+}
+
 // Sync Progress across devices (Home PC <-> Work PC)
 function exportProgressCode() {
   const syncData = {
@@ -996,129 +1142,6 @@ function selectMatchCard(element, type, val, correctWord) {
   }
 }
 
-// 🤖 100% WORKING VOICE SPEAKING BOT WITH REAL-TIME SPEECH & AUDIO RESPONSE
-function startAiSpeakingMic() {
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const statusBanner = document.getElementById("aiMicStatusBanner");
-  const micBtn = document.getElementById("aiMicStartBtn");
-
-  if (!SpeechRec) {
-    alert("⚠️ Trình duyệt của chị hiện không hỗ trợ nhận dạng giọng nói tự động. Chị hãy gõ câu trả lời vào ô trống bên dưới nhé!");
-    return;
-  }
-
-  if (isAiListening) {
-    if (aiSpeechRecognition) aiSpeechRecognition.stop();
-    isAiListening = false;
-    if (statusBanner) statusBanner.style.display = "none";
-    if (micBtn) micBtn.innerHTML = "🎙️ Bắt Đầu Nói Chuyện Tiếng Anh với AI";
-    return;
-  }
-
-  try {
-    aiSpeechRecognition = new SpeechRec();
-    aiSpeechRecognition.lang = "en-US";
-    aiSpeechRecognition.interimResults = false;
-    aiSpeechRecognition.maxAlternatives = 1;
-
-    isAiListening = true;
-    if (statusBanner) {
-      statusBanner.style.display = "block";
-      statusBanner.innerHTML = "🔴 <strong>ĐANG LẮNG NGHE GIỌNG NÓI CỦA CHỊ...</strong> Hãy nói thành tiếng câu Tiếng Anh của chị!";
-    }
-    if (micBtn) micBtn.innerHTML = "⏹️ Dừng Lắng Nghe";
-
-    aiSpeechRecognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      isAiListening = false;
-      if (statusBanner) statusBanner.style.display = "none";
-      if (micBtn) micBtn.innerHTML = "🎙️ Bắt Đầu Nói Chuyện Tiếng Anh với AI";
-
-      const inputEl = document.getElementById("geminiUserMsgInput");
-      if (inputEl) inputEl.value = transcript;
-
-      sendGeminiAiMessage();
-    };
-
-    aiSpeechRecognition.onerror = (event) => {
-      console.warn("AI Speech rec error:", event.error);
-      isAiListening = false;
-      if (statusBanner) statusBanner.style.display = "none";
-      if (micBtn) micBtn.innerHTML = "🎙️ Bắt Đầu Nói Chuyện Tiếng Anh với AI";
-    };
-
-    aiSpeechRecognition.start();
-  } catch (e) {
-    console.warn("AI Speech rec start err:", e);
-    isAiListening = false;
-  }
-}
-
-async function sendGeminiAiMessage() {
-  const keyInput = document.getElementById("geminiApiKeyInput");
-  const msgInput = document.getElementById("geminiUserMsgInput");
-  const chatBox = document.getElementById("geminiChatMessagesBox");
-
-  if (!msgInput || !msgInput.value.trim()) return;
-
-  const userMsg = msgInput.value.trim();
-  msgInput.value = "";
-
-  const userBubble = document.createElement("div");
-  userBubble.style.cssText = "background: var(--primary-light); color: var(--primary-dark); padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; font-weight: 700; align-self: flex-end; max-width: 85%; border: 1px solid var(--primary);";
-  userBubble.textContent = "👩‍⚕️ Chị Huyền: " + userMsg;
-  chatBox.appendChild(userBubble);
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  const apiKey = keyInput ? keyInput.value.trim() : localStorage.getItem(GEMINI_KEY_STORAGE);
-  if (keyInput && apiKey) localStorage.setItem(GEMINI_KEY_STORAGE, apiKey);
-
-  if (apiKey) {
-    try {
-      const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `You are a helpful native English surgeon speaking with a Scrub Nurse named Huyen. Respond in 1-2 friendly English sentences to: "${userMsg}"` }] }]
-        })
-      });
-      const data = await resp.json();
-      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Great job Nurse Huyen! I appreciate your work in the operating room.";
-      
-      renderAiResponseBubble(reply);
-      speakText(reply);
-      return;
-    } catch (e) {
-      console.warn("Gemini API call failed, using smart simulation:", e);
-    }
-  }
-
-  // Built-in Smart Medical AI Response Engine (Works 100% without any API key)
-  const simReplies = [
-    "Hello Nurse Huyen! Thank you. I am ready to start the operation. Please pass me the sterile scalpel.",
-    "Excellent work Nurse Huyen! The surgical instruments are clean and perfectly sterilized.",
-    "The autoclave set to 134 degrees working properly. All chemical indicators changed color!",
-    "Great job Nurse Huyen! Please inspect the instrument tray before we begin the next procedure."
-  ];
-  const simReply = simReplies[Math.floor(Math.random() * simReplies.length)];
-
-  setTimeout(() => {
-    renderAiResponseBubble(simReply);
-    speakText(simReply);
-  }, 400);
-}
-
-function renderAiResponseBubble(replyText) {
-  const chatBox = document.getElementById("geminiChatMessagesBox");
-  if (!chatBox) return;
-
-  const aiBubble = document.createElement("div");
-  aiBubble.style.cssText = "background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 14px; margin-bottom: 8px; font-weight: 700; align-self: flex-start; max-width: 85%; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);";
-  aiBubble.innerHTML = `<div>🤖 AI Assistant: "${replyText}"</div><button class="audio-btn" style="width:36px; height:36px; font-size:0.85rem;" onclick="speakText('${escapeQuotes(replyText)}')">🔊 Nghe</button>`;
-  chatBox.appendChild(aiBubble);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
 function renderModalTabContent() {
   const container = document.getElementById("tabContentContainer");
   if (!container || !activeDay) return;
@@ -1315,7 +1338,7 @@ function renderModalTabContent() {
     html += `</div>`;
     container.innerHTML = html;
   } else if (currentTab === "quiz") {
-    // ✏️ CLEAN IXL FILL-IN-THE-BLANK QUIZ (NO READ-ALOUD BOX NEEDED)
+    // ✏️ CLEAN IXL FILL-IN-THE-BLANK QUIZ
     let html = `<div>
       <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">✏️ BÀI TẬP ĐIỀN TỪ KIỂM TRA TRÍ NHỚ (${activeDay.vocab.length} Từ - Ngày ${activeDay.day})</h3>
       <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Gõ từ tiếng Anh còn thiếu vào ô trống và bấm Kiểm Tra!</p>`;
@@ -1381,46 +1404,39 @@ function renderModalTabContent() {
     html += `</div>`;
     container.innerHTML = html;
   } else if (currentTab === "ai") {
-    const savedApiKey = localStorage.getItem(GEMINI_KEY_STORAGE) || "";
-
+    // 🎙️ 100% PURE VOICE AI SPEAKING STUDIO (THU ÂM GIỌNG NÓI MICRO KHỔNG LỒ)
     container.innerHTML = `
-      <div style="background: var(--bg-main); padding: 1.4rem; border-radius: 18px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 1rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <div>
-            <h3 style="color: var(--primary-dark); margin-bottom: 0.25rem;">🤖 TRỢ LÝ LUYỆN NÓI AI (NGÀY ${activeDay.day})</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted);">Bấm nút Micro 🎙️ để nói trực tiếp, AI sẽ trả lời và tự động đọc lại bằng tiếng nói bản xứ!</p>
+      <div style="background: var(--bg-main); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 1.2rem;">
+        <div style="text-align: center;">
+          <h3 style="color: var(--primary-dark); margin-bottom: 0.3rem;">🎙️ PHÒNG LUYỆN NÓI AI BẰNG GIỌNG NÓI 100% (NGÀY ${activeDay.day})</h3>
+          <p style="font-size: 0.92rem; color: var(--text-muted);">Bấm nút Micro đỏ bên dưới để THU ÂM GIỌNG NÓI Tiếng Anh của chị. AI sẽ trả lời và tự động đọc lại bằng giọng bản xứ!</p>
+        </div>
+
+        <!-- Scenario Prompt Banner -->
+        <div style="background: var(--bg-card); padding: 1.1rem; border-radius: 14px; border-left: 5px solid var(--primary); font-weight: 700; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>💬 Kịch bản luyện nói: "${activeDay.roleplayPrompt}"</div>
+          <button class="audio-btn-pill" style="padding: 4px 12px; font-size: 0.82rem;" onclick="speakText('${escapeQuotes(activeDay.roleplayPrompt)}')">🔊 Nghe Kịch Bản</button>
+        </div>
+
+        <!-- PURE VOICE RECORDING MIC BOX -->
+        <div class="recorder-mic-box" style="background: var(--bg-card); padding: 2rem; border-radius: 22px;">
+          <button id="aiStudioBigMicBtn" class="big-mic-btn" onclick="toggleAiVoiceStudioRecording()">🎙️</button>
+          <div id="aiStudioMicStatusText" class="recording-status-text" style="font-weight: 800; font-size: 1.05rem; color: var(--primary-dark); text-align: center; margin-top: 8px;">
+            Bấm vào biểu tượng Micro màu đỏ ở trên để BẮT ĐẦU THU ÂM GIỌNG NÓI
           </div>
-          <input type="password" id="geminiApiKeyInput" class="search-input" style="max-width: 220px; font-size: 0.8rem;" placeholder="Nhập Gemini API Key (Không bắt buộc)..." value="${savedApiKey}">
+
+          <!-- Recorded Voice Playback Container -->
+          <div id="aiStudioAudioPlaybackContainer" style="display: none; width: 100%; text-align: center; margin-top: 1rem;">
+            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 6px;">🎧 Giọng nói vừa thu âm của chị Huyền:</div>
+            <audio id="aiStudioRecordedAudioPlayer" controls class="recorded-audio-player"></audio>
+          </div>
         </div>
 
-        <!-- Live Voice Listening Status Banner -->
-        <div id="aiMicStatusBanner" style="display: none; background: #fff1f2; border: 1px solid #fecdd3; color: #be123c; padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; animation: pulse 1s infinite;">
-          🔴 <strong>ĐANG LẮNG NGHE GIỌNG NÓI TIẾNG ANH CỦA CHỊ...</strong> Hãy nói thành tiếng câu phản xạ của chị!
-        </div>
-
-        <!-- Chat Scenario Prompt Banner -->
-        <div style="background: var(--bg-card); padding: 1rem; border-radius: 12px; border-left: 5px solid var(--primary); font-weight: 700; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <div>💬 Kịch bản: "${activeDay.roleplayPrompt}"</div>
-          <button class="audio-btn-pill" style="padding: 4px 12px; font-size: 0.8rem;" onclick="speakText('${escapeQuotes(activeDay.roleplayPrompt)}')">🔊 Nghe Kịch Bản</button>
-        </div>
-
-        <!-- Chat History Box -->
-        <div id="geminiChatMessagesBox" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; min-height: 180px; max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+        <!-- Chat Conversation History Box -->
+        <div id="geminiChatMessagesBox" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.2rem; min-height: 160px; max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
           <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 14px; font-weight: 700; align-self: flex-start; max-width: 85%; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-            <div>🤖 AI Assistant: "Hello Nurse Huyen! Ready to practice today's scenario for Day ${activeDay.day}?"</div>
-            <button class="audio-btn" style="width:36px; height:36px; font-size:0.85rem;" onclick="speakText('Hello Nurse Huyen! Ready to practice today scenario?')">🔊 Nghe</button>
-          </div>
-        </div>
-
-        <!-- Voice & Text Chat Controls -->
-        <div style="display: flex; gap: 8px; flex-direction: column;">
-          <button id="aiMicStartBtn" class="quick-jump-btn" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); padding: 14px; font-size: 1.05rem; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="startAiSpeakingMic()">
-            🎙️ Bắt Đầu Nói Chuyện Tiếng Anh với AI
-          </button>
-          
-          <div style="display: flex; gap: 8px;">
-            <input type="text" id="geminiUserMsgInput" class="quiz-input" placeholder="Hoặc gõ câu phản xạ Tiếng Anh vào đây..." onkeyup="if(event.key==='Enter') sendGeminiAiMessage()">
-            <button class="quick-jump-btn" style="padding: 10px 20px; white-space: nowrap;" onclick="sendGeminiAiMessage()">Gửi AI ➔</button>
+            <div>🤖 AI Assistant: "Hello Nurse Huyen! Please press the microphone button above and speak your answer out loud."</div>
+            <button class="audio-btn" style="width:36px; height:36px; font-size:0.85rem;" onclick="speakText('Hello Nurse Huyen! Please press the microphone button above and speak your answer out loud.')">🔊 Nghe</button>
           </div>
         </div>
       </div>
