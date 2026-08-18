@@ -43,3 +43,10 @@
 [2026-08-16T06:50:43+07:00] styles.css: Nâng cấp toàn bộ hệ thống giao diện UI/UX Pro Max (bổ sung thanh Bottom Navigation Dock cho điện thoại, hiệu ứng kính mờ Glassmorphism, bóng đổ Neumorphic nảy mượt và responsive touch target 48px).
 [2026-08-16T06:50:48+07:00] index.html: Tích hợp mã xoá cache v=3.0 và cấu trúc menu Bottom Navigation Dock.
 [2026-08-16T06:50:50+07:00] english-nurse.zip: Đóng gói lại tệp nén zip với phiên bản UI/UX Pro Max v3.0.
+[2026-08-16T07:08:44+07:00] styles.css: Thiết kế lại toàn bộ hệ thống phông chữ (Typography System) theo chuẩn Apple.com (SF Pro / Inter font family, Apple anti-aliasing text smoothing, tight tracking headline letter-spacing).
+[2026-08-16T07:08:49+07:00] index.html: Tích hợp tham số làm tươi đệm cache Apple Typography v=4.0.
+[2026-08-16T07:08:51+07:00] english-nurse.zip: Đóng gói lại tệp nén zip với phông chữ Apple Typography v4.0.
+[2026-08-16T07:38:07+07:00] .agents/skills/english-nurse-trainer/SKILL.md: Bổ sung mục tham chiếu 10 bộ công cụ mã nguồn mở IPA hàng đầu thế giới (Phonemizer, IPA-Dict, Gruut-IPA, eSpeak-ng).
+[2026-08-16T07:38:11+07:00] C:/Users/APC/.gemini/config/skills/english-nurse-trainer/SKILL.md: Cập nhật tài nguyên Global Skill chứa kiến trúc tham chiếu IPA.
+[2026-08-16T08:10:05+07:00] .agents/skills/english-nurse-trainer/SKILL.md: Cập nhật Skill Workspace chuẩn mực đầy đủ Apple Typography System, UI/UX Pro Max, Mobile Bottom Navigation Dock và 10 kho tài nguyên IPA mã nguồn mở.
+[2026-08-16T08:10:09+07:00] C:/Users/APC/.gemini/config/skills/english-nurse-trainer/SKILL.md: Lưu Skill toàn cục Global Antigravity chứa toàn bộ đặc tả hệ thống mới nhất.

@@ -9,13 +9,17 @@ let progressState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 let masteredVocabState = JSON.parse(localStorage.getItem(MASTERED_VOCAB_KEY)) || {};
 
 let activeDay = null;
-let currentTab = "vocab";
+let currentTab = "flashcard";
 let speechSynth = window.speechSynthesis;
 let slowMode = false;
 
 // Voice Studio State
 let availableEnglishVoices = [];
 let selectedVoice = null;
+
+// Modal 3D Flashcard State
+let modalFlashcardIndex = 0;
+let modalIsCardFlipped = false;
 
 // Global IPA Dictionary for Audio Error Correction
 let GLOBAL_IPA_MAP = {
@@ -310,12 +314,12 @@ function calculateSentenceSimilarityWithIPA(targetSentence, spokenSentence) {
 
   let matchCount = 0;
   const spokenSet = new Set(spokenWords);
-  const targetSet = new Set(targetWords);
 
   // Highlighting spoken output
   const diffHtml = spokenWords
     .map((word) => {
-      if (targetSet.has(word)) {
+
+      if (targetWords.includes(word)) {
         matchCount++;
         return `<span style="color: #22c55e; font-weight: 800;">${word}</span>`;
       } else {
@@ -881,13 +885,15 @@ function updateQuizScoreText(score, total) {
   }
 }
 
-// Modal Lesson Detail
+// Modal Lesson Detail & 3D Flashcard Integration
 function openLessonModal(day) {
   const dayData = CURRICULUM_DATA.find((d) => d.day === day);
   if (!dayData) return;
 
   activeDay = dayData;
-  currentTab = "vocab";
+  modalFlashcardIndex = 0;
+  modalIsCardFlipped = false;
+  currentTab = "flashcard"; // Open 3D Flashcard tab by default inside Lesson Modal
 
   const modal = document.getElementById("lessonModal");
   modal.classList.add("active");
@@ -895,7 +901,7 @@ function openLessonModal(day) {
   document.getElementById("modalDayTitle").textContent = dayData.title;
   document.getElementById("modalDayGoal").textContent = dayData.goal;
 
-  renderModalTabContent();
+  switchTab("flashcard");
 }
 
 function closeLessonModal() {
@@ -912,11 +918,81 @@ function switchTab(tabName) {
   renderModalTabContent();
 }
 
+// Modal 3D Flashcard Interactive Logic
+function flipModalFlashcard() {
+  const wrapper = document.getElementById("modalFlashcardWrapper");
+  if (!wrapper) return;
+  modalIsCardFlipped = !modalIsCardFlipped;
+  wrapper.classList.toggle("flipped", modalIsCardFlipped);
+}
+
+function nextModalFlashcard(isMastered) {
+  if (!activeDay || !activeDay.vocab || activeDay.vocab.length === 0) return;
+
+  const currentItem = activeDay.vocab[modalFlashcardIndex];
+  if (isMastered) {
+    masteredVocabState[currentItem.word] = true;
+  } else {
+    delete masteredVocabState[currentItem.word];
+  }
+  localStorage.setItem(MASTERED_VOCAB_KEY, JSON.stringify(masteredVocabState));
+  updateProgressStats();
+
+  modalFlashcardIndex = (modalFlashcardIndex + 1) % activeDay.vocab.length;
+  modalIsCardFlipped = false;
+  renderModalTabContent();
+}
+
 function renderModalTabContent() {
   const container = document.getElementById("tabContentContainer");
   if (!container || !activeDay) return;
 
-  if (currentTab === "vocab") {
+  if (currentTab === "flashcard") {
+    const vocabList = activeDay.vocab || [];
+    if (vocabList.length === 0) {
+      container.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Không có từ vựng cho bài học này.</div>`;
+      return;
+    }
+
+    const currentItem = vocabList[modalFlashcardIndex];
+
+    let html = `
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; width: 100%; max-width: 520px; align-items: center;">
+          <h3 style="color: var(--secondary);">🎴 Thẻ Flashcard 3D (Ngày ${activeDay.day})</h3>
+          <span style="font-weight: 800; color: var(--primary-dark);">Thẻ ${modalFlashcardIndex + 1} / ${vocabList.length}</span>
+        </div>
+
+        <!-- Modal 3D Flip Card -->
+        <div id="modalFlashcardWrapper" class="flashcard-3d-wrapper ${modalIsCardFlipped ? "flipped" : ""}" onclick="flipModalFlashcard()" style="max-width: 520px; height: 320px; margin: 0.5rem 0;">
+          <div class="flashcard-inner">
+            <!-- Front Face (English) -->
+            <div class="flashcard-face flashcard-front">
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">TIẾNG ANH (NHẤN ĐỂ LẬT THẺ)</span>
+              <div class="flash-word-text">${currentItem.word}</div>
+              <div class="flash-ipa-text">${currentItem.ipa}</div>
+              <button class="audio-btn-pill" style="margin-top: 8px;" onclick="event.stopPropagation(); speakText('${escapeQuotes(currentItem.word)}')">🔊 Nghe Đọc</button>
+            </div>
+            <!-- Back Face (Vietnamese Meaning & Example) -->
+            <div class="flashcard-face flashcard-back">
+              <span style="font-size: 0.8rem; font-weight: 700; color: #5eead4; margin-bottom: 6px;">NGHĨA TIẾNG VIỆT & VÍ DỤ</span>
+              <div class="flash-meaning-text">${currentItem.meaning}</div>
+              <div class="flash-example-text">"${currentItem.example}"</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Flashcard Action Buttons -->
+        <div class="flashcard-game-actions" style="max-width: 520px;">
+          <button class="game-btn btn-again" onclick="nextModalFlashcard(false)">❌ Chưa Thuộc</button>
+          <button class="game-btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border);" onclick="flipModalFlashcard()">🔄 Lật Thẻ</button>
+          <button class="game-btn btn-know" onclick="nextModalFlashcard(true)">✅ Đã Thuộc</button>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
+  } else if (currentTab === "vocab") {
     let html = `<div>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
         <h3 style="color: var(--secondary);">🗣️ Từ Vựng & Phát Âm IPA (Bấm nút 🔊 để nghe âm chuẩn)</h3>
