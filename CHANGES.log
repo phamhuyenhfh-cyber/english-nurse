@@ -50,3 +50,6 @@
 [2026-08-16T07:38:11+07:00] C:/Users/APC/.gemini/config/skills/english-nurse-trainer/SKILL.md: Cập nhật tài nguyên Global Skill chứa kiến trúc tham chiếu IPA.
 [2026-08-16T08:10:05+07:00] .agents/skills/english-nurse-trainer/SKILL.md: Cập nhật Skill Workspace chuẩn mực đầy đủ Apple Typography System, UI/UX Pro Max, Mobile Bottom Navigation Dock và 10 kho tài nguyên IPA mã nguồn mở.
 [2026-08-16T08:10:09+07:00] C:/Users/APC/.gemini/config/skills/english-nurse-trainer/SKILL.md: Lưu Skill toàn cục Global Antigravity chứa toàn bộ đặc tả hệ thống mới nhất.
+[2026-08-18T22:50:21+07:00] index.html: Bổ sung ô tab Flashcard 3D vào ngay đầu danh sách tab trong cửa sổ Bài Học (Lesson Detail Modal).
+[2026-08-18T22:50:36+07:00] app.js: Xây dựng bộ điều khiển lật thẻ 3D Flashcard trực tiếp trong cửa sổ bài học chi tiết cho từng Ngày học riêng biệt.
+[2026-08-18T22:50:39+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa tính năng lật thẻ 3D trong bài học v5.0.

@@ -21,6 +21,11 @@ let selectedVoice = null;
 let modalFlashcardIndex = 0;
 let modalIsCardFlipped = false;
 
+// Modal Audio Recorder State
+let modalMediaRecorder = null;
+let modalAudioChunks = [];
+let modalIsRecording = false;
+
 // Global IPA Dictionary for Audio Error Correction
 let GLOBAL_IPA_MAP = {
   scrub: "/skrʌb/",
@@ -234,7 +239,6 @@ function loadRecorderSentencesForSelectedDay() {
   let sentencesList = [];
 
   const extractSentencesFromDay = (d) => {
-    // Vocab examples
     if (d.vocab) {
       d.vocab.forEach((v) => {
         if (v.example) {
@@ -246,7 +250,6 @@ function loadRecorderSentencesForSelectedDay() {
         }
       });
     }
-    // Shadowing dialogue lines
     if (d.shadowing) {
       d.shadowing.forEach((s) => {
         if (s.sentence) {
@@ -258,7 +261,6 @@ function loadRecorderSentencesForSelectedDay() {
         }
       });
     }
-    // CSSD Self-talk phrases
     if (d.cssdSelfTalk) {
       d.cssdSelfTalk.forEach((c) => {
         if (c.englishText) {
@@ -315,10 +317,8 @@ function calculateSentenceSimilarityWithIPA(targetSentence, spokenSentence) {
   let matchCount = 0;
   const spokenSet = new Set(spokenWords);
 
-  // Highlighting spoken output
   const diffHtml = spokenWords
     .map((word) => {
-
       if (targetWords.includes(word)) {
         matchCount++;
         return `<span style="color: #22c55e; font-weight: 800;">${word}</span>`;
@@ -328,7 +328,6 @@ function calculateSentenceSimilarityWithIPA(targetSentence, spokenSentence) {
     })
     .join(" ");
 
-  // Find missed or mispronounced target words for IPA feedback
   let missedWords = targetWords.filter((w) => !spokenSet.has(w));
 
   let ipaFixCardsHtml = "";
@@ -370,11 +369,13 @@ function initSpeechRecognition() {
 
     speechRecognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      const recognizedBox = document.getElementById("speechRecognizedBox");
-      const outputEl = document.getElementById("recognizedTextOutput");
-      const feedbackEl = document.getElementById("speechFeedbackText");
+      const recognizedBox = document.getElementById("speechRecognizedBox") || document.getElementById("modalSpeechRecognizedBox");
+      const outputEl = document.getElementById("recognizedTextOutput") || document.getElementById("modalRecognizedTextOutput");
+      const feedbackEl = document.getElementById("speechFeedbackText") || document.getElementById("modalSpeechFeedbackText");
 
-      const targetText = document.getElementById("recorderSentenceSelect").value;
+      const targetSelect = document.getElementById("modalRecorderSentenceSelect") || document.getElementById("recorderSentenceSelect");
+      const targetText = targetSelect ? targetSelect.value : "";
+      
       const { accuracy, diffHtml, ipaFixCardsHtml } = calculateSentenceSimilarityWithIPA(targetText, transcript);
 
       if (recognizedBox && outputEl && feedbackEl) {
@@ -431,16 +432,24 @@ function updateRecorderSentence() {
   }
 }
 
+function updateModalRecorderSentence() {
+  const select = document.getElementById("modalRecorderSentenceSelect");
+  const targetDisplay = document.getElementById("modalTargetSentenceDisplay");
+  if (select && targetDisplay) {
+    targetDisplay.textContent = `"${select.value}"`;
+  }
+}
+
 function playTargetSentenceAudio() {
-  const select = document.getElementById("recorderSentenceSelect");
+  const select = document.getElementById("modalRecorderSentenceSelect") || document.getElementById("recorderSentenceSelect");
   if (select) speakText(select.value);
 }
 
 async function toggleMicRecording() {
-  const micBtn = document.getElementById("bigMicBtn");
-  const statusText = document.getElementById("recordingStatusText");
-  const audioContainer = document.getElementById("audioPlaybackContainer");
-  const player = document.getElementById("recordedAudioPlayer");
+  const micBtn = document.getElementById("modalBigMicBtn") || document.getElementById("bigMicBtn");
+  const statusText = document.getElementById("modalRecordingStatusText") || document.getElementById("recordingStatusText");
+  const audioContainer = document.getElementById("modalAudioPlaybackContainer") || document.getElementById("audioPlaybackContainer");
+  const player = document.getElementById("modalRecordedAudioPlayer") || document.getElementById("recordedAudioPlayer");
 
   if (!isRecording) {
     try {
@@ -484,8 +493,8 @@ async function toggleMicRecording() {
       mediaRecorder.start(100);
       isRecording = true;
 
-      micBtn.classList.add("recording");
-      statusText.textContent = "🔴 Đang Ghi Âm... (Bấm nút để DỪNG)";
+      if (micBtn) micBtn.classList.add("recording");
+      if (statusText) statusText.textContent = "🔴 Đang Ghi Âm... (Bấm nút để DỪNG)";
 
       if (speechRecognition) {
         try {
@@ -518,8 +527,8 @@ async function toggleMicRecording() {
     }
 
     isRecording = false;
-    micBtn.classList.remove("recording");
-    statusText.textContent = "✅ Ghi âm hoàn tất! Hãy bấm nút ▶️ bên dưới để nghe lại ⬇️";
+    if (micBtn) micBtn.classList.remove("recording");
+    if (statusText) statusText.textContent = "✅ Ghi âm hoàn tất! Hãy bấm nút ▶️ bên dưới để nghe lại ⬇️";
   }
 }
 
@@ -885,7 +894,7 @@ function updateQuizScoreText(score, total) {
   }
 }
 
-// Modal Lesson Detail & 3D Flashcard Integration
+// Modal Lesson Detail & 3D Flashcard & Audio Recorder Integration
 function openLessonModal(day) {
   const dayData = CURRICULUM_DATA.find((d) => d.day === day);
   if (!dayData) return;
@@ -992,6 +1001,73 @@ function renderModalTabContent() {
     `;
 
     container.innerHTML = html;
+  } else if (currentTab === "recorder") {
+    // 🎙️ AUDIO RECORDER STUDIO INTEGRATED INSIDE LESSON MODAL FOR ACTIVE DAY
+    let sentencesList = [];
+    if (activeDay.vocab) {
+      activeDay.vocab.forEach((v) => {
+        if (v.example) sentencesList.push({ label: `[Từ vựng] ${v.word}: "${v.example}"`, text: v.example });
+      });
+    }
+    if (activeDay.shadowing) {
+      activeDay.shadowing.forEach((s) => {
+        if (s.sentence) sentencesList.push({ label: `[Hội thoại] ${s.speaker}: "${s.sentence}"`, text: s.sentence });
+      });
+    }
+    if (activeDay.cssdSelfTalk) {
+      activeDay.cssdSelfTalk.forEach((c) => {
+        if (c.englishText) sentencesList.push({ label: `[CSSD] ${c.action}: "${c.englishText}"`, text: c.englishText });
+      });
+    }
+
+    let defaultSentence = sentencesList.length > 0 ? sentencesList[0].text : "I am a scrub nurse working in the operating theatre.";
+
+    let selectOptionsHtml = sentencesList
+      .map((item) => `<option value="${escapeQuotes(item.text)}">${item.label}</option>`)
+      .join("");
+
+    let html = `
+      <div class="recorder-studio-container" style="padding: 1rem; border: none; box-shadow: none;">
+        <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">🎙️ PHÒNG GHI ÂM & CHẤM PHÁT ÂM (NGÀY ${activeDay.day})</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Ghi âm câu luyện phát âm của Ngày ${activeDay.day}, nhận ngay điểm % chính xác & thẻ chữa lỗi IPA!</p>
+
+        <!-- Sample Sentence Selector -->
+        <div style="background: var(--bg-main); padding: 1.2rem; border-radius: 14px; border: 1px solid var(--border);">
+          <label style="font-weight: 700; display: block; margin-bottom: 6px;">Chọn câu luyện ghi âm của Ngày ${activeDay.day}:</label>
+          <select id="modalRecorderSentenceSelect" class="unit-select" style="width: 100%; margin-bottom: 1rem;" onchange="updateModalRecorderSentence()">
+            ${selectOptionsHtml}
+          </select>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div id="modalTargetSentenceDisplay" style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark);">
+              "${defaultSentence}"
+            </div>
+            <button class="audio-btn-pill" onclick="playTargetSentenceAudio()">🔊 Nghe Mẫu</button>
+          </div>
+        </div>
+
+        <!-- Recording Mic Box -->
+        <div class="recorder-mic-box" style="margin-top: 1rem;">
+          <button id="modalBigMicBtn" class="big-mic-btn" onclick="toggleMicRecording()">🎙️</button>
+          <div id="modalRecordingStatusText" class="recording-status-text">Bấm vào Micro để Bắt Đầu Ghi Âm</div>
+
+          <!-- Recorded Audio Player -->
+          <div id="modalAudioPlaybackContainer" style="display: none; width: 100%; text-align: center; margin-top: 1rem;">
+            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 6px;">🎧 Giọng nói vừa ghi âm của chị Huyền:</div>
+            <audio id="modalRecordedAudioPlayer" controls class="recorded-audio-player"></audio>
+          </div>
+
+          <!-- Speech Recognition Result -->
+          <div id="modalSpeechRecognizedBox" style="display: none; margin-top: 1rem; background: var(--bg-card); padding: 1.2rem; border-radius: 12px; width: 100%; border: 1px solid var(--border); text-align: left;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-muted); text-transform: uppercase;">Văn bản nhận dạng từ giọng nói của chị:</div>
+            <div id="modalRecognizedTextOutput" style="font-size: 1.15rem; font-weight: 800; color: var(--secondary); margin: 8px 0; line-height: 1.5;">...</div>
+            <div id="modalSpeechFeedbackText" style="font-weight: 800; font-size: 1rem; margin-top: 8px;">...</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
   } else if (currentTab === "vocab") {
     let html = `<div>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1083,13 +1159,19 @@ function renderModalTabContent() {
     container.innerHTML = html;
   } else if (currentTab === "ai") {
     container.innerHTML = `
-      <div style="background: var(--bg-main); padding: 1.5rem; border-radius: 12px;">
+      <div style="background: var(--bg-main); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border);">
         <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">🤖 Luyện Phản Xạ Đóng Vai Cùng Trợ Lý AI Antigravity</h3>
-        <p style="margin-bottom: 1rem; font-size: 0.95rem;">Copy câu lệnh dưới đây và nhắn trực tiếp cho em (AI Antigravity) để bắt đầu luyện tập hội thoại:</p>
-        <div style="background: var(--bg-card); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); font-weight: 600; margin-bottom: 1rem;">
-          "${activeDay.roleplayPrompt}"
+        <p style="margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-muted);">
+          Kịch bản nói chuyện hôm nay (Ngày ${activeDay.day}):
+        </p>
+        <div style="background: var(--bg-card); padding: 1.2rem; border-radius: 12px; border: 1.5px solid var(--primary); font-weight: 700; margin-bottom: 1.2rem; color: var(--secondary);">
+          💬 "${activeDay.roleplayPrompt}"
         </div>
-        <button class="quick-jump-btn" onclick="copyRoleplayPrompt('${escapeQuotes(activeDay.roleplayPrompt)}')">📋 Copy Câu Lệnh Luyện Nói với AI</button>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="quick-jump-btn" onclick="speakText('${escapeQuotes(activeDay.roleplayPrompt)}')">🔊 Nghe AI Đọc Kịch Bản</button>
+          <button class="quick-jump-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);" onclick="copyRoleplayPrompt('${escapeQuotes(activeDay.roleplayPrompt)}')">📋 Copy Kịch Bản Luyện Nói</button>
+        </div>
       </div>
     `;
   }
