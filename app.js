@@ -4,6 +4,7 @@ const STORAGE_KEY = "ENGLISH_NURSE_HUYEN_PROGRESS_V1";
 const MASTERED_VOCAB_KEY = "ENGLISH_NURSE_MASTERED_VOCAB";
 const THEME_KEY = "ENGLISH_NURSE_THEME";
 const SELECTED_VOICE_KEY = "ENGLISH_NURSE_SELECTED_VOICE_NAME";
+const GEMINI_KEY_STORAGE = "ENGLISH_NURSE_GEMINI_API_KEY";
 
 let progressState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 let masteredVocabState = JSON.parse(localStorage.getItem(MASTERED_VOCAB_KEY)) || {};
@@ -25,6 +26,13 @@ let modalIsCardFlipped = false;
 let modalMediaRecorder = null;
 let modalAudioChunks = [];
 let modalIsRecording = false;
+
+// Weekly Test Matching Game State
+let selectedMatchWord = null;
+let matchedPairsCount = 0;
+
+// Gemini Chat State
+let geminiChatHistory = [];
 
 // Global IPA Dictionary for Audio Error Correction
 let GLOBAL_IPA_MAP = {
@@ -801,7 +809,7 @@ function markFlashcardScore(isMastered) {
   renderCurrentFlashcard();
 }
 
-// ✏️ FILL-IN-THE-BLANK QUIZ LOGIC
+// ✏️ FILL-IN-THE-BLANK QUIZ LOGIC WITH READ-ALOUD RECORDING
 function loadQuizForSelectedDay() {
   const select = document.getElementById("quizDaySelect");
   const selectedKey = select ? select.value : "all";
@@ -840,6 +848,8 @@ function loadQuizForSelectedDay() {
     const card = document.createElement("div");
     card.className = "quiz-question-card";
 
+    const fullSentenceText = q.sentence.replace("________", q.answer);
+
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <span class="day-tag">CÂU ${idx + 1} / ${questions.length} (NGÀY ${q.day})</span>
@@ -855,12 +865,34 @@ function loadQuizForSelectedDay() {
 
       <div id="quizResult_${idx}" class="quiz-result-badge">
         <span id="quizResultText_${idx}"></span>
-        <button class="audio-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="speakText('${escapeQuotes(q.answer)}')">🔊 Nghe Đọc</button>
+        <button class="audio-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="speakText('${escapeQuotes(q.answer)}')">🔊 Nghe Đọc Từ</button>
+      </div>
+
+      <!-- Read-Aloud Audio Recording Box inside Quiz -->
+      <div style="background: var(--bg-main); padding: 1rem; border-radius: 12px; border: 1px dashed var(--primary); margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <span style="font-weight: 700; font-size: 0.9rem; color: var(--primary-dark);">🎙️ Ghi Âm Đọc Lại Nguyên Câu:</span>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">"${fullSentenceText}"</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="audio-btn-pill" style="padding: 6px 14px; font-size: 0.82rem;" onclick="speakText('${escapeQuotes(fullSentenceText)}')">🔊 Nghe Mẫu Câu</button>
+          <button class="audio-btn-pill" style="padding: 6px 14px; font-size: 0.82rem; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);" onclick="recordQuizSentence('${escapeQuotes(fullSentenceText)}')">🎙️ Bấm Thu Âm Đọc</button>
+        </div>
       </div>
     `;
 
     container.appendChild(card);
   });
+}
+
+function recordQuizSentence(sentenceText) {
+  const recSelect = document.getElementById("recorderSentenceSelect");
+  if (recSelect) {
+    recSelect.value = sentenceText;
+  }
+  switchMainView("recorder");
+  updateRecorderSentence();
+  toggleMicRecording();
 }
 
 function checkQuizAnswer(idx, correctAnswer) {
@@ -950,6 +982,106 @@ function nextModalFlashcard(isMastered) {
   modalFlashcardIndex = (modalFlashcardIndex + 1) % activeDay.vocab.length;
   modalIsCardFlipped = false;
   renderModalTabContent();
+}
+
+// 🏆 WEEKLY MATCHING GAME & REVIEW TEST LOGIC
+function selectMatchCard(element, type, val, correctWord) {
+  if (type === "word") {
+    document.querySelectorAll(".match-word-card").forEach((c) => c.classList.remove("selected"));
+    element.classList.add("selected");
+    selectedMatchWord = { el: element, val: val };
+  } else if (type === "meaning") {
+    if (!selectedMatchWord) {
+      alert("Chị vui lòng chọn 1 từ Tiếng Anh ở cột bên trái trước nhé!");
+      return;
+    }
+    if (selectedMatchWord.val === correctWord) {
+      element.style.background = "#dcfce7";
+      element.style.borderColor = "#22c55e";
+      element.style.color = "#15803d";
+      element.innerHTML = "✅ " + element.innerHTML;
+
+      selectedMatchWord.el.style.background = "#dcfce7";
+      selectedMatchWord.el.style.borderColor = "#22c55e";
+      selectedMatchWord.el.style.color = "#15803d";
+      selectedMatchWord.el.innerHTML = "✅ " + selectedMatchWord.el.innerHTML;
+
+      speakText(selectedMatchWord.val);
+      selectedMatchWord = null;
+      matchedPairsCount++;
+    } else {
+      element.style.background = "#ffe4e6";
+      setTimeout(() => {
+        element.style.background = "var(--bg-main)";
+      }, 800);
+      alert("❌ Chưa đúng cặp từ! Chị hãy chọn lại từ khác nhé.");
+    }
+  }
+}
+
+// 🤖 GEMINI AI DIRECT CHAT & VOICE INTERACTION LOGIC
+async function sendGeminiAiMessage() {
+  const keyInput = document.getElementById("geminiApiKeyInput");
+  const msgInput = document.getElementById("geminiUserMsgInput");
+  const chatBox = document.getElementById("geminiChatMessagesBox");
+
+  if (!msgInput || !msgInput.value.trim()) return;
+
+  const userMsg = msgInput.value.trim();
+  msgInput.value = "";
+
+  const userBubble = document.createElement("div");
+  userBubble.style.cssText = "background: var(--primary-light); color: var(--primary-dark); padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; font-weight: 700; align-self: flex-end; max-width: 80%;";
+  userBubble.textContent = "👩‍⚕️ Chị Huyền: " + userMsg;
+  chatBox.appendChild(userBubble);
+
+  const apiKey = keyInput ? keyInput.value.trim() : localStorage.getItem(GEMINI_KEY_STORAGE);
+  if (keyInput && apiKey) localStorage.setItem(GEMINI_KEY_STORAGE, apiKey);
+
+  if (apiKey) {
+    try {
+      const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `You are an English speaking AI medical assistant for a Scrub Nurse named Huyen. Roleplay and respond in 1-2 short simple English sentences to: "${userMsg}"` }] }]
+        })
+      });
+      const data = await resp.json();
+      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Great job Nurse Huyen! Please tell me more about your work.";
+      
+      renderAiResponseBubble(reply);
+      speakText(reply);
+      return;
+    } catch (e) {
+      console.warn("Gemini API call failed, using smart simulation:", e);
+    }
+  }
+
+  // Instant Smart AI Simulation (If no API key provided)
+  const simReplies = [
+    "Hello Nurse Huyen! Today we are sterilizing the surgical forceps and trays.",
+    "The autoclave temperature is set to 134 degrees. The indicator changed color!",
+    "Great pronunciation Nurse Huyen! Always remember to inspect instruments for cleanliness.",
+    "I am passing you the sterile surgical scissors for the operation."
+  ];
+  const simReply = simReplies[Math.floor(Math.random() * simReplies.length)];
+
+  setTimeout(() => {
+    renderAiResponseBubble(simReply);
+    speakText(simReply);
+  }, 600);
+}
+
+function renderAiResponseBubble(replyText) {
+  const chatBox = document.getElementById("geminiChatMessagesBox");
+  if (!chatBox) return;
+
+  const aiBubble = document.createElement("div");
+  aiBubble.style.cssText = "background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; font-weight: 700; align-self: flex-start; max-width: 85%; display: flex; align-items: center; justify-content: space-between; gap: 8px;";
+  aiBubble.innerHTML = `<div>🤖 AI Assistant: "${replyText}"</div><button class="audio-btn" style="width:32px; height:32px; font-size:0.8rem;" onclick="speakText('${escapeQuotes(replyText)}')">🔊</button>`;
+  chatBox.appendChild(aiBubble);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function renderModalTabContent() {
@@ -1068,6 +1200,62 @@ function renderModalTabContent() {
     `;
 
     container.innerHTML = html;
+  } else if (currentTab === "weeklyTest") {
+    // 🏆 WEEKLY COMPREHENSIVE REVIEW TEST (Kiểm tra Đóng gói Kiến thức theo Tuần)
+    const vocabList = activeDay.vocab || [];
+    const shuffledMeanings = [...vocabList].sort(() => Math.random() - 0.5);
+
+    let matchWordsHtml = vocabList
+      .map(
+        (v) =>
+          `<button class="match-word-card" style="padding: 10px 16px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg-main); font-weight: 800; cursor: pointer; text-align: left; transition: var(--transition-fast);" onclick="selectMatchCard(this, 'word', '${escapeQuotes(v.word)}')">🗣️ ${v.word} <span style="font-family: monospace; font-size: 0.8rem; color: var(--accent);">${v.ipa}</span></button>`
+      )
+      .join("");
+
+    let matchMeaningsHtml = shuffledMeanings
+      .map(
+        (v) =>
+          `<button class="match-meaning-card" style="padding: 10px 16px; border-radius: 12px; border: 2px solid var(--border); background: var(--bg-main); font-weight: 700; cursor: pointer; text-align: left; transition: var(--transition-fast);" onclick="selectMatchCard(this, 'meaning', '${escapeQuotes(v.meaning)}', '${escapeQuotes(v.word)}')">👉 ${v.meaning}</button>`
+      )
+      .join("");
+
+    let html = `
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div>
+          <h3 style="color: var(--secondary); margin-bottom: 0.25rem;">🏆 BÀI KIỂM TRA ĐÓNG GÓI KIẾN THỨC TUẦN (NGÀY ${activeDay.day})</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Hoàn thành 3 phần kiểm tra dưới đây để đóng gói 100% từ vựng và câu thoại đã học trong tuần!</p>
+        </div>
+
+        <!-- Part 1: Matching English Word to Meaning -->
+        <div style="background: var(--bg-main); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--border);">
+          <h4 style="color: var(--primary-dark); margin-bottom: 0.8rem;">🧩 PHẦN 1: NỐI TỪ TIẾNG ANH VỚI NGHĨA TIẾNG VIỆT</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Bấm 1 từ bên cột Tiếng Anh ➔ Bấm tiếp nghĩa Tiếng Việt tương ứng bên cột Phải để nối cặp từ đúng!</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-weight: 800; font-size: 0.85rem; color: var(--secondary);">TIẾNG ANH:</div>
+              ${matchWordsHtml}
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-weight: 800; font-size: 0.85rem; color: var(--secondary);">NGHĨA TIẾNG VIỆT:</div>
+              ${matchMeaningsHtml}
+            </div>
+          </div>
+        </div>
+
+        <!-- Part 2: Multiple Choice Sentence Test -->
+        <div style="background: var(--bg-main); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--border);">
+          <h4 style="color: var(--primary-dark); margin-bottom: 0.8rem;">🔘 PHẦN 2: TRẮC NGHIỆM CHỌN CÂU Y TẾ ĐÚNG</h4>
+          <div style="font-weight: 700; margin-bottom: 0.8rem;">Câu hỏi: Công việc chính của Điều dưỡng dụng cụ (Scrub Nurse) trong phòng mổ là gì?</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="quiz-check-btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); text-align: left;" onclick="this.style.background='#dcfce7'; this.style.borderColor='#22c55e'; speakText('I clean, inspect, and sterilize surgical instruments.')">A. "I clean, inspect, and sterilize surgical instruments." (Chính xác ✅)</button>
+            <button class="quiz-check-btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); text-align: left;" onclick="this.style.background='#ffe4e6'; alert('❌ Chưa đúng! Chọn lại phương án A nhé.')">B. "I drive the ambulance to pick up emergency patients."</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
   } else if (currentTab === "vocab") {
     let html = `<div>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1095,12 +1283,14 @@ function renderModalTabContent() {
     container.innerHTML = html;
   } else if (currentTab === "quiz") {
     let html = `<div>
-      <h3 style="color: var(--secondary); margin-bottom: 1rem;">✏️ Bài Tập Điền Từ Kiểm Tra Trí Nhớ (${activeDay.vocab.length} Từ - Ngày ${activeDay.day})</h3>`;
+      <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">✏️ BÀI TẬP ĐIỀN TỪ & GHI ÂM ĐỌC LẠI (${activeDay.vocab.length} Từ - Ngày ${activeDay.day})</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Gõ đáp án đúng vào ô trống, sau đó bấm 🎙️ Micro thu âm đọc lại để thuộc nhanh nhất!</p>`;
 
     if (activeDay.quiz) {
       activeDay.quiz.forEach((q, idx) => {
+        const fullSentenceText = q.sentence.replace("________", q.answer);
         html += `
-          <div class="quiz-question-card" style="margin-bottom: 1rem;">
+          <div class="quiz-question-card" style="margin-bottom: 1.2rem;">
             <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-dark);">CÂU ${idx + 1} / ${activeDay.quiz.length}</div>
             <div class="quiz-sentence">${q.sentence.replace("________", "<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>")}</div>
             <div class="quiz-input-group">
@@ -1110,6 +1300,18 @@ function renderModalTabContent() {
             <div id="modalQuizResult_${idx}" class="quiz-result-badge">
               <span id="modalQuizResultText_${idx}"></span>
               <button class="audio-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="speakText('${escapeQuotes(q.answer)}')">🔊</button>
+            </div>
+
+            <!-- Read-Aloud Audio Recording Box -->
+            <div style="background: var(--bg-main); padding: 0.9rem 1.1rem; border-radius: 12px; border: 1px dashed var(--primary); margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span style="font-weight: 700; font-size: 0.88rem; color: var(--primary-dark);">🎙️ Ghi Âm Đọc Lại Câu Vừa Điền:</span>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">"${fullSentenceText}"</div>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button class="audio-btn-pill" style="padding: 4px 12px; font-size: 0.8rem;" onclick="speakText('${escapeQuotes(fullSentenceText)}')">🔊 Nghe Mẫu</button>
+                <button class="audio-btn-pill" style="padding: 4px 12px; font-size: 0.8rem; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);" onclick="recordQuizSentence('${escapeQuotes(fullSentenceText)}')">🎙️ Bấm Thu Âm</button>
+              </div>
             </div>
           </div>
         `;
@@ -1158,19 +1360,36 @@ function renderModalTabContent() {
     html += `</div>`;
     container.innerHTML = html;
   } else if (currentTab === "ai") {
+    const savedApiKey = localStorage.getItem(GEMINI_KEY_STORAGE) || "";
+
     container.innerHTML = `
-      <div style="background: var(--bg-main); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border);">
-        <h3 style="color: var(--primary-dark); margin-bottom: 0.5rem;">🤖 Luyện Phản Xạ Đóng Vai Cùng Trợ Lý AI Antigravity</h3>
-        <p style="margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-muted);">
-          Kịch bản nói chuyện hôm nay (Ngày ${activeDay.day}):
-        </p>
-        <div style="background: var(--bg-card); padding: 1.2rem; border-radius: 12px; border: 1.5px solid var(--primary); font-weight: 700; margin-bottom: 1.2rem; color: var(--secondary);">
-          💬 "${activeDay.roleplayPrompt}"
+      <div style="background: var(--bg-main); padding: 1.4rem; border-radius: 18px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="color: var(--primary-dark); margin-bottom: 0.25rem;">🤖 TRỢ LÝ LUYỆN NÓI AI GEMINI (NGÀY ${activeDay.day})</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);">Nói chuyện Tiếng Anh phản xạ trực tiếp với AI Gemini ngay trên trang web!</p>
+          </div>
+          <input type="password" id="geminiApiKeyInput" class="search-input" style="max-width: 220px; font-size: 0.8rem;" placeholder="Nhập Gemini API Key (Không bắt buộc)..." value="${savedApiKey}">
         </div>
 
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button class="quick-jump-btn" onclick="speakText('${escapeQuotes(activeDay.roleplayPrompt)}')">🔊 Nghe AI Đọc Kịch Bản</button>
-          <button class="quick-jump-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);" onclick="copyRoleplayPrompt('${escapeQuotes(activeDay.roleplayPrompt)}')">📋 Copy Kịch Bản Luyện Nói</button>
+        <!-- Chat Scenario Prompt Banner -->
+        <div style="background: var(--bg-card); padding: 1rem; border-radius: 12px; border-left: 5px solid var(--primary); font-weight: 700;">
+          💬 Kịch bản đóng vai: "${activeDay.roleplayPrompt}"
+          <button class="audio-btn-pill" style="margin-left: 10px; padding: 4px 12px; font-size: 0.8rem;" onclick="speakText('${escapeQuotes(activeDay.roleplayPrompt)}')">🔊 Nghe Mẫu Kịch Bản</button>
+        </div>
+
+        <!-- Chat History Box -->
+        <div id="geminiChatMessagesBox" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; min-height: 180px; max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 10px 14px; border-radius: 12px; font-weight: 700; align-self: flex-start; max-width: 85%;">
+            🤖 AI Assistant: "Hello Nurse Huyen! Ready to practice today's scenario for Day ${activeDay.day}?"
+          </div>
+        </div>
+
+        <!-- Chat Input Controls -->
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="geminiUserMsgInput" class="quiz-input" placeholder="Gõ câu phản xạ Tiếng Anh của chị..." onkeyup="if(event.key==='Enter') sendGeminiAiMessage()">
+          <button class="quick-jump-btn" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); padding: 10px 16px;" onclick="toggleMicRecording()" title="Bấm Micro để nói bằng giọng">🎙️ Nói</button>
+          <button class="quick-jump-btn" onclick="sendGeminiAiMessage()">Gửi AI ➔</button>
         </div>
       </div>
     `;
