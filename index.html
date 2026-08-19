@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ENGLISH NURSE 90-DAY PORTAL | IXL & Apple Frosted Glass UI/UX</title>
-  <link rel="stylesheet" href="styles.css?v=10.0">
+  <title>NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC | PHẠM HUYỀN 0936786794</title>
+  <link rel="stylesheet" href="styles.css?v=29.0">
 </head>
 <body>
 
@@ -13,72 +13,165 @@
     <div class="logo-container">
       <span class="logo-icon">🩺</span>
       <div>
-        <div class="logo-title">ENGLISH NURSE 90-DAY PORTAL</div>
-        <div class="logo-subtitle">Lựa Chọn Giọng Đọc Bản Xứ, Flashcards & Bài Tập Điền Từ</div>
+        <div class="logo-title">NURSING ENGLISH</div>
+        <div class="logo-subtitle">HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC</div>
       </div>
     </div>
 
-    <!-- Navigation Tabs (Desktops & Fixed Bottom Dock on Phones) -->
-    <nav class="main-nav-tabs">
-      <button class="nav-tab-btn active" data-view="roadmap" onclick="switchMainView('roadmap')">🗓️ Lộ Trình</button>
-      <button class="nav-tab-btn" data-view="flashcard" onclick="switchMainView('flashcard')">🎴 Flashcard</button>
-      <button class="nav-tab-btn" data-view="quiz" onclick="switchMainView('quiz')">✏️ Điền Từ</button>
-      <button class="nav-tab-btn" data-view="recorder" onclick="switchMainView('recorder')">🎙️ Ghi Âm</button>
-    </nav>
-
     <div class="header-actions">
-      <!-- Voice Selection Dropdown & Test Button -->
-      <div style="display: flex; align-items: center; gap: 6px;">
-        <select id="headerVoiceSelect" class="unit-select" style="max-width: 170px; font-size: 0.85rem;" onchange="changeSelectedVoice()"></select>
-        <button class="sync-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="testSelectedVoice()">🔊 Thử Giọng</button>
-      </div>
-
+      <!-- Hidden dropdown for voice engine initialization -->
+      <select id="headerVoiceSelect" style="display: none;" onchange="changeSelectedVoice()"></select>
       <button class="sync-btn" onclick="exportProgressCode()" title="Copy mã tiến độ để dán sang máy cơ quan">📋 Copy Tiến Độ</button>
       <button class="sync-btn" onclick="importProgressCode()" title="Dán mã tiến độ từ máy nhà sang">📥 Dán Tiến Độ</button>
       <button id="themeToggleBtn" class="theme-toggle-btn">🌙 Giao diện Tối</button>
     </div>
   </header>
 
+  <!-- 🌟 GLASSMORPHISM MAIN NAVIGATION BAR (7 CORE MODULES CHUẨN THEO ẢNH CHỤP MẪU) -->
+  <nav class="main-module-nav">
+    <button class="module-nav-btn active" data-module="home" onclick="switchMainModule('home')">🏠 Home</button>
+    <button class="module-nav-btn" data-module="vocab" onclick="switchMainModule('vocab')">📖 Vocabulary</button>
+    <button class="module-nav-btn" data-module="practice" onclick="switchMainModule('practice')">✏️ Practice</button>
+    <button class="module-nav-btn" data-module="speaking" onclick="switchMainModule('speaking')">🎙️ Speaking</button>
+    <button class="module-nav-btn" data-module="review" onclick="switchMainModule('review')">🏆 Review</button>
+    <button class="module-nav-btn" data-module="progress" onclick="switchMainModule('progress')">📊 Progress</button>
+    <button class="module-nav-btn" data-module="profile" onclick="switchMainModule('profile')">👤 Profile</button>
+  </nav>
+
   <!-- Main Container -->
   <main class="main-container">
 
-    <!-- VIEW 1: ROADMAP SECTION -->
-    <section id="roadmapView" class="app-view-section active">
-      <!-- Progress Hero Banner -->
-      <section class="hero-banner">
-        <div class="hero-info">
-          <h1>🏥 Chào chị Phạm Huyền!</h1>
-          <p>Duy trì 15–20 phút luyện phát âm thành tiếng & chọn giọng đọc bản xứ hay nhất dành riêng cho chị!</p>
+    <!-- MODULE 1: HOME (PERSONALIZED LEARNING DASHBOARD) -->
+    <section id="homeView" class="app-view-section active">
+      <!-- TOP WELCOME HERO BANNER (ẢNH CHỊ HUYỀN BÊN TRÁI - KHUNG THÔNG TẤT BÊN PHẢI CHUẨN 100% THEO MẪU ẢNH) -->
+      <section class="top-welcome-banner">
+        <div class="top-welcome-avatar-wrapper">
+          <img src="huyen_avatar.png" alt="Phạm Huyền - Nursing English" class="top-welcome-photo">
+          <div class="top-welcome-badge">🩺 PHẠM HUYỀN | CSSD & OR NURSE</div>
+        </div>
+
+        <div class="top-welcome-content">
+          <div class="top-welcome-sub">— TRANG TỰ HỌC TIẾNG ANH CHUYÊN NGÀNH ĐIỀU DƯỠNG</div>
+          <h1 class="top-welcome-title">"NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC"</h1>
+          <p class="top-welcome-intro">
+            "Chào mừng bạn! Tôi là <strong>Phạm Huyền</strong> - Điều dưỡng Dụng cụ & Tiệt trùng Trung tâm (CSSD). Nơi mang đến giải pháp <strong>5 phút mỗi ngày – để tiếng Anh điều dưỡng không còn nằm trên trang giấy</strong>!"
+          </p>
           
+          <div class="top-welcome-actions">
+            <button class="top-welcome-btn-primary" onclick="jumpToToday()">🚀 START TODAY'S LESSON</button>
+            <button class="top-welcome-btn-secondary" onclick="testSelectedVoice()">🔊 Thử Giọng Đọc Bản Xứ</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Progress Stats Banner (Chuẩn theo ảnh chụp của chị Huyền) -->
+      <section class="progress-bar-card">
+        <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 800; font-size: 0.95rem; color: var(--primary-dark);">📊 Tiến Độ Học Tập 90 Ngày Của Chị Huyền</span>
+            <span style="font-weight: 800; font-size: 0.9rem; color: var(--secondary);"><strong id="completedCountText">0 / 90 Ngày</strong> (<strong id="completedPercentText">0%</strong>)</span>
+          </div>
           <div class="progress-bar-container">
             <div id="progressFill" class="progress-bar-fill"></div>
           </div>
-          <div class="progress-stats">
-            <span>Tiến độ: <strong id="completedCountText">0 / 90 Ngày</strong></span>
-            <span>Hoàn thành: <strong id="completedPercentText">0%</strong></span>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div class="badge-item" style="background: var(--bg-main); color: var(--text-main); padding: 8px 14px; border-radius: 12px; border: 1px solid var(--border);">
+            <span class="badge-icon">🔥</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.8rem;">Chuỗi Kiên Trì</div>
+              <div id="streakText" style="font-weight: 800; color: var(--primary-dark); font-size: 0.9rem;">0 Ngày</div>
+            </div>
+          </div>
+          <button class="quick-jump-btn" onclick="jumpToToday()">🚀 Bắt Đầu Học Hôm Nay</button>
+        </div>
+      </section>
+
+      <!-- 🌟 PERSONALIZED DASHBOARD: 5 CORE LEARNING METRICS -->
+      <section class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin: 1.5rem 0;">
+        
+        <!-- CARD 1: TODAY'S ACTIVITY (THỜI GIAN & TỪ VỰNG HÔM NAY) -->
+        <div class="glass-container-card" style="background: var(--bg-card); padding: 1.4rem; border-radius: 22px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 800; font-size: 0.95rem; color: var(--primary-dark);">⏱️ TODAY (HÔM NAY)</span>
+            <span style="font-size: 0.8rem; background: rgba(37,99,235,0.1); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-weight: 700;">Nhẹ Nhàng 5–15 Phút</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="background: var(--bg-main); padding: 10px 14px; border-radius: 14px; border: 1px solid var(--border);">
+              <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">Study Time</div>
+              <div style="font-size: 1.25rem; font-weight: 900; color: var(--secondary);">12 min</div>
+            </div>
+            <div style="background: var(--bg-main); padding: 10px 14px; border-radius: 14px; border: 1px solid var(--border);">
+              <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">Vocabulary</div>
+              <div style="font-size: 1.25rem; font-weight: 900; color: var(--primary-dark);">8 words</div>
+            </div>
+            <div style="background: var(--bg-main); padding: 10px 14px; border-radius: 14px; border: 1px solid var(--border);">
+              <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">Listening</div>
+              <div style="font-size: 1.25rem; font-weight: 900; color: #0284c7;">5 min</div>
+            </div>
+            <div style="background: var(--bg-main); padding: 10px 14px; border-radius: 14px; border: 1px solid var(--border);">
+              <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">Speaking</div>
+              <div style="font-size: 1.25rem; font-weight: 900; color: #d97706;">4 min</div>
+            </div>
           </div>
         </div>
 
-        <div class="hero-badges">
-          <div class="badge-item">
-            <span class="badge-icon">🔥</span>
-            <div>
-              <div style="font-weight: 700;">Chuỗi Kiên Trì</div>
-              <div id="streakText" style="font-size: 0.85rem; opacity: 0.9;">0 Ngày</div>
-            </div>
+        <!-- CARD 2: PROGRESS BREAKDOWN (TIẾN ĐỘ THÀNH THẠO %) -->
+        <div class="glass-container-card" style="background: var(--bg-card); padding: 1.4rem; border-radius: 22px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 800; font-size: 0.95rem; color: var(--primary-dark);">📈 MASTERY SKILLS (KỸ NĂNG)</span>
+            <span style="font-size: 0.8rem; background: rgba(16,185,129,0.1); color: #10b981; padding: 4px 10px; border-radius: 20px; font-weight: 700;">4 Kỹ Năng Y Tế</span>
           </div>
-          <div class="badge-item">
-            <span class="badge-icon">🎙️</span>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
             <div>
-              <div style="font-weight: 700;">Giọng Đọc Đang Dùng</div>
-              <div id="activeVoiceNameText" style="font-size: 0.85rem; opacity: 0.9;">English US Native</div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px;">
+                <span>🗣️ Phản Xạ Từ Vựng (Vocabulary)</span>
+                <span style="color: var(--primary-dark);">85%</span>
+              </div>
+              <div style="background: var(--bg-main); height: 8px; border-radius: 10px; overflow: hidden;"><div style="width: 85%; background: var(--primary); height: 100%; border-radius: 10px;"></div></div>
             </div>
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <button class="quick-jump-btn" onclick="jumpToToday()" style="flex: 1;">🚀 Bài Học Hôm Nay</button>
-            <button class="sync-btn" onclick="testSelectedVoice()" style="background: rgba(255,255,255,0.25); color: white; border: 1px solid white;">🔊 Thử Giọng</button>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px;">
+                <span>🎙️ Phát Âm IPA & Ghi Âm (Speaking)</span>
+                <span style="color: #d97706;">78%</span>
+              </div>
+              <div style="background: var(--bg-main); height: 8px; border-radius: 10px; overflow: hidden;"><div style="width: 78%; background: #d97706; height: 100%; border-radius: 10px;"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 700; margin-bottom: 4px;">
+                <span>🧼 Quy Trình Khử Khuẩn CSSD Self-Talk</span>
+                <span style="color: #10b981;">92%</span>
+              </div>
+              <div style="background: var(--bg-main); height: 8px; border-radius: 10px; overflow: hidden;"><div style="width: 92%; background: #10b981; height: 100%; border-radius: 10px;"></div></div>
+            </div>
           </div>
         </div>
+
+        <!-- CARD 3: LEARNING STREAK & ACHIEVEMENTS (THÀNH TÍCH KIÊN TRÌ) -->
+        <div class="glass-container-card" style="background: var(--bg-card); padding: 1.4rem; border-radius: 22px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 800; font-size: 0.95rem; color: var(--primary-dark);">🏆 ACHIEVEMENTS (HUY CHƯƠNG)</span>
+            <span style="font-size: 0.8rem; background: rgba(245,158,11,0.1); color: #d97706; padding: 4px 10px; border-radius: 20px; font-weight: 700;">Huy Chương Y Tế</span>
+          </div>
+          <div style="display: flex; gap: 10px; justify-content: space-around; text-align: center;">
+            <div style="background: var(--bg-main); padding: 12px; border-radius: 16px; border: 1px solid var(--border); flex: 1;">
+              <div style="font-size: 1.8rem; margin-bottom: 2px;">🏅</div>
+              <div style="font-weight: 800; font-size: 0.82rem; color: var(--secondary);">CSSD Master</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Đã Thuộc 50 Từ</div>
+            </div>
+            <div style="background: var(--bg-main); padding: 12px; border-radius: 16px; border: 1px solid var(--border); flex: 1;">
+              <div style="font-size: 1.8rem; margin-bottom: 2px;">🎙️</div>
+              <div style="font-weight: 800; font-size: 0.82rem; color: var(--secondary);">Native Voice</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">15 Lần Ghi Âm</div>
+            </div>
+            <div style="background: var(--bg-main); padding: 12px; border-radius: 16px; border: 1px solid var(--border); flex: 1;">
+              <div style="font-size: 1.8rem; margin-bottom: 2px;">🔥</div>
+              <div style="font-weight: 800; font-size: 0.82rem; color: var(--secondary);">Super Nurse</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Chuỗi 7 Ngày</div>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       <!-- Controls & Filter Section -->
@@ -101,12 +194,12 @@
       </section>
     </section>
 
-    <!-- VIEW 2: FLASHCARD GAME SECTION (CHIA THEO NGÀY) -->
-    <section id="flashcardView" class="app-view-section">
+    <!-- MODULE 2: VOCABULARY SECTION -->
+    <section id="vocabView" class="app-view-section">
       <div class="flashcard-game-container">
         <div class="flashcard-deck-header">
           <div>
-            <h2 style="color: var(--secondary);">🎴 TRÒ CHƠI LẬT THẺ FLASHCARD</h2>
+            <h2 style="color: var(--secondary);">🎴 KHO TỪ VỰNG & THẺ FLASHCARD 3D</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem;">Học từ mới được chia theo từng Ngày học!</p>
           </div>
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -147,8 +240,8 @@
       </div>
     </section>
 
-    <!-- VIEW 3: FILL-IN-THE-BLANK QUIZ SECTION -->
-    <section id="quizView" class="app-view-section">
+    <!-- MODULE 3: PRACTICE SECTION (BÀI TẬP ĐIỀN TỪ) -->
+    <section id="practiceView" class="app-view-section">
       <div class="quiz-container">
         <div class="quiz-header-banner">
           <div>
@@ -171,8 +264,8 @@
       </div>
     </section>
 
-    <!-- VIEW 4: AUDIO RECORDER STUDIO SECTION -->
-    <section id="recorderView" class="app-view-section">
+    <!-- MODULE 4: SPEAKING SECTION (PHÒNG GHI ÂM) -->
+    <section id="speakingView" class="app-view-section">
       <div class="recorder-studio-container">
         <div>
           <h2 style="color: var(--secondary); margin-bottom: 0.25rem;">🎙️ PHÒNG GHI ÂM & CHẤM PHÁT ÂM THEO NGÀY</h2>
@@ -223,6 +316,40 @@
       </div>
     </section>
 
+    <!-- MODULE 5: REVIEW SECTION (KIỂM TRA ĐÓNG GÓI TUẦN) -->
+    <section id="reviewView" class="app-view-section">
+      <div style="background: var(--bg-card); padding: 1.8rem; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow);">
+        <h2 style="color: var(--secondary); margin-bottom: 0.5rem;">🏆 BÀI KIỂM TRA ĐÓNG GÓI KIẾN THỨC TUẦN</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Vui lòng mở từng Bài Học cụ thể trong phần 🗓️ Lộ Trình để tham gia Bài Kiểm Tra Đóng Gói Tuần tương ứng!</p>
+        <button class="quick-jump-btn" onclick="switchMainModule('home')">👈 Quay Về Trang Chủ</button>
+      </div>
+    </section>
+
+    <!-- MODULE 6: PROGRESS SECTION (BÁO CÁO CHI TIẾT) -->
+    <section id="progressView" class="app-view-section">
+      <div style="background: var(--bg-card); padding: 1.8rem; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow);">
+        <h2 style="color: var(--secondary); margin-bottom: 0.5rem;">📊 BÁO CÁO TIẾN ĐỘ THÀNH THẠO 90 NGÀY</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Xem tổng quan chuỗi kiên trì và tiến độ từng Unit của chị Phạm Huyền!</p>
+        <button class="quick-jump-btn" onclick="switchMainModule('home')">👈 Quay Về Trang Chủ</button>
+      </div>
+    </section>
+
+    <!-- MODULE 7: PROFILE SECTION (THÔNG TIN TÁC GIẢ PHẠM HUYỀN) -->
+    <section id="profileView" class="app-view-section">
+      <div style="background: var(--bg-card); padding: 2rem; border-radius: 26px; border: 1px solid var(--border); box-shadow: var(--shadow); max-width: 680px; margin: 0 auto; text-align: center;">
+        <img src="huyen_avatar.png" alt="Phạm Huyền" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); margin-bottom: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <h2 style="color: var(--secondary); margin-bottom: 0.25rem;">PHẠM HUYỀN</h2>
+        <div style="font-weight: 800; color: var(--primary-dark); font-size: 0.95rem; margin-bottom: 1rem;">ĐIỀU DƯỠNG DỤNG CỤ & TIỆT TRÙNG TRUNG TÂM (CSSD)</div>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+          "Nơi mang đến giải pháp 5 phút mỗi ngày – để tiếng Anh điều dưỡng không còn nằm trên trang giấy!"
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://zalo.me/0936786794" target="_blank" class="sync-btn" style="background: #0068ff; color: white;">💬 Zalo: 0936786794</a>
+          <a href="tel:0936786794" class="sync-btn" style="background: #10b981; color: white;">📞 Điện thoại: 0936786794</a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Lesson Detail Modal -->
@@ -253,7 +380,44 @@
     </div>
   </div>
 
-  <script src="data.js?v=10.0"></script>
-  <script src="app.js?v=10.0"></script>
+  <!-- FLOATING FOUNDER CORNER WIDGET (CHÍNH CHỦ PHẠM HUYỀN) -->
+  <div class="floating-founder-widget">
+    <!-- Popup Modal / Card when expanded -->
+    <div id="founderPopupCard" class="founder-popup-card">
+      <button class="popup-close-x" onclick="toggleFounderPopup()">&times;</button>
+      <div class="popup-top-banner">
+        <img src="huyen_avatar.png" alt="Phạm Huyền" class="popup-avatar">
+        <div>
+          <div class="popup-author-name">PHẠM HUYỀN</div>
+          <div class="popup-author-tag">NURSING ENGLISH</div>
+        </div>
+      </div>
+      <div class="popup-content-inner">
+        <div class="popup-title">"NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC"</div>
+        <p class="popup-text">5 phút mỗi ngày – để tiếng Anh điều dưỡng không còn nằm trên trang giấy!</p>
+        <div class="popup-contact-line">
+          <span>📞 SỐ ĐIỆN THOẠI:</span>
+          <strong>0936786794</strong>
+        </div>
+        <div class="popup-actions-row">
+          <a href="https://zalo.me/0936786794" target="_blank" class="popup-btn zalo-btn">💬 Zalo 0936786794</a>
+          <a href="tel:0936786794" class="popup-btn call-btn">📞 Gọi Ngay</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Collapsed Trigger Button (Match 100% Image 1) -->
+    <button id="floatingWidgetTriggerBtn" class="floating-trigger-btn" onclick="toggleFounderPopup()">
+      <img src="huyen_avatar.png" alt="Phạm Huyền" class="trigger-avatar">
+      <div class="trigger-info">
+        <span class="trigger-name">PHẠM HUYỀN</span>
+        <span class="trigger-phone">📞 0936786794</span>
+      </div>
+      <span class="trigger-pulse-dot"></span>
+    </button>
+  </div>
+
+  <script src="data.js?v=29.0"></script>
+  <script src="app.js?v=29.0"></script>
 </body>
 </html>

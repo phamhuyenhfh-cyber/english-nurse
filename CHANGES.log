@@ -65,3 +65,55 @@
 [2026-08-18T23:17:40+07:00] app.js: Chuyển toàn bộ phần Luyện Nói AI sang giao diện Thu Âm Giọng Nói 100% bằng Micro Khổng Lồ (aiStudioBigMicBtn), tự động mở micro điện thoại, phát lại tệp thu âm và đọc thoại phản hồi ra loa.
 [2026-08-18T23:17:46+07:00] index.html: Cập nhật cache-busting v9.0 cho toàn bộ tệp tĩnh.
 [2026-08-18T23:17:50+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa tính năng Phòng Thu Âm Luyện Nói AI v9.0.
+[2026-08-18T23:25:41+07:00] index.html: Loại bỏ hoàn toàn nút tab Luyện Nói Với AI và đưa tab Từ Vựng & Hình Ảnh IPA lên làm tab mặc định chính.
+[2026-08-18T23:26:00+07:00] app.js: Bổ sung hình ảnh dụng cụ/y tế minh họa cho từng từ vựng, thẻ phiên âm IPA màu vàng hổ phách, dịch nghĩa tiếng Việt từ vựng và câu ví dụ dịch nghĩa chi tiết.
+[2026-08-18T23:26:05+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa giao diện từ vựng có hình ảnh minh họa v10.0.
+[2026-08-19T07:13:30+07:00] pham_huyen.png: Tạo mới tệp ảnh chân dung chị Phạm Huyền trong trang phục điều dưỡng badge "NURSE".
+[2026-08-19T07:13:30+07:00] index.html: Cập nhật tiêu đề trang web "NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC", tích hợp Founder Section chuẩn Freshmenow và Floating Corner Popup Widget chứa tên Phạm Huyền & SĐT 0936786794.
+[2026-08-19T07:13:30+07:00] styles.css: Thiết kế giao diện Founder Card, phông nền gradient y tế, avatar hình tròn nổi bật và hiệu ứng mở ra popup góc dưới màn hình v11.0.
+[2026-08-19T07:13:30+07:00] app.js: Thêm hàm xử lý toggleFounderPopup mở/đóng pop-up góc dưới màn hình v11.0.
+[2026-08-19T07:13:46+07:00] english-nurse.zip: Đóng gói lại tệp nén zip chứa tiêu đề tên trang web mới, Founder Section và Floating Popup góc màn hình v11.0.
+[2026-08-19T07:20:46+07:00] index.html: Chuyển Banner đón khách Phạm Huyền lên TRÊN CÙNG trang web (ảnh bên trái, slogan + giới thiệu bên phải, nút Bắt Đầu Học Ngay chuyển giao diện), loại bỏ SĐT lặp lại ở Header.
+[2026-08-19T07:20:46+07:00] styles.css: Thiết kế lại Top Welcome Hero Banner chuẩn phong cách chuyên nghiệp v12.0.
+[2026-08-19T07:20:46+07:00] app.js: Thêm hàm scrollToRoadmapGrid chuyển mượt xuống giao diện lộ trình học khi bấm nút Bắt Đầu Học Ngay.
+[2026-08-19T07:20:46+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v12.0.
+[2026-08-19T07:23:47+07:00] index.html: Loại bỏ hoàn toàn banner welcome và các nút điều hướng lặp lại ở đầu trang theo yêu cầu của chị Phạm Huyền (vì khi bấm vào từng bài học đã có đầy đủ 100% công cụ học tập bên trong).
+[2026-08-19T07:23:47+07:00] english-nurse.zip: Đóng gói lại tệp nén zip tinh gọn v13.0.
+[2026-08-19T07:25:30+07:00] index.html: Giữ lại Top Welcome Banner Phạm Huyền đẳng cấp trên cùng trang chủ (ảnh chân dung Phạm Huyền bên trái, slogan "NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC" bên phải kèm nút VÀO LỘ TRÌNH HỌC NGAY) theo đúng hình ảnh chị chọn.
+[2026-08-19T07:25:30+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v14.0.
+[2026-08-19T07:31:25+07:00] index.html: Cập nhật lời giới thiệu truyền cảm hứng mới trên Welcome Banner và Popup Card: "5 phút mỗi ngày – để tiếng Anh điều dưỡng không còn nằm trên trang giấy."
+[2026-08-19T07:31:25+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v15.0.
+[2026-08-19T07:34:15+07:00] styles.css: Nâng cấp toàn diện hệ thống thiết kế UI/UX Pro Max v16.0: Chuyển sang bảng màu Y tế Emerald Mint dịu mát, nâng cấp bo góc siêu mềm mại (border-radius 28px - 32px), bo tròn nút pill (50px), và làm hiệu ứng cuộn & chuyển trang mượt như lụa (Apple Spring Curve).
+[2026-08-19T07:34:15+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v16.0.
+[2026-08-19T07:37:18+07:00] styles.css: Chuyển toàn bộ hệ thống giao diện sang gam màu Midnight Navy Blue (#132644 - chuẩn mẫu ảnh chị Huyền chọn) phối cùng Cyan & Gold Accent, thu nhỏ ảnh đại diện (125px desktop / 90px mobile) tinh tế, và tối ưu hóa 100% hiển thị mượt mà trên màn hình điện thoại v17.0.
+[2026-08-19T07:37:18+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v17.0.
+[2026-08-19T07:40:15+07:00] product_blueprint.md: Tạo mới bản thiết kế tổng thể sản phẩm Product Architecture & EdTech Blueprint bao gồm 10 hạng mục cốt lõi cho trang NURSING ENGLISH.
+[2026-08-19T07:44:01+07:00] ui_ux_design_system.md: Tạo mới bản quy chuẩn UI/UX Design System cho 7 màn hình học tập chính theo phong cách Frosted Glass UI.
+[2026-08-19T07:44:01+07:00] index.html, styles.css, app.js: Tích hợp trọn bộ 7 Màn hình học tập UX/UI (Home, Vocabulary, Practice, Speaking, Review, Progress, Profile) mượt mà theo phong cách CALM – MODERN – MEDICAL – PREMIUM – FRIENDLY v18.0.
+[2026-08-19T07:44:01+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v18.0.
+[2026-08-19T07:47:17+07:00] index.html, app.js: Nâng cấp toàn diện Hệ thống Flashcard Điều Dưỡng Chuyên Sâu 2 Mặt (Mặt trước: Hình ảnh y tế, Word, IPA, Audio; Mặt sau: Nghĩa Việt, Loại từ, Ví dụ lâm sàng, Dịch câu, Audio ví dụ, Nursing Note) kèm 3 nút đánh giá Spaced Repetition (Again, Good, Easy) v19.0.
+[2026-08-19T07:47:17+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v19.0.
+[2026-08-19T07:50:34+07:00] index.html, styles.css, app.js: Nâng cấp Practice Studio với trọn bộ 6 Dạng Bài Tập (1. Fill in blank, 2. Listen & Type, 3. Choose Word, 4. Matching, 5. IPA recognition, 6. Sentence Builder) và Hệ Thống Chấm Điểm & Giải Thích Vì Sao Sai Chi Tiết v20.0.
+[2026-08-19T07:50:34+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v20.0.
+[2026-08-19T07:53:38+07:00] index.html, app.js: Nâng cấp toàn diện Speaking Studio theo quy trình LISTEN ➔ RECORD ➔ ANALYZE ➔ CORRECT ➔ REPEAT (Native Audio 2 tốc độ Normal & Slow, nút Record/Stop, playback nghe lại, chấm điểm phát âm IPA, nút TRY AGAIN và huy hiệu AI-Assisted Pronunciation Feedback Disclaimer) v21.0.
+[2026-08-19T07:53:38+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v21.0.
+[2026-08-19T07:55:06+07:00] index.html, app.js: Nâng cấp toàn diện Hệ thống Ôn tập Thông minh Spaced Repetition (Phân loại 5 Trạng thái trí nhớ: NEW, LEARNING, REVIEW, DIFFICULT, MASTERED, tự động tạo gói Daily Review và 2 Chế độ thời gian linh hoạt: QUICK REVIEW 5 phút & FULL PRACTICE 15 phút) v22.0.
+[2026-08-19T07:55:06+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v22.0.
+[2026-08-19T07:55:52+07:00] data.js: Bổ sung Kho Tình Huống Nghề Nghiệp 16 Chủ Đề Chuyên Sâu Lâm Sàng (Bao gồm Vocab, IPA, Meaning, Nursing Context, Mẫu câu giao tiếp thực tế và 3 Kịch bản hội thoại chuẩn: Nurse-Patient, Nurse-Doctor, Nurse-Colleague) v23.0.
+[2026-08-19T07:55:52+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v23.0.
+[2026-08-19T07:57:19+07:00] index.html: Nâng cấp Dashboard Học Tập Cá Nhân Hóa trả lời ngay 5 câu hỏi cốt lõi (Hôm nay học gì, Học bao lâu, Tiến bộ bao nhiêu %, Yếu phần nào, Bây giờ nên học gì) với hiệu ứng kính mờ Frosted Glass UI dịu mát v24.0.
+[2026-08-19T07:57:19+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v24.0.
+[2026-08-19T07:58:25+07:00] database_architecture.md: Tạo mới bản thiết kế Cơ sở dữ liệu 20 Entities, Sơ đồ quan hệ ERD Diagram và Quy trình bảo mật & quyền riêng tư âm thanh Ephemeral Blob Storage.
+[2026-08-19T07:58:25+07:00] index.html, app.js: Tích hợp nút '🗑️ Xóa bản ghi âm của tôi (Delete My Recording)' trong Speaking Studio cho phép người học chủ động xóa file âm thanh giải phóng bộ nhớ RAM và bảo vệ 100% quyền riêng tư v25.0.
+[2026-08-19T07:58:25+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v25.0.
+[2026-08-19T07:59:26+07:00] ai_tutor_and_qa_report.md: Tạo mới bản thiết kế AI Tutor Phase 2 (English Nursing Coach & Roleplay Evaluation Matrix) và Báo cáo kiểm định chất lượng toàn diện QA Report (Function, UX, Mobile, Audio, Recording, Error Handling) v26.0.
+[2026-08-19T07:59:26+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v26.0.
+[2026-08-19T08:03:16+07:00] styles.css: Tinh chỉnh lại giao diện Banner Hero (.top-welcome-banner) chuẩn 100% theo mẫu hình ảnh mới chị Phạm Huyền tải lên (Gam màu Deep Navy Blue #07101e, khung trích dẫn có viền cam #f59e0b, nút bấm phát sáng cam và bóng đổ cực kỳ mượt mà) v27.0.
+[2026-08-19T08:03:16+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v27.0.
+[2026-08-19T08:05:34+07:00] index.html, styles.css: Kiểm tra và xác nhận giữ nguyên vẹn 100% toàn bộ bố cục Giao diện Header, Thanh điều hướng 7 Module và Banner Hero theo đúng mẫu hình ảnh chị Phạm Huyền yêu cầu v28.0.
+[2026-08-19T08:05:34+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v28.0.
+[2026-08-19T08:07:42+07:00] index.html: Cập nhật thẻ mã phiên bản styles.css?v=28.0 và lưu trực tiếp xuống ổ đĩa với thời gian LastWriteTime mới nhất (8:07 AM ngày 19/08/2026) v29.0.
+[2026-08-19T08:07:42+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v29.0.
+[2026-08-19T08:10:26+07:00] index.html, styles.css: Đặt thanh Tiến Độ Học Tập (.progress-bar-card) ngay dưới Banner Hero (.top-welcome-banner) chuẩn 100% theo hình ảnh thực tế địa chỉ D:/Huyen/english-nurse/index.html chị Phạm Huyền vừa gửi v30.0.
+[2026-08-19T08:10:26+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v30.0.
+

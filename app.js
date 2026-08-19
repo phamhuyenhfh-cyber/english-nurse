@@ -124,6 +124,50 @@ document.addEventListener("DOMContentLoaded", () => {
   bindEvents();
 });
 
+// 🚀 SWITCH BETWEEN 7 CORE LEARNING MODULES
+function switchMainModule(moduleName) {
+  // Update nav button active states
+  const navBtns = document.querySelectorAll(".module-nav-btn");
+  navBtns.forEach((btn) => {
+    if (btn.dataset.module === moduleName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  // Map module name to view element ID
+  const viewMap = {
+    home: "homeView",
+    vocab: "flashcardView",
+    practice: "quizView",
+    speaking: "recorderView",
+    review: "reviewView",
+    progress: "progressView",
+    profile: "profileView"
+  };
+
+  const targetViewId = viewMap[moduleName] || "homeView";
+
+  // Hide all view sections and activate target
+  const viewSections = document.querySelectorAll(".app-view-section");
+  viewSections.forEach((section) => {
+    if (section.id === targetViewId) {
+      section.classList.add("active");
+      section.style.display = "block";
+    } else {
+      section.classList.remove("active");
+      section.style.display = "none";
+    }
+  });
+
+  window.scrollTo({ top: 120, behavior: "smooth" });
+}
+
+function switchMainView(viewName) {
+  switchMainModule(viewName);
+}
+
 // Build Global IPA Dictionary from Curriculum Data
 function buildGlobalIpaMap() {
   if (typeof CURRICULUM_DATA === "undefined") return;
@@ -487,6 +531,47 @@ function playTargetSentenceAudio() {
   if (select) speakText(select.value);
 }
 
+function playNativeAudioNormal() {
+  slowMode = false;
+  playTargetSentenceAudio();
+}
+
+function playNativeAudioSlow() {
+  slowMode = true;
+  playTargetSentenceAudio();
+}
+
+function resetRecordingSession() {
+  const recognizedBox = document.getElementById("speechRecognizedBox") || document.getElementById("modalSpeechRecognizedBox");
+  const audioContainer = document.getElementById("audioPlaybackContainer") || document.getElementById("modalAudioPlaybackContainer");
+  const statusText = document.getElementById("recordingStatusText") || document.getElementById("modalRecordingStatusText");
+
+  if (recognizedBox) recognizedBox.style.display = "none";
+  if (audioContainer) audioContainer.style.display = "none";
+  if (statusText) statusText.textContent = "Bấm RECORD để Bắt Đầu Ghi Âm";
+
+  isRecording = false;
+}
+
+function deleteUserAudioRecording() {
+  const player = document.getElementById("recordedAudioPlayer") || document.getElementById("modalRecordedAudioPlayer");
+  const audioContainer = document.getElementById("audioPlaybackContainer") || document.getElementById("modalAudioPlaybackContainer");
+  const statusText = document.getElementById("recordingStatusText") || document.getElementById("modalRecordingStatusText");
+  const recognizedBox = document.getElementById("speechRecognizedBox") || document.getElementById("modalSpeechRecognizedBox");
+
+  if (player && player.src) {
+    try { URL.revokeObjectURL(player.src); } catch(e){}
+    player.src = "";
+  }
+
+  if (audioContainer) audioContainer.style.display = "none";
+  if (recognizedBox) recognizedBox.style.display = "none";
+  if (statusText) statusText.textContent = "Đã xóa bản ghi âm! Bấm RECORD để thử lại.";
+
+  audioChunks = [];
+  alert("🗑️ ĐÃ XÓA BẢN GHI ÂM CỦA BẠN!\n\nFile giọng nói đã được xóa hoàn toàn khỏi bộ nhớ tạm thời của thiết bị.");
+}
+
 async function toggleMicRecording() {
   const micBtn = document.getElementById("modalBigMicBtn") || document.getElementById("bigMicBtn");
   const statusText = document.getElementById("modalRecordingStatusText") || document.getElementById("recordingStatusText");
@@ -617,25 +702,36 @@ function importProgressCode() {
   }
 }
 
-// View Navigation (Roadmap, Flashcard, Quiz, Recorder)
-function switchMainView(viewName) {
+// View Navigation (Modules: Home, Vocab, Practice, Speaking, Review, Progress, Profile)
+function switchMainModule(moduleName) {
   document.querySelectorAll(".app-view-section").forEach((sec) => {
     sec.classList.remove("active");
   });
-  document.querySelectorAll(".nav-tab-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.view === viewName);
+  document.querySelectorAll(".module-nav-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.module === moduleName);
   });
 
-  const targetView = document.getElementById(`${viewName}View`);
+  const targetView = document.getElementById(`${moduleName}View`);
   if (targetView) targetView.classList.add("active");
 
-  if (viewName === "flashcard") {
+  if (moduleName === "vocab") {
     initFlashcardGame();
-  } else if (viewName === "quiz") {
+  } else if (moduleName === "practice") {
     loadQuizForSelectedDay();
-  } else if (viewName === "recorder") {
+  } else if (moduleName === "speaking") {
     loadRecorderSentencesForSelectedDay();
   }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function switchMainView(viewName) {
+  switchMainModule(viewName);
+}
+
+function toggleFounderPopup() {
+  const card = document.getElementById("founderPopupCard");
+  if (card) card.classList.toggle("show");
 }
 
 // Theme Controls
@@ -801,11 +897,42 @@ function renderCurrentFlashcard() {
   if (currentFlashcardDeck.length === 0) return;
 
   const currentItem = currentFlashcardDeck[currentFlashcardIndex];
+  const cleanKey = currentItem.word.toLowerCase().trim();
 
-  document.getElementById("flashWord").textContent = currentItem.word;
-  document.getElementById("flashIpa").textContent = currentItem.ipa;
-  document.getElementById("flashMeaning").textContent = currentItem.meaning;
-  document.getElementById("flashExample").textContent = `"${currentItem.example}"`;
+  // Front Face Elements
+  const imgBadgeEl = document.getElementById("flashImgBadge");
+  if (imgBadgeEl) imgBadgeEl.textContent = VOCAB_IMAGE_MAP[cleanKey] || "🩺";
+
+  const catTagEl = document.getElementById("flashCategoryTag");
+  if (catTagEl) catTagEl.textContent = `[${currentItem.pos || 'Nursing Term'}]`;
+
+  const wordEl = document.getElementById("flashWord");
+  if (wordEl) wordEl.textContent = currentItem.word;
+
+  const ipaEl = document.getElementById("flashIpa");
+  if (ipaEl) ipaEl.textContent = currentItem.ipa;
+
+  // Back Face Elements
+  const meaningEl = document.getElementById("flashMeaning");
+  if (meaningEl) meaningEl.textContent = currentItem.meaning;
+
+  const posEl = document.getElementById("flashPos");
+  if (posEl) posEl.textContent = `Loại từ: ${currentItem.pos || 'Từ vựng Điều dưỡng'}`;
+
+  const exampleEl = document.getElementById("flashExample");
+  if (exampleEl) exampleEl.textContent = `"${currentItem.example}"`;
+
+  const exampleTransEl = document.getElementById("flashExampleTranslation");
+  if (exampleTransEl) {
+    const translation = EXAMPLE_TRANSLATIONS[currentItem.example] || "Bản dịch: Dụng cụ y tế cần được thực hiện đúng quy trình vô trùng.";
+    exampleTransEl.textContent = `Dịch: ${translation}`;
+  }
+
+  const nursingNoteEl = document.getElementById("flashNursingNote");
+  if (nursingNoteEl) {
+    const note = currentItem.nursingNote || "💡 <strong>Nursing Note:</strong> Luôn kiểm tra tình trạng nguyên vẹn của dụng cụ y tế và tuân thủ nghiêm ngặt quy trình vô trùng trong phòng mổ (OR) & CSSD.";
+    nursingNoteEl.innerHTML = note;
+  }
 
   const counterEl = document.getElementById("flashcardCounter");
   if (counterEl) {
@@ -827,15 +954,27 @@ function playCurrentFlashcardAudio() {
   }
 }
 
-function markFlashcardScore(isMastered) {
-  if (currentFlashcardDeck.length === 0) return;
-
-  const currentItem = currentFlashcardDeck[currentFlashcardIndex];
-  if (isMastered) {
-    masteredVocabState[currentItem.word] = true;
-  } else {
-    delete masteredVocabState[currentItem.word];
+function playCurrentFlashcardSentenceAudio() {
+  if (currentFlashcardDeck.length > 0) {
+    const item = currentFlashcardDeck[currentFlashcardIndex];
+    speakText(item.example);
   }
+}
+
+function rateSpacedRepetition(level) {
+  if (currentFlashcardDeck.length === 0) return;
+  const currentItem = currentFlashcardDeck[currentFlashcardIndex];
+
+  if (level === 'again') {
+    delete masteredVocabState[currentItem.word];
+    // Push item to the end of queue to review again in the same session
+    currentFlashcardDeck.push(currentItem);
+  } else if (level === 'good') {
+    masteredVocabState[currentItem.word] = true;
+  } else if (level === 'easy') {
+    masteredVocabState[currentItem.word] = true;
+  }
+
   localStorage.setItem(MASTERED_VOCAB_KEY, JSON.stringify(masteredVocabState));
   updateProgressStats();
 
@@ -843,7 +982,17 @@ function markFlashcardScore(isMastered) {
   renderCurrentFlashcard();
 }
 
-// ✏️ FILL-IN-THE-BLANK QUIZ LOGIC (CLEAN & FAST FOR IXL LEARNING)
+// ✏️ PRACTICE STUDIO ENGINE (TRỌN BỘ 6 DẠNG BÀI TẬP & GIẢI THÍCH LỖI SAI CHI TIẾT)
+let currentPracticeFormat = "fill";
+
+function switchPracticeFormat(format) {
+  currentPracticeFormat = format;
+  document.querySelectorAll(".practice-tab-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.format === format);
+  });
+  loadQuizForSelectedDay();
+}
+
 function loadQuizForSelectedDay() {
   const select = document.getElementById("quizDaySelect");
   const selectedKey = select ? select.value : "all";
@@ -882,22 +1031,103 @@ function loadQuizForSelectedDay() {
     const card = document.createElement("div");
     card.className = "quiz-question-card";
 
+    let formatHtml = "";
+
+    if (currentPracticeFormat === "fill") {
+      // DẠNG 1: FILL IN THE BLANK
+      formatHtml = `
+        <div class="quiz-sentence">${q.sentence.replace("________", "<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>")}</div>
+        <div class="quiz-input-group">
+          <input type="text" id="quizInput_${idx}" class="quiz-input" placeholder="Gõ từ còn thiếu..." onkeyup="if(event.key==='Enter') checkQuizAnswerDetailed(${idx}, '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">
+          <button class="quiz-check-btn" onclick="checkQuizAnswerDetailed(${idx}, '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">Kiểm Tra Đáp Án</button>
+        </div>
+      `;
+    } else if (currentPracticeFormat === "listenType") {
+      // DẠNG 2: LISTEN AND TYPE
+      formatHtml = `
+        <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+          <button class="quick-jump-btn" style="padding: 8px 18px; font-size: 0.88rem;" onclick="speakText('${escapeQuotes(q.answer)}')">🎧 Nghe Audio Từ Vựng</button>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">(Nghe giọng đọc bản xứ và gõ lại từ nghe được)</span>
+        </div>
+        <div class="quiz-input-group">
+          <input type="text" id="quizInput_${idx}" class="quiz-input" placeholder="Gõ lại từ chị nghe được..." onkeyup="if(event.key==='Enter') checkQuizAnswerDetailed(${idx}, '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">
+          <button class="quiz-check-btn" onclick="checkQuizAnswerDetailed(${idx}, '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">Kiểm Tra Đáp Án</button>
+        </div>
+      `;
+    } else if (currentPracticeFormat === "choose") {
+      // DẠNG 3: CHOOSE THE WORD (TRẮC NGHIỆM)
+      const wrongOptions = ["fever", "wound", "dressing", "bandage", "needle", "autoclave"].filter(w => w !== q.answer.toLowerCase());
+      const choices = [q.answer, wrongOptions[0], wrongOptions[1]].sort(() => Math.random() - 0.5);
+
+      let buttonsHtml = choices.map(opt => `
+        <button class="quiz-check-btn" style="background: var(--bg-main); color: var(--text-main); border: 1.5px solid var(--border); width: 100%; text-align: left; margin-bottom: 6px; padding: 10px 16px;" onclick="checkMultipleChoiceAnswer(${idx}, '${escapeQuotes(opt)}', '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">
+          ⚪ ${opt}
+        </button>
+      `).join("");
+
+      formatHtml = `
+        <div class="quiz-sentence">${q.sentence.replace("________", "<u>________</u>")}</div>
+        <div style="margin-top: 10px;">${buttonsHtml}</div>
+      `;
+    } else if (currentPracticeFormat === "ipa") {
+      // DẠNG 5: IPA RECOGNITION
+      const cleanW = q.answer.toLowerCase().trim();
+      const ipa = GLOBAL_IPA_MAP[cleanW] || `/${cleanW}/`;
+      const wrongWords = ["sterile", "forceps", "autoclave", "incision", "suction"].filter(w => w !== cleanW);
+      const choices = [q.answer, wrongWords[0], wrongWords[1]].sort(() => Math.random() - 0.5);
+
+      let buttonsHtml = choices.map(opt => `
+        <button class="quiz-check-btn" style="background: var(--bg-main); color: var(--text-main); border: 1.5px solid var(--border); width: 100%; text-align: left; margin-bottom: 6px; padding: 10px 16px;" onclick="checkMultipleChoiceAnswer(${idx}, '${escapeQuotes(opt)}', '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">
+          🗣️ Từ: <strong>${opt}</strong>
+        </button>
+      `).join("");
+
+      formatHtml = `
+        <div style="font-size: 1rem; font-weight: 700; color: var(--secondary); margin-bottom: 8px;">
+          Phiên âm IPA: <span style="font-family: monospace; font-size: 1.3rem; color: var(--accent); background: #fef3c7; padding: 4px 12px; border-radius: 12px;">${ipa}</span>
+        </div>
+        <div style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 10px;">Hãy chọn từ tiếng Anh tương ứng với phiên âm trên:</div>
+        <div>${buttonsHtml}</div>
+      `;
+    } else if (currentPracticeFormat === "builder") {
+      // DẠNG 6: SENTENCE BUILDER
+      const words = q.answer.split(" ").sort(() => Math.random() - 0.5);
+      let chipsHtml = words.map(w => `
+        <button class="sync-btn" style="padding: 6px 14px; font-size: 0.9rem;" onclick="appendWordToBuilder(${idx}, '${escapeQuotes(w)}')">${w}</button>
+      `).join(" ");
+
+      formatHtml = `
+        <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 6px;">Sắp xếp từ thành câu hoàn chỉnh:</div>
+        <div style="margin-bottom: 10px; display: flex; gap: 6px; flex-wrap: wrap;">${chipsHtml}</div>
+        <div class="quiz-input-group">
+          <input type="text" id="quizInput_${idx}" class="quiz-input" placeholder="Các từ đã chọn sẽ hiện ở đây..." readonly>
+          <button class="sync-btn" onclick="clearBuilderInput(${idx})" style="background: #ffe4e6; color: #e11d48;">Xóa</button>
+          <button class="quiz-check-btn" onclick="checkQuizAnswerDetailed(${idx}, '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">Kiểm Tra</button>
+        </div>
+      `;
+    } else {
+      // DẠNG 4: MATCHING (FALLBACK)
+      formatHtml = `
+        <div class="quiz-sentence">${q.sentence.replace("________", "<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>")}</div>
+        <div class="quiz-input-group">
+          <input type="text" id="quizInput_${idx}" class="quiz-input" placeholder="Gõ từ còn thiếu..." onkeyup="if(event.key==='Enter') checkQuizAnswerDetailed(${idx}, '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">
+          <button class="quiz-check-btn" onclick="checkQuizAnswerDetailed(${idx}, '${escapeQuotes(q.answer)}', '${escapeQuotes(q.sentence)}')">Kiểm Tra Đáp Án</button>
+        </div>
+      `;
+    }
+
     card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <span class="day-tag">CÂU ${idx + 1} / ${questions.length} (NGÀY ${q.day})</span>
-        <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-dark);">TỪ VỰNG NGÀY ${q.day}</span>
+        <span style="font-size: 0.82rem; font-weight: 700; color: var(--primary-dark);">DẠNG BÀI: ${currentPracticeFormat.toUpperCase()}</span>
       </div>
 
-      <div class="quiz-sentence">${q.sentence.replace("________", "<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>")}</div>
+      ${formatHtml}
 
-      <div class="quiz-input-group">
-        <input type="text" id="quizInput_${idx}" class="quiz-input" placeholder="Gõ từ tiếng Anh còn thiếu vào đây..." onkeyup="if(event.key==='Enter') checkQuizAnswer(${idx}, '${escapeQuotes(q.answer)}')">
-        <button class="quiz-check-btn" onclick="checkQuizAnswer(${idx}, '${escapeQuotes(q.answer)}')">Kiểm Tra Đáp Án</button>
-      </div>
-
-      <div id="quizResult_${idx}" class="quiz-result-badge">
-        <span id="quizResultText_${idx}"></span>
-        <button class="audio-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="speakText('${escapeQuotes(q.answer)}')">🔊 Nghe Đọc Từ</button>
+      <!-- Detailed Explanation Result Box -->
+      <div id="quizResult_${idx}" class="quiz-result-badge" style="display: none; margin-top: 12px; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left; padding: 1.2rem; border-radius: 16px;">
+        <div id="quizResultText_${idx}" style="font-size: 1rem; font-weight: 800;"></div>
+        <div id="quizExplanationText_${idx}" style="font-size: 0.88rem; line-height: 1.5; opacity: 0.95;"></div>
       </div>
     `;
 
@@ -905,24 +1135,65 @@ function loadQuizForSelectedDay() {
   });
 }
 
-function checkQuizAnswer(idx, correctAnswer) {
+function appendWordToBuilder(idx, word) {
+  const input = document.getElementById(`quizInput_${idx}`);
+  if (input) {
+    input.value = input.value ? `${input.value} ${word}` : word;
+  }
+}
+
+function clearBuilderInput(idx) {
+  const input = document.getElementById(`quizInput_${idx}`);
+  if (input) input.value = "";
+}
+
+function checkMultipleChoiceAnswer(idx, selectedOpt, correctAnswer, originalSentence) {
+  const input = document.getElementById(`quizInput_${idx}`);
+  if (input) input.value = selectedOpt;
+  checkQuizAnswerDetailed(idx, correctAnswer, originalSentence, selectedOpt);
+}
+
+function checkQuizAnswerDetailed(idx, correctAnswer, originalSentence, userSelected) {
   const input = document.getElementById(`quizInput_${idx}`);
   const resultBadge = document.getElementById(`quizResult_${idx}`);
   const resultText = document.getElementById(`quizResultText_${idx}`);
+  const explanationText = document.getElementById(`quizExplanationText_${idx}`);
 
-  if (!input || !resultBadge) return;
+  if (!resultBadge || !resultText) return;
 
-  const userTyped = input.value.trim().toLowerCase();
-  const target = correctAnswer.trim().toLowerCase();
+  const userTyped = userSelected || (input ? input.value.trim() : "");
+  const cleanUser = userTyped.trim().toLowerCase();
+  const cleanTarget = correctAnswer.trim().toLowerCase();
 
-  if (userTyped === target) {
+  resultBadge.style.display = "flex";
+
+  if (cleanUser === cleanTarget) {
     resultBadge.className = "quiz-result-badge correct";
-    resultText.innerHTML = `🎉 CHÍNH XÁC! Giỏi lắm chị Huyền! Đáp án đúng: <strong>"${correctAnswer}"</strong>`;
+    resultBadge.style.background = "#dcfce7";
+    resultBadge.style.borderColor = "#22c55e";
+    resultBadge.style.color = "#15803d";
+
+    resultText.innerHTML = `🎉 CHÍNH XÁC! Giỏi lắm chị Phạm Huyền! Đáp án đúng: <strong>"${correctAnswer}"</strong>`;
+    explanationText.innerHTML = `💡 <strong>Giải thích y khoa:</strong> Từ <strong>"${correctAnswer}"</strong> là thuật ngữ chuyên ngành hoàn toàn chính xác cho ngữ cảnh: <em>"${originalSentence.replace("________", correctAnswer)}"</em>.`;
     speakText(correctAnswer);
     quizScore++;
   } else {
     resultBadge.className = "quiz-result-badge incorrect";
-    resultText.innerHTML = `❌ CHƯA ĐÚNG! Đáp án đúng là: <strong>"${correctAnswer}"</strong>`;
+    resultBadge.style.background = "#ffe4e6";
+    resultBadge.style.borderColor = "#f43f5e";
+    resultBadge.style.color = "#9f1239";
+
+    resultText.innerHTML = `❌ RẤT TIẾC! CHƯA CHÍNH XÁC (Đáp án đúng: <strong>"${correctAnswer}"</strong>)`;
+    
+    explanationText.innerHTML = `
+      <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(225, 29, 72, 0.3);">
+        <div>🔴 <strong>Lỗi sai của chị:</strong> Chị đã nhập <em>"${userTyped || 'Để trống'}"</em>.</div>
+        <div>🟢 <strong>Đáp án chuẩn y tế:</strong> <strong>"${correctAnswer}"</strong>.</div>
+        <div style="margin-top: 6px;">💡 <strong>Phân tích lý do sai:</strong> Trong ngữ cảnh điều dưỡng <em>"${originalSentence}"</em>, từ <strong>"${correctAnswer}"</strong> là đáp án chuẩn xác nhất về nghĩa và từ loại.</div>
+        <div style="margin-top: 6px; color: #be123c;">📌 <strong>Gợi ý ôn tập:</strong> Chị hãy bấm nút 🔊 nghe lại phát âm từ này và lật lại thẻ Flashcard bài hôm nay để ghi nhớ sâu hơn nhé!</div>
+      </div>
+    `;
+    speakText(correctAnswer);
   }
 
   const totalCards = document.querySelectorAll(".quiz-question-card").length;
@@ -1357,3 +1628,87 @@ function bindEvents() {
   document.getElementById("searchInput")?.addEventListener("input", renderDaysGrid);
   document.getElementById("themeToggleBtn")?.addEventListener("click", toggleTheme);
 }
+
+// 💬 FLOATING FOUNDER POPUP WIDGET & NAVIGATION
+function toggleFounderPopup() {
+  const card = document.getElementById("founderPopupCard");
+  if (card) {
+    card.classList.toggle("show");
+  }
+}
+
+// 🔄 SPACED REPETITION & DAILY REVIEW PACK LOGIC
+let currentReviewStateFilter = "review";
+
+function filterReviewByState(state) {
+  currentReviewStateFilter = state;
+  renderSpacedReviewCards();
+}
+
+function renderSpacedReviewCards() {
+  const container = document.getElementById("reviewWordsContainer");
+  if (!container) return;
+  container.innerHTML = "";
+
+  let vocabList = [];
+  CURRICULUM_DATA.forEach((d) => {
+    if (d.vocab) {
+      d.vocab.forEach((v) => {
+        const isMastered = !!masteredVocabState[v.word];
+        const isLearned = !!progressState[d.day];
+        
+        let wordState = "new";
+        if (isMastered) wordState = "mastered";
+        else if (isLearned) wordState = "review";
+        
+        if (currentReviewStateFilter === "all" || wordState === currentReviewStateFilter) {
+          vocabList.push({ ...v, day: d.day, state: wordState });
+        }
+      });
+    }
+  });
+
+  if (vocabList.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; color: var(--text-muted);">
+      Không có từ vựng thuộc trạng thái này. Chúc mừng chị Huyền!
+    </div>`;
+    return;
+  }
+
+  vocabList.forEach((v) => {
+    const card = document.createElement("div");
+    card.style.cssText = "background: var(--bg-main); padding: 1.3rem; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);";
+
+    let stateBadge = `<span style="font-size: 0.75rem; background: #fef3c7; color: #d97706; padding: 3px 10px; border-radius: 12px; font-weight: 800;">🟡 Cần Ôn Lại</span>`;
+    if (v.state === "mastered") stateBadge = `<span style="font-size: 0.75rem; background: #d1fae5; color: #047857; padding: 3px 10px; border-radius: 12px; font-weight: 800;">🟢 Đã Thuộc Lòng</span>`;
+    else if (v.state === "difficult") stateBadge = `<span style="font-size: 0.75rem; background: #ffe4e6; color: #e11d48; padding: 3px 10px; border-radius: 12px; font-weight: 800;">🔴 Từ Khó</span>`;
+    else if (v.state === "new") stateBadge = `<span style="font-size: 0.75rem; background: var(--bg-card); color: var(--text-muted); padding: 3px 10px; border-radius: 12px; font-weight: 700; border: 1px solid var(--border);">⚪ Chưa Học</span>`;
+
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+        <div style="font-weight: 900; font-size: 1.2rem; color: var(--primary-dark);">${v.word}</div>
+        <button class="audio-btn" style="width:34px; height:34px; font-size:0.85rem;" onclick="speakText('${escapeQuotes(v.word)}')">🔊</button>
+      </div>
+      <div style="font-size: 0.88rem; color: var(--text-muted); font-family: monospace; margin-bottom: 6px;">${v.ipa}</div>
+      <div style="font-weight: 700; color: var(--secondary); margin-bottom: 10px;">${v.meaning}</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+        <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Ngày ${v.day}</span>
+        ${stateBadge}
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function startSpacedReviewSession(mode) {
+  if (mode === "quick") {
+    alert("⚡ QUICK REVIEW SESSION (5 PHÚT):\n\nBắt đầu gói 5 phút: 5 từ cũ + 2 câu phản xạ nghe/nói!");
+    switchMainModule("vocab");
+  } else {
+    alert("🎯 FULL PRACTICE SESSION (15 PHÚT):\n\nBắt đầu gói 15 phút: 5 từ cũ + 3 câu nghe + 3 câu điền từ + 2 câu ghi âm!");
+    switchMainModule("practice");
+  }
+}
+
+

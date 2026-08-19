@@ -195,3 +195,126 @@ const CURRICULUM_DATA = [
 
   CURRICULUM_DATA.sort((a, b) => a.day - b.day);
 })();
+
+// 🏥 KHO TÌNH HUỐNG NGHỀ NGHIỆP ĐIỀU DƯỠNG (16 CHỦ ĐỀ CHUYÊN SÂU LÂM SÀNG)
+const CLINICAL_SCENARIOS_DATA = [
+  {
+    id: "greeting",
+    title: "1. Greeting Patients (Chào hỏi Bệnh nhân)",
+    icon: "👋",
+    sentences: [
+      { english: "Hello, good morning! How are you feeling today?", vietnamese: "Xin chào, chúc một buổi sáng tốt lành! Hôm nay bác cảm thấy thế nào ạ?" },
+      { english: "Welcome to the surgical ward.", vietnamese: "Chào mừng bác đến với khoa phẫu thuật." }
+    ],
+    dialogues: {
+      nursePatient: [
+        { speaker: "Nurse Huyen", english: "Good morning! I am Nurse Huyen. How are you feeling today?", vietnamese: "Chào bác! Cháu là điều dưỡng Huyền. Hôm nay bác cảm thấy thế nào ạ?" },
+        { speaker: "Patient", english: "Good morning Nurse. I am feeling much better, thank you.", vietnamese: "Chào cô điều dưỡng. Tôi cảm thấy tốt hơn nhiều rồi, cảm ơn cô." }
+      ],
+      nurseDoctor: [
+        { speaker: "Nurse Huyen", english: "Good morning Doctor. Patient David has been greeted and prepped for the morning round.", vietnamese: "Chào Bác sĩ. Bệnh nhân David đã được chào hỏi và chuẩn bị xong cho ca đi buồng sáng." },
+        { speaker: "Doctor", english: "Great work, Nurse Huyen. Let me check his recovery status.", vietnamese: "Tốt lắm điều dưỡng Huyền. Để tôi kiểm tra tình trạng phục hồi của bệnh nhân." }
+      ],
+      nurseColleague: [
+        { speaker: "Nurse Huyen", english: "Hi Lan, I just greeted the new patient in Room 402.", vietnamese: "Chào Lan, mình vừa chào hỏi bệnh nhân mới ở Phòng 402." },
+        { speaker: "Nurse Lan", english: "Thanks Huyen, I will update his admission file right now.", vietnamese: "Cảm ơn Huyền, mình sẽ cập nhật hồ sơ nhập viện của bệnh nhân ngay." }
+      ]
+    }
+  },
+  {
+    id: "introducing",
+    title: "2. Introducing Yourself (Giới thiệu Bản thân)",
+    icon: "🪪",
+    sentences: [
+      { english: "Hello, my name is Huyen. I will be your nurse today.", vietnamese: "Xin chào, tôi tên là Huyền. Tôi sẽ là điều dưỡng chăm sóc cho bác hôm nay." },
+      { english: "I am a scrub nurse working in the Operating Room and CSSD.", vietnamese: "Tôi là điều dưỡng dụng cụ làm việc tại Phòng Mổ và Khoa Tiệt trùng CSSD." }
+    ],
+    dialogues: {
+      nursePatient: [
+        { speaker: "Nurse Huyen", english: "Hello! My name is Huyen. I am your duty nurse for this morning shift.", vietnamese: "Xin chào! Cháu tên là Huyền. Cháu là điều dưỡng trực ca sáng hôm nay của bác." },
+        { speaker: "Patient", english: "Nice to meet you, Nurse Huyen. Thank you for looking after me.", vietnamese: "Rất vui được gặp cô, điều dưỡng Huyền. Cảm ơn cô đã chăm sóc tôi." }
+      ],
+      nurseDoctor: [
+        { speaker: "Nurse Huyen", english: "Hello Dr. Smith, I am Huyen, the scrub nurse for today's appendectomy operation.", vietnamese: "Chào Bác sĩ Smith, em là Huyền, điều dưỡng dụng cụ cho ca mổ ruột thừa hôm nay." },
+        { speaker: "Doctor", english: "Nice to meet you, Huyen. Please make sure the sterile laparoscopy set is ready.", vietnamese: "Rất vui được gặp em, Huyền. Hãy đảm bảo bộ dụng cụ nội soi vô trùng đã sẵn sàng nhé." }
+      ],
+      nurseColleague: [
+        { speaker: "Nurse Huyen", english: "Hello team, I am Nurse Huyen from the CSSD sterilization unit.", vietnamese: "Xin chào cả team, em là Điều dưỡng Huyền đến từ đơn vị tiệt trùng CSSD." },
+        { speaker: "Colleague", english: "Welcome Huyen! Glad to have you in the surgical team.", vietnamese: "Chào mừng Huyền! Rất vui được hợp tác cùng em trong đội ngũ phẫu thuật." }
+      ]
+    }
+  },
+  {
+    id: "vitals",
+    title: "3. Taking Vital Signs (Đo Chỉ Số Sinh Tồn)",
+    icon: "🩺",
+    sentences: [
+      { english: "I am going to check your blood pressure.", vietnamese: "Tôi sẽ kiểm tra huyết áp cho bác." },
+      { english: "Let me check your temperature.", vietnamese: "Để tôi đo nhiệt độ cho bác nhé." },
+      { english: "Please take a deep breath.", vietnamese: "Xin bác hãy hít một hơi thật sâu." }
+    ],
+    dialogues: {
+      nursePatient: [
+        { speaker: "Nurse Huyen", english: "I am going to check your blood pressure and pulse now. Please roll up your sleeve.", vietnamese: "Bây giờ cháu sẽ đo huyết áp và bắt mạch cho bác. Bác vui lòng xắn tay áo lên nhé." },
+        { speaker: "Patient", english: "Sure Nurse. Is my blood pressure normal?", vietnamese: "Được chứ cô. Huyết áp của tôi có bình thường không?" },
+        { speaker: "Nurse Huyen", english: "Your blood pressure is 120 over 80. Perfectly normal!", vietnamese: "Huyết áp của bác là 120 trên 80. Hoàn toàn bình thường ạ!" }
+      ],
+      nurseDoctor: [
+        { speaker: "Nurse Huyen", english: "Doctor, I just checked Mr. John's vitals. Blood pressure is 130/85, pulse 76, temperature 36.8°C.", vietnamese: "Bác sĩ ơi, em vừa kiểm tra chỉ số sinh tồn cho ông John. Huyết áp 130/85, mạch 76, nhiệt độ 36.8°C." },
+        { speaker: "Doctor", english: "Excellent, all vitals are stable. He is ready for pre-op clearance.", vietnamese: "Tuyệt vời, tất cả chỉ số đều ổn định. Bệnh nhân đủ điều kiện thông qua trước phẫu thuật." }
+      ],
+      nurseColleague: [
+        { speaker: "Nurse Huyen", english: "Lan, could you help me record the vital signs for Room 301?", vietnamese: "Lan ơi, cậu giúp mình ghi lại các chỉ số sinh tồn cho Phòng 301 được không?" },
+        { speaker: "Nurse Lan", english: "Sure Huyen! Read out the numbers and I will type them into the EHR system.", vietnamese: "Được chứ Huyền! Cậu cứ đọc số đi, mình gõ vào hệ thống bệnh án điện tử EHR cho." }
+      ]
+    }
+  },
+  {
+    id: "pain",
+    title: "4. Asking About Pain (Hỏi Độ Đau Bệnh Nhân)",
+    icon: "💊",
+    sentences: [
+      { english: "Are you feeling any pain?", vietnamese: "Bác có cảm thấy đau ở đâu không?" },
+      { english: "On a scale from 1 to 10, how severe is your pain?", vietnamese: "Trên thang điểm từ 1 đến 10, mức độ đau của bác là mấy điểm?" }
+    ],
+    dialogues: {
+      nursePatient: [
+        { speaker: "Nurse Huyen", english: "Are you feeling any pain around your incision site?", vietnamese: "Bác có cảm thấy đau ở vùng vết mổ không ạ?" },
+        { speaker: "Patient", english: "Yes nurse, it hurts a little when I move.", vietnamese: "Có cô điều dưỡng, hơi đau một chút khi tôi cử động." },
+        { speaker: "Nurse Huyen", english: "On a scale of 1 to 10, how would you rate the pain?", vietnamese: "Trên thang điểm từ 1 đến 10, bác đánh giá mức đau khoảng mấy điểm ạ?" }
+      ],
+      nurseDoctor: [
+        { speaker: "Nurse Huyen", english: "Doctor, the patient in bed 4 reports post-op pain score of 6 out of 10.", vietnamese: "Bác sĩ ơi, bệnh nhân ở giường 4 báo điểm đau sau mổ là 6/10." },
+        { speaker: "Doctor", english: "Understood. Please administer 500mg IV Paracetamol as prescribed.", vietnamese: "Đã rõ. Em cho bệnh nhân dùng 500mg Paracetamol truyền tĩnh mạch theo y lệnh nhé." }
+      ],
+      nurseColleague: [
+        { speaker: "Nurse Huyen", english: "Patient in 302 needs pain re-assessment in 30 minutes.", vietnamese: "Bệnh nhân ở phòng 302 cần đánh giá lại mức độ đau sau 30 phút nữa." },
+        { speaker: "Nurse Lan", english: "Got it! I will check her pain score during my next round.", vietnamese: "Đã nhớ! Mình sẽ kiểm tra điểm đau của cô ấy trong ca đi buồng tiếp theo." }
+      ]
+    }
+  },
+  {
+    id: "positioning",
+    title: "8. Patient Positioning (Tư Thế Bệnh Nhân Phòng Mổ)",
+    icon: "🛌",
+    sentences: [
+      { english: "Please lie down on your back.", vietnamese: "Xin bác nằm ngửa ra giường." },
+      { english: "Please turn onto your left side.", vietnamese: "Xin bác xoay người sang bên trái." }
+    ],
+    dialogues: {
+      nursePatient: [
+        { speaker: "Nurse Huyen", english: "Please lie down on your back and relax your arms.", vietnamese: "Xin bác nằm ngửa ra giường và thả lỏng hai tay nhé." },
+        { speaker: "Patient", english: "Like this, Nurse?", vietnamese: "Như thế này phải không cô?" },
+        { speaker: "Nurse Huyen", english: "Yes, perfect! I will place a soft pillow under your knees.", vietnamese: "Đúng rồi, rất chuẩn ạ! Cháu sẽ đặt một chiếc gối mềm dưới khớp gối của bác." }
+      ],
+      nurseDoctor: [
+        { speaker: "Nurse Huyen", english: "Doctor, the patient is positioned in the supine position for the abdominal surgery.", vietnamese: "Bác sĩ ơi, bệnh nhân đã được đặt nằm ở tư thế nằm ngửa cho ca phẫu thuật vùng bụng." },
+        { speaker: "Doctor", english: "Thank you Huyen. Ensure all pressure points are well padded.", vietnamese: "Cảm ơn em Huyền. Hãy đảm bảo các điểm tì đè được chèn lót đệm êm ái nhé." }
+      ],
+      nurseColleague: [
+        { speaker: "Nurse Huyen", english: "Lan, help me shift the patient into the lithotomy position for OR 2.", vietnamese: "Lan ơi, phụ mình chuyển tư thế bệnh nhân sang tư thế sản khoa cho Phòng Mổ số 2 với." },
+        { speaker: "Nurse Lan", english: "On my way! Let's make sure the leg supports are secure.", vietnamese: "Sang ngay đây! Đảm bảo các giá đỡ chân đã được chốt chắc chắn nhé." }
+      ]
+    }
+  }
+];
