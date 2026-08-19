@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC | PHẠM HUYỀN 0936786794</title>
-  <link rel="stylesheet" href="styles.css?v=110.0">
+  <link rel="stylesheet" href="styles.css?v=120.0">
   <style>
     /* EMBEDDED STYLES MATCHING EXACTLY THE REFERENCE IMAGE (WHITE GLASSMOPHIC DAY CARDS) */
     .controls-section {
@@ -318,25 +318,10 @@
       <select id="headerVoiceSelect" style="display: none;" onchange="changeSelectedVoice()"></select>
       <button class="sync-btn" onclick="exportProgressCode()" title="Copy mã tiến độ để dán sang máy cơ quan">📋 Copy Tiến Độ</button>
       <button class="sync-btn" onclick="importProgressCode()" title="Dán mã tiến độ từ máy nhà sang">📥 Dán Tiến Độ</button>
-      <button id="themeToggleBtn" class="theme-toggle-btn">🌙 Giao diện Tối</button>
-    </div>
-  </header>
-
-  <!-- 🌟 GLASSMORPHISM MAIN NAVIGATION BAR (7 CORE MODULES) -->
-  <nav class="main-module-nav">
-    <button class="module-nav-btn active" data-module="home" onclick="switchMainModule('home')">🏠 Home</button>
-    <button class="module-nav-btn" data-module="vocab" onclick="switchMainModule('vocab')">📖 Vocabulary</button>
-    <button class="module-nav-btn" data-module="practice" onclick="switchMainModule('practice')">✏️ Practice</button>
-    <button class="module-nav-btn" data-module="speaking" onclick="switchMainModule('speaking')">🎙️ Speaking</button>
-    <button class="module-nav-btn" data-module="review" onclick="switchMainModule('review')">🏆 Review</button>
-    <button class="module-nav-btn" data-module="progress" onclick="switchMainModule('progress')">📊 Progress</button>
-    <button class="module-nav-btn" data-module="profile" onclick="switchMainModule('profile')">👤 Profile</button>
-  </nav>
-
-  <!-- Main Container -->
+      <button   <!-- Main Container -->
   <main class="main-container">
 
-    <!-- MODULE 1: HOME (PERSONALIZED LEARNING DASHBOARD) -->
+    <!-- HOME (PERSONALIZED LEARNING DASHBOARD) -->
     <section id="homeView" class="app-view-section active">
       
       <!-- 🌟 TOP WELCOME HERO BANNER (BÊN TRÁI: TIÊU ĐỀ & LỜI CHÀO & SỐ ĐT | BÊN PHẢI: ẢNH CHỊ HUYỀN) -->
@@ -430,169 +415,6 @@
         </section>
       </section>
     </section>
-
-    <!-- MODULE 2: VOCABULARY SECTION -->
-    <section id="vocabView" class="app-view-section">
-      <div class="flashcard-game-container">
-        <div class="flashcard-deck-header">
-          <div>
-            <h2 style="color: var(--secondary);">🎴 KHO TỪ VỰNG & THẺ FLASHCARD 3D</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Học từ mới được chia theo từng Ngày học!</p>
-          </div>
-          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <select id="flashcardDeckSelect" class="unit-select" onchange="initFlashcardGame()">
-              <option value="all">📚 Tất cả từ vựng (90 Ngày)</option>
-              <option value="cssd">🧼 Từ vựng Tiệt trùng CSSD</option>
-              <!-- Day options dynamically added by app.js -->
-            </select>
-            <div class="flashcard-counter" id="flashcardCounter">Thẻ 1 / 10</div>
-          </div>
-        </div>
-
-        <!-- 3D Flip Card chuẩn quy chuẩn (Mặt trước: Tiếng Anh - Mặt sau: Phiên âm IPA & Nghĩa Tiếng Việt) -->
-        <div id="flashcardWrapper" class="flashcard-3d-wrapper" onclick="flipFlashcard()" style="max-width: 580px; height: 340px; margin: 1rem auto; perspective: 1000px; cursor: pointer;">
-          <div class="flashcard-inner" style="position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d;">
-            <!-- Front Face (MẶT TRƯỚC: CHỈ CHỨA TỪ TIẾNG ANH MỚI & NÚT NGHE ĐỌC) -->
-            <div class="flashcard-face flashcard-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 28px; padding: 2.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border: 2.5px solid #0d9488; box-shadow: 0 16px 40px rgba(13, 148, 136, 0.15);">
-              <span style="font-size: 0.85rem; font-weight: 800; color: #0d9488; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; background: #ccfbf1; padding: 4px 16px; border-radius: 50px;">MẶT TRƯỚC: TỪ TIẾNG ANH (NHẤN ĐỂ LẬT XEM PHIÊN ÂM & NGHĨA)</span>
-              <div id="flashWord" class="flash-word-text" style="font-size: 2.6rem; font-weight: 900; color: #0f172a; margin: 10px 0;">Scrub nurse</div>
-              <button class="audio-btn-pill" style="margin-top: 14px; background: #0d9488; color: #ffffff; border: none; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);" onclick="event.stopPropagation(); playCurrentFlashcardAudio()">🔊 Nghe Đọc Chuẩn</button>
-            </div>
-            <!-- Back Face (MẶT SAU: PHIÊN ÂM IPA + NGHĨA TIẾNG VIỆT & VÍ DỤ) -->
-            <div class="flashcard-face flashcard-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 28px; padding: 2.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #07101e 0%, #11223e 100%); color: #ffffff; transform: rotateY(180deg); border: 2.5px solid #38bdf8; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);">
-              <span style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; background: rgba(56, 189, 248, 0.15); padding: 4px 16px; border-radius: 50px; border: 1px solid rgba(56, 189, 248, 0.3);">MẶT SAU: PHIÊN ÂM IPA & NGHĨA TIẾNG VIỆT</span>
-              
-              <!-- PHIÊN ÂM IPA NỔI BẬT Ở MẶT SAU -->
-              <div id="flashIpa" class="flash-ipa-text" style="font-family: monospace; font-size: 1.4rem; font-weight: 800; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 4px 18px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); margin: 6px 0 12px 0;">/skrʌb nɜːs/</div>
-              
-              <!-- NGHĨA TIẾNG VIỆT -->
-              <div id="flashMeaning" class="flash-meaning-text" style="font-size: 1.45rem; font-weight: 900; color: #ffffff; margin-bottom: 8px;">Điều dưỡng dụng cụ phòng mổ</div>
-              
-              <!-- CÂU VÍ DỤ -->
-              <div id="flashExample" class="flash-example-text" style="font-size: 0.95rem; color: #94a3b8; font-style: italic; background: rgba(255, 255, 255, 0.08); padding: 8px 16px; border-radius: 14px;">"I am a scrub nurse in the operating theatre."</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Flashcard Game Action Buttons -->
-        <div class="flashcard-game-actions">
-          <button class="game-btn btn-again" onclick="markFlashcardScore(false)">❌ Chưa Thuộc (Học Lại)</button>
-          <button class="game-btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border);" onclick="flipFlashcard()">🔄 Lật Thẻ</button>
-          <button class="game-btn btn-know" onclick="markFlashcardScore(true)">✅ Đã Thuộc (Đạt)</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- MODULE 3: PRACTICE SECTION (BÀI TẬP ĐIỀN TỪ) -->
-    <section id="practiceView" class="app-view-section">
-      <div class="quiz-container">
-        <div class="quiz-header-banner">
-          <div>
-            <h2 style="color: var(--secondary);">✏️ BÀI TẬP ĐIỀN TỪ KIỂM TRA TRÍ NHỚ</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Gõ từ tiếng Anh còn thiếu vào ô trống và bấm Kiểm Tra Đáp Án!</p>
-          </div>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <select id="quizDaySelect" class="unit-select" onchange="loadQuizForSelectedDay()">
-              <option value="all">📚 Bài tập Điền từ (Tất cả ngày)</option>
-              <!-- Day options dynamically added by app.js -->
-            </select>
-            <div class="flashcard-counter" id="quizScoreText">Điểm: 0 / 0</div>
-          </div>
-        </div>
-
-        <!-- Quiz List Cards Container -->
-        <div id="quizCardsContainer" style="display: flex; flex-direction: column; gap: 1.25rem;">
-          <!-- Generated dynamically by app.js -->
-        </div>
-      </div>
-    </section>
-
-    <!-- MODULE 4: SPEAKING SECTION (PHÒNG GHI ÂM) -->
-    <section id="speakingView" class="app-view-section">
-      <div class="recorder-studio-container">
-        <div>
-          <h2 style="color: var(--secondary); margin-bottom: 0.25rem;">🎙️ PHÒNG GHI ÂM & CHẤM PHÁT ÂM THEO NGÀY</h2>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">Ghi âm giọng nói của chị theo từng Ngày học (1 - 90), nghe lại và so sánh trực tiếp với giọng đọc chuẩn bản xứ!</p>
-        </div>
-
-        <!-- Sample Sentence Selector for Recording -->
-        <div style="background: var(--bg-main); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border);">
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; align-items: center;">
-            <label style="font-weight: 800; white-space: nowrap; color: var(--primary-dark);">🗓️ Chọn Ngày Luyện Ghi Âm:</label>
-            <select id="recorderDaySelect" class="unit-select" style="flex-grow: 1;" onchange="loadRecorderSentencesForSelectedDay()">
-              <option value="all">📚 Tất cả 90 Ngày học</option>
-              <!-- Day options dynamically added by app.js -->
-            </select>
-          </div>
-
-          <label style="font-weight: 700; display: block; margin-bottom: 6px;">Chọn mẫu câu luyện ghi âm hôm nay:</label>
-          <select id="recorderSentenceSelect" class="unit-select" style="width: 100%;" onchange="updateRecorderSentence()">
-            <!-- Dynamic sentences added by app.js -->
-          </select>
-
-          <div style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div id="targetSentenceDisplay" style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark);">
-              "I am a scrub nurse working in the CSSD department."
-            </div>
-            <button class="audio-btn-pill" onclick="playTargetSentenceAudio()">🔊 Nghe Mẫu</button>
-          </div>
-        </div>
-
-        <!-- Recording Mic Box -->
-        <div class="recorder-mic-box">
-          <button id="bigMicBtn" class="big-mic-btn" onclick="toggleMicRecording()">🎙️</button>
-          <div id="recordingStatusText" class="recording-status-text">Bấm vào biểu tượng Micro để Bắt Đầu Ghi Âm</div>
-
-          <!-- Recorded Audio Player -->
-          <div id="audioPlaybackContainer" style="display: none; width: 100%; text-align: center; margin-top: 1rem;">
-            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 6px;">🎧 Giọng nói vừa ghi âm của chị Huyền:</div>
-            <audio id="recordedAudioPlayer" controls class="recorded-audio-player"></audio>
-          </div>
-
-          <!-- Speech Recognition Result -->
-          <div id="speechRecognizedBox" style="display: none; margin-top: 1rem; background: var(--bg-card); padding: 1.2rem; border-radius: 12px; width: 100%; border: 1px solid var(--border); text-align: left;">
-            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-muted); text-transform: uppercase;">Văn bản nhận dạng từ giọng nói của chị:</div>
-            <div id="recognizedTextOutput" style="font-size: 1.15rem; font-weight: 800; color: var(--secondary); margin: 8px 0; line-height: 1.5;">...</div>
-            <div id="speechFeedbackText" style="font-weight: 800; font-size: 1rem; margin-top: 8px;">...</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MODULE 5: REVIEW SECTION (KIỂM TRA ĐÓNG GÓI TUẦN) -->
-    <section id="reviewView" class="app-view-section">
-      <div style="background: var(--bg-card); padding: 1.8rem; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow);">
-        <h2 style="color: var(--secondary); margin-bottom: 0.5rem;">🏆 BÀI KIỂM TRA ĐÓNG GÓI KIẾN THỨC TUẦN</h2>
-        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Vui lòng mở từng Bài Học cụ thể trong phần 🗓️ Lộ Trình để tham gia Bài Kiểm Tra Đóng Gói Tuần tương ứng!</p>
-        <button class="quick-jump-btn" onclick="switchMainModule('home')">👈 Quay Về Trang Chủ</button>
-      </div>
-    </section>
-
-    <!-- MODULE 6: PROGRESS SECTION (BÁO CÁO CHI TIẾT) -->
-    <section id="progressView" class="app-view-section">
-      <div style="background: var(--bg-card); padding: 1.8rem; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow);">
-        <h2 style="color: var(--secondary); margin-bottom: 0.5rem;">📊 BÁO CÁO TIẾN ĐỘ THÀNH THẠO 90 NGÀY</h2>
-        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Xem tổng quan chuỗi kiên trì và tiến độ từng Unit của chị Phạm Huyền!</p>
-        <button class="quick-jump-btn" onclick="switchMainModule('home')">👈 Quay Về Trang Chủ</button>
-      </div>
-    </section>
-
-    <!-- MODULE 7: PROFILE SECTION (THÔNG TIN TÁC GIẢ PHẠM HUYỀN) -->
-    <section id="profileView" class="app-view-section">
-      <div style="background: var(--bg-card); padding: 2rem; border-radius: 26px; border: 1px solid var(--border); box-shadow: var(--shadow); max-width: 680px; margin: 0 auto; text-align: center;">
-        <img src="huyen_avatar.png" alt="Phạm Huyền" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); margin-bottom: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-        <h2 style="color: var(--secondary); margin-bottom: 0.25rem;">PHẠM HUYỀN</h2>
-        <div style="font-weight: 800; color: var(--primary-dark); font-size: 0.95rem; margin-bottom: 1rem;">ĐIỀU DƯỠNG DỤNG CỤ & TIỆT TRÙNG TRUNG TÂM (CSSD)</div>
-        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
-          "Nơi mang đến giải pháp 5 phút mỗi ngày – để tiếng Anh điều dưỡng không còn nằm trên trang giấy!"
-        </p>
-        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-          <a href="https://zalo.me/0936786794" target="_blank" class="sync-btn" style="background: #0068ff; color: white;">💬 Zalo: 0936786794</a>
-          <a href="tel:0936786794" class="sync-btn" style="background: #10b981; color: white;">📞 Điện thoại: 0936786794</a>
-        </div>
-      </div>
-    </section>
-
   </main>
 
   <!-- Lesson Detail Modal -->
@@ -660,7 +482,7 @@
     </button>
   </div>
 
-  <script src="data.js?v=110.0"></script>
-  <script src="app.js?v=110.0"></script>
+  <script src="data.js?v=120.0"></script>
+  <script src="app.js?v=120.0"></script>
 </body>
 </html>
