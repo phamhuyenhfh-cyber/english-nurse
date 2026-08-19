@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC | PHẠM HUYỀN 0936786794</title>
-  <link rel="stylesheet" href="styles.css?v=120.0">
+  <link rel="stylesheet" href="styles.css?v=130.0">
   <style>
     /* EMBEDDED STYLES MATCHING EXACTLY THE REFERENCE IMAGE (WHITE GLASSMOPHIC DAY CARDS) */
     .controls-section {
@@ -318,7 +318,22 @@
       <select id="headerVoiceSelect" style="display: none;" onchange="changeSelectedVoice()"></select>
       <button class="sync-btn" onclick="exportProgressCode()" title="Copy mã tiến độ để dán sang máy cơ quan">📋 Copy Tiến Độ</button>
       <button class="sync-btn" onclick="importProgressCode()" title="Dán mã tiến độ từ máy nhà sang">📥 Dán Tiến Độ</button>
-      <button   <!-- Main Container -->
+      <button id="themeToggleBtn" class="theme-toggle-btn">🌙 Giao diện Tối</button>
+    </div>
+  </header>
+
+  <!-- 🌟 GLASSMORPHISM MAIN NAVIGATION BAR (HÀI HÒA MÁY TÍNH & ĐIỆN THOẠI) -->
+  <nav class="main-module-nav" style="display: flex; justify-content: center; gap: 10px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 8px 16px; border-radius: 50px; border: 1px solid #e2e8f0; margin: 1rem auto; max-width: 900px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); overflow-x: auto; white-space: nowrap;">
+    <button class="module-nav-btn active" data-module="home" onclick="switchMainModule('home')" style="padding: 8px 18px; border-radius: 30px; border: none; font-weight: 800; font-size: 0.88rem; cursor: pointer; background: #0f172a; color: #ffffff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);">🏠 Home</button>
+    <button class="module-nav-btn" data-module="vocab" onclick="openQuickModalTab('vocab')" style="padding: 8px 18px; border-radius: 30px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: transparent; color: #475569;">📖 Vocabulary</button>
+    <button class="module-nav-btn" data-module="practice" onclick="openQuickModalTab('quiz')" style="padding: 8px 18px; border-radius: 30px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: transparent; color: #475569;">✏️ Practice</button>
+    <button class="module-nav-btn" data-module="speaking" onclick="openQuickModalTab('recorder')" style="padding: 8px 18px; border-radius: 30px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: transparent; color: #475569;">🎙️ Speaking</button>
+    <button class="module-nav-btn" data-module="review" onclick="openQuickModalTab('weeklyTest')" style="padding: 8px 18px; border-radius: 30px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: transparent; color: #475569;">🏆 Review</button>
+    <button class="module-nav-btn" data-module="progress" onclick="openQuickModalTab('cssd')" style="padding: 8px 18px; border-radius: 30px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: transparent; color: #475569;">📊 Progress</button>
+    <button class="module-nav-btn" data-module="profile" onclick="toggleFounderPopup()" style="padding: 8px 18px; border-radius: 30px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; background: transparent; color: #475569;">👤 Profile</button>
+  </nav>
+
+  <!-- Main Container -->
   <main class="main-container">
 
     <!-- HOME (PERSONALIZED LEARNING DASHBOARD) -->
@@ -482,7 +497,7 @@
     </button>
   </div>
 
-  <script src="data.js?v=120.0"></script>
-  <script src="app.js?v=120.0"></script>
+  <script src="data.js?v=130.0"></script>
+  <script src="app.js?v=130.0"></script>
 </body>
 </html>

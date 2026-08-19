@@ -1223,6 +1223,13 @@ function updateQuizScoreText(score, total) {
   }
 }
 
+// Quick Modal Launcher for Header Navigation Bar
+function openQuickModalTab(tabName) {
+  const day = activeDay ? activeDay.day : 1;
+  openLessonModal(day);
+  if (tabName) switchTab(tabName);
+}
+
 // Modal Lesson Detail & 3D Flashcard & Audio Recorder Integration
 function openLessonModal(day) {
   day = Number(day);

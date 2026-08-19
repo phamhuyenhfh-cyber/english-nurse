@@ -131,3 +131,4 @@
 [2026-08-19T10:39:27+07:00] index.html & app.js: Chuẩn hóa 100% cấu trúc thẻ 3D Flashcard: MẶT TRƯỚC CHỈ CHỨA từ Tiếng Anh & Nút Nghe Đọc; MẶT SAU CHỨA Phiên âm IPA màu cam nổi bật, Nghĩa Tiếng Việt & Câu ví dụ v70.0.
 [2026-08-19T10:44:18+07:00] index.html: Áp dụng version cache-busting v100.0 nâng cấp hệ thống bắt buộc xóa toàn bộ bộ nhớ đệm cũ trên thiết bị di động và máy tính.
 [2026-08-19T10:50:23+07:00] index.html & app.js: Tối ưu hóa giao diện Mobile-First Responsive UI Pro Max cho điện thoại cực kỳ gọn gàng, thoáng mắt, bo tròn mềm mại và bổ sung hình ảnh minh họa dụng cụ y tế nổi bật trên cả 2 mặt thẻ 3D Flashcard v110.0.
+[2026-08-19T11:00:30+07:00] index.html: Cắt bỏ hoàn toàn các section dư thừa phía dưới trang chủ (Flashcard 3D danh sách dài, Bài tập điền từ 361 câu bên ngoài) và thanh điều hướng thừa; gom toàn bộ 7 module học vào cửa sổ Vào Bài Học gọn gàng v120.0.
