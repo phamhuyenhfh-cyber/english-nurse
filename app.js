@@ -1596,13 +1596,36 @@ function renderModalTabContent() {
         </div>
 
         <!-- Part 2: Multiple Choice Sentence Test -->
-        <div style="background: var(--bg-main); padding: 1.25rem; border-radius: 16px; border: 1px solid var(--border);">
-          <h4 style="color: var(--primary-dark); margin-bottom: 0.8rem;">🔘 PHẦN 2: TRẮC NGHIỆM CHỌN CÂU Y TẾ ĐÚNG</h4>
-          <div style="font-weight: 700; margin-bottom: 0.8rem;">Câu hỏi: Công việc chính của Điều dưỡng dụng cụ (Scrub Nurse) trong phòng mổ là gì?</div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <button class="quiz-check-btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); text-align: left;" onclick="this.style.background='#dcfce7'; this.style.borderColor='#22c55e'; speakText('I clean, inspect, and sterilize surgical instruments.')">A. "I clean, inspect, and sterilize surgical instruments." (Chính xác ✅)</button>
-            <button class="quiz-check-btn" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); text-align: left;" onclick="this.style.background='#ffe4e6'; alert('❌ Chưa đúng! Chọn lại phương án A nhé.')">B. "I drive the ambulance to pick up emergency patients."</button>
+        <div style="background: #ffffff !important; padding: 1.5rem !important; border-radius: 20px !important; border: 1.5px solid #cbd5e1 !important; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <h4 style="color: #0d9488 !important; margin: 0; font-size: 1.1rem; font-weight: 800;">🔘 PHẦN 2: TRẮC NGHIỆM CHỌN CÂU Y TẾ ĐÚNG</h4>
+            <span style="background: #ccfbf1; color: #0f766e; font-weight: 800; font-size: 0.8rem; padding: 4px 12px; border-radius: 50px;">Ngày ${activeDay.day}</span>
           </div>
+          
+          <div style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; line-height: 1.5; background: #f0fdf4; padding: 1rem; border-radius: 14px; border-left: 5px solid #0d9488;">
+            ❓ Câu hỏi: Công việc chính của Điều dưỡng dụng cụ (Scrub Nurse) trong phòng mổ là gì?
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="mc-option-btn" id="mcOpt_A" style="padding: 14px 18px !important; border-radius: 14px !important; border: 1.5px solid #cbd5e1 !important; background: #ffffff !important; color: #0f172a !important; font-weight: 700 !important; font-size: 0.98rem !important; cursor: pointer !important; text-align: left !important; transition: all 0.2s ease !important;" onclick="selectMcOption(this, 'A')">
+              A. "I clean, inspect, and sterilize surgical instruments."
+            </button>
+            <button class="mc-option-btn" id="mcOpt_B" style="padding: 14px 18px !important; border-radius: 14px !important; border: 1.5px solid #cbd5e1 !important; background: #ffffff !important; color: #0f172a !important; font-weight: 700 !important; font-size: 0.98rem !important; cursor: pointer !important; text-align: left !important; transition: all 0.2s ease !important;" onclick="selectMcOption(this, 'B')">
+              B. "I drive the ambulance to pick up emergency patients."
+            </button>
+            <button class="mc-option-btn" id="mcOpt_C" style="padding: 14px 18px !important; border-radius: 14px !important; border: 1.5px solid #cbd5e1 !important; background: #ffffff !important; color: #0f172a !important; font-weight: 700 !important; font-size: 0.98rem !important; cursor: pointer !important; text-align: left !important; transition: all 0.2s ease !important;" onclick="selectMcOption(this, 'C')">
+              C. "I prescribe oral medication for outpatients."
+            </button>
+            <button class="mc-option-btn" id="mcOpt_D" style="padding: 14px 18px !important; border-radius: 14px !important; border: 1.5px solid #cbd5e1 !important; background: #ffffff !important; color: #0f172a !important; font-weight: 700 !important; font-size: 0.98rem !important; cursor: pointer !important; text-align: left !important; transition: all 0.2s ease !important;" onclick="selectMcOption(this, 'D')">
+              D. "I perform heart surgery on the patient."
+            </button>
+          </div>
+
+          <button class="quiz-submit-btn" onclick="submitMcTest('A', 'I clean, inspect, and sterilize surgical instruments.')" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important; color: #ffffff !important; border: none !important; border-radius: 14px !important; padding: 14px 28px !important; font-weight: 800 !important; font-size: 1rem !important; cursor: pointer !important; margin-top: 1.2rem !important; width: 100% !important; box-shadow: 0 6px 18px rgba(13, 148, 136, 0.35) !important;">
+            ✓ NỘP BÀI KIỂM TRA TRẮC NGHIỆM
+          </button>
+
+          <div id="mcFeedbackBadge" style="display: none; margin-top: 1rem; padding: 12px 18px; border-radius: 14px; font-weight: 800; align-items: center; justify-content: space-between;"></div>
         </div>
       </div>
     `;
@@ -1751,6 +1774,80 @@ function checkModalQuizAnswer(idx, correctAnswer) {
     resultText.innerHTML = `❌ CHƯA ĐÚNG! Đáp án đúng là: <strong>"${correctAnswer}"</strong> (Chị gõ lại thử nhé!)`;
     input.style.border = "2.5px solid #f43f5e";
     input.style.background = "#fff1f2";
+  }
+}
+
+// 🔘 MULTIPLE CHOICE TEST WORKFLOW (CHỌN XONG MỚI BẤM NỘP BÀI)
+let currentMcSelectedOption = null;
+
+function selectMcOption(btnEl, optionKey) {
+  currentMcSelectedOption = optionKey;
+
+  // Unhighlight all options
+  const buttons = document.querySelectorAll(".mc-option-btn");
+  buttons.forEach((b) => {
+    b.style.setProperty("background", "#ffffff", "important");
+    b.style.setProperty("border", "1.5px solid #cbd5e1", "important");
+    b.style.setProperty("color", "#0f172a", "important");
+    b.style.setProperty("font-weight", "700", "important");
+  });
+
+  // Highlight selected option
+  btnEl.style.setProperty("background", "#e0f2fe", "important");
+  btnEl.style.setProperty("border", "2.5px solid #0284c7", "important");
+  btnEl.style.setProperty("color", "#0369a1", "important");
+  btnEl.style.setProperty("font-weight", "800", "important");
+
+  // Hide feedback badge until user submits
+  const feedbackBadge = document.getElementById("mcFeedbackBadge");
+  if (feedbackBadge) feedbackBadge.style.display = "none";
+}
+
+function submitMcTest(correctKey, correctAudioText) {
+  const feedbackBadge = document.getElementById("mcFeedbackBadge");
+  if (!feedbackBadge) return;
+
+  if (!currentMcSelectedOption) {
+    alert("⚠️ CHÚ Ý: Chị chưa chọn phương án nào!\n\nVui lòng bấm chọn 1 phương án (A, B, C hoặc D) trước khi bấm nút 'NỘP BÀI KIỂM TRA TRẮC NGHIỆM' nhé.");
+    return;
+  }
+
+  const selectedBtn = document.getElementById(`mcOpt_${currentMcSelectedOption}`);
+
+  if (currentMcSelectedOption === correctKey) {
+    if (selectedBtn) {
+      selectedBtn.style.setProperty("background", "#dcfce7", "important");
+      selectedBtn.style.setProperty("border", "2.5px solid #22c55e", "important");
+      selectedBtn.style.setProperty("color", "#15803d", "important");
+      selectedBtn.style.setProperty("font-weight", "800", "important");
+    }
+
+    feedbackBadge.style.display = "flex";
+    feedbackBadge.style.alignItems = "center";
+    feedbackBadge.style.justifyContent = "space-between";
+    feedbackBadge.style.background = "#dcfce7";
+    feedbackBadge.style.border = "1.5px solid #22c55e";
+    feedbackBadge.style.color = "#0f766e";
+    feedbackBadge.style.fontWeight = "800";
+    feedbackBadge.innerHTML = `🎉 CHÍNH XÁC! Giỏi lắm chị Huyền! Phương án ${correctKey} chị chọn là đáp án hoàn toàn đúng!`;
+
+    if (correctAudioText) speakText(correctAudioText);
+  } else {
+    if (selectedBtn) {
+      selectedBtn.style.setProperty("background", "#ffe4e6", "important");
+      selectedBtn.style.setProperty("border", "2.5px solid #f43f5e", "important");
+      selectedBtn.style.setProperty("color", "#be123c", "important");
+      selectedBtn.style.setProperty("font-weight", "800", "important");
+    }
+
+    feedbackBadge.style.display = "flex";
+    feedbackBadge.style.alignItems = "center";
+    feedbackBadge.style.justifyContent = "space-between";
+    feedbackBadge.style.background = "#ffe4e6";
+    feedbackBadge.style.border = "1.5px solid #f43f5e";
+    feedbackBadge.style.color = "#be123c";
+    feedbackBadge.style.fontWeight = "800";
+    feedbackBadge.innerHTML = `❌ CHƯA ĐÚNG! Chị chọn phương án ${currentMcSelectedOption} chưa chính xác. Đáp án đúng là: <strong>${correctKey}. "${correctAudioText}"</strong> (Chị thử chọn lại nhé!)`;
   }
 }
 
