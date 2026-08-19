@@ -1411,36 +1411,50 @@ function renderModalTabContent() {
     }
 
     const currentItem = vocabList[modalFlashcardIndex];
+    const cleanWordKey = currentItem.word.toLowerCase().trim();
+    const visualIcon = VOCAB_IMAGE_MAP[cleanWordKey] || "🩺";
+    const exampleTranslation = EXAMPLE_TRANSLATIONS[currentItem.example] || "Bản dịch: Dụng cụ phẫu thuật cần kiểm tra quy trình tiệt trùng.";
 
     let html = `
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-        <div style="display: flex; justify-content: space-between; width: 100%; max-width: 520px; align-items: center;">
-          <h3 style="color: var(--secondary);">🎴 Thẻ Flashcard 3D (Ngày ${activeDay.day})</h3>
-          <span style="font-weight: 800; color: var(--primary-dark);">Thẻ ${modalFlashcardIndex + 1} / ${vocabList.length}</span>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%;">
+        <div style="display: flex; justify-content: space-between; width: 100%; max-width: 540px; align-items: center;">
+          <h3 style="color: var(--secondary); font-size: 1.1rem;">🎴 Thẻ Flashcard 3D (Ngày ${activeDay.day})</h3>
+          <span style="font-weight: 800; color: var(--primary-dark); font-size: 0.9rem;">Thẻ ${modalFlashcardIndex + 1} / ${vocabList.length}</span>
         </div>
 
-        <!-- Modal 3D Flip Card chuẩn quy chuẩn (Mặt trước: Tiếng Anh - Mặt sau: Phiên âm IPA & Nghĩa Tiếng Việt) -->
-        <div id="modalFlashcardWrapper" class="flashcard-3d-wrapper ${modalIsCardFlipped ? "flipped" : ""}" onclick="flipModalFlashcard()" style="max-width: 540px; height: 320px; margin: 0.8rem auto; perspective: 1000px; cursor: pointer;">
+        <!-- Modal 3D Flip Card chuẩn quy chuẩn (Mặt trước: Tiếng Anh & Hình Ảnh - Mặt sau: Phiên âm IPA & Nghĩa Tiếng Việt) -->
+        <div id="modalFlashcardWrapper" class="flashcard-3d-wrapper ${modalIsCardFlipped ? "flipped" : ""}" onclick="flipModalFlashcard()" style="width: 100%; max-width: 540px; height: 350px; margin: 0.5rem auto; perspective: 1000px; cursor: pointer;">
           <div class="flashcard-inner" style="position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d;">
-            <!-- Front Face (MẶT TRƯỚC: CHỈ CHỨA TỪ TIẾNG ANH MỚI & NÚT NGHE ĐỌC) -->
-            <div class="flashcard-face flashcard-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 24px; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border: 2.5px solid #0d9488; box-shadow: 0 14px 36px rgba(13, 148, 136, 0.15);">
-              <span style="font-size: 0.8rem; font-weight: 800; color: #0d9488; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; background: #ccfbf1; padding: 4px 14px; border-radius: 50px;">MẶT TRƯỚC: TỪ TIẾNG ANH (NHẤN ĐỂ LẬT XEM PHIÊN ÂM & NGHĨA)</span>
-              <div class="flash-word-text" style="font-size: 2.4rem; font-weight: 900; color: #0f172a; margin: 8px 0;">${currentItem.word}</div>
-              <button class="audio-btn-pill" style="margin-top: 12px; background: #0d9488; color: #ffffff; border: none; padding: 8px 22px; border-radius: 50px; font-weight: 800; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);" onclick="event.stopPropagation(); speakText('${escapeQuotes(currentItem.word)}')">🔊 Nghe Đọc Chuẩn</button>
+            
+            <!-- Front Face (MẶT TRƯỚC: CHỈ CÓ TỪ TIẾNG ANH & HÌNH ẢNH MINH HỌA DỤNG CỤ + NÚT NGHE ĐỌC) -->
+            <div class="flashcard-face flashcard-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 24px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border: 2.5px solid #0d9488; box-shadow: 0 14px 36px rgba(13, 148, 136, 0.15);">
+              <span style="font-size: 0.78rem; font-weight: 800; color: #0d9488; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; background: #ccfbf1; padding: 4px 14px; border-radius: 50px;">MẶT TRƯỚC: TỪ TIẾNG ANH (NHẤN ĐỂ LẬT THẺ)</span>
+              
+              <!-- 🖼️ HÌNH ẢNH DỤNG CỤ Y TẾ MINH HỌA (ICON THỦ NỔI BẬT) -->
+              <div style="width: 76px; height: 76px; border-radius: 20px; background: linear-gradient(135deg, #ccfbf1 0%, #e0f2fe 100%); border: 2px solid #0d9488; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; margin: 6px 0; box-shadow: 0 6px 16px rgba(13, 148, 136, 0.2);">
+                ${visualIcon}
+              </div>
+
+              <div class="flash-word-text" style="font-size: 2.2rem; font-weight: 900; color: #0f172a; margin: 4px 0 10px 0;">${currentItem.word}</div>
+              <button class="audio-btn-pill" style="background: #0d9488; color: #ffffff; border: none; padding: 8px 22px; border-radius: 50px; font-weight: 800; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);" onclick="event.stopPropagation(); speakText('${escapeQuotes(currentItem.word)}')">🔊 Nghe Đọc Chuẩn</button>
+              <div style="font-size: 0.78rem; color: #64748b; margin-top: 10px; font-style: italic;">🔄 Nhấn vào thẻ để lật xem Nghĩa Tiếng Việt & IPA</div>
             </div>
+
             <!-- Back Face (MẶT SAU: PHIÊN ÂM IPA + NGHĨA TIẾNG VIỆT & VÍ DỤ) -->
-            <div class="flashcard-face flashcard-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 24px; padding: 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #07101e 0%, #11223e 100%); color: #ffffff; transform: rotateY(180deg); border: 2.5px solid #38bdf8; box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);">
-              <span style="font-size: 0.8rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; background: rgba(56, 189, 248, 0.15); padding: 4px 14px; border-radius: 50px; border: 1px solid rgba(56, 189, 248, 0.3);">MẶT SAU: PHIÊN ÂM IPA & NGHĨA TIẾNG VIỆT</span>
+            <div class="flashcard-face flashcard-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 24px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #07101e 0%, #11223e 100%); color: #ffffff; transform: rotateY(180deg); border: 2.5px solid #38bdf8; box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);">
+              <span style="font-size: 0.78rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; background: rgba(56, 189, 248, 0.15); padding: 4px 14px; border-radius: 50px; border: 1px solid rgba(56, 189, 248, 0.3);">MẶT SAU: PHIÊN ÂM IPA & NGHĨA TIẾNG VIỆT</span>
               
               <!-- PHIÊN ÂM IPA NỔI BẬT Ở MẶT SAU -->
-              <div class="flash-ipa-text" style="font-family: monospace; font-size: 1.3rem; font-weight: 800; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 4px 16px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); margin: 6px 0 10px 0;">${currentItem.ipa}</div>
+              <div class="flash-ipa-text" style="font-family: monospace; font-size: 1.25rem; font-weight: 800; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 4px 16px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); margin: 6px 0;">${currentItem.ipa}</div>
               
               <!-- NGHĨA TIẾNG VIỆT -->
-              <div class="flash-meaning-text" style="font-size: 1.35rem; font-weight: 900; color: #ffffff; margin-bottom: 6px;">${currentItem.meaning}</div>
+              <div class="flash-meaning-text" style="font-size: 1.3rem; font-weight: 900; color: #ffffff; margin-bottom: 6px;">👉 Dịch: ${currentItem.meaning}</div>
               
               <!-- CÂU VÍ DỤ -->
-              <div class="flash-example-text" style="font-size: 0.9rem; color: #94a3b8; font-style: italic; background: rgba(255, 255, 255, 0.08); padding: 6px 14px; border-radius: 12px;">"${currentItem.example}"</div>
+              <div class="flash-example-text" style="font-size: 0.88rem; color: #cbd5e1; font-style: italic; background: rgba(255, 255, 255, 0.08); padding: 6px 12px; border-radius: 12px; margin-bottom: 4px;">"${currentItem.example}"</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">💡 ${exampleTranslation}</div>
             </div>
+
           </div>
         </div>
 

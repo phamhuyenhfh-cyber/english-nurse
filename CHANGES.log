@@ -129,3 +129,4 @@
 [2026-08-19T10:32:25+07:00] index.html & app.js: Nhúng trực tiếp inline style cho khung modal lessonModal, nút đóng X tròn và thanh tab chuyển bài học v60.0 chống tuyệt đối lỗi không hiện bài học do cache CSS cũ.
 [2026-08-19T10:35:33+07:00] index.html & app.js: Xóa bỏ xung đột display:none trong thuộc tính style HTML và áp dụng setProperty display flex !important cho openLessonModal giúp mở popup bài học 100% lập tức khi nhấp chuột v65.0.
 [2026-08-19T10:39:27+07:00] index.html & app.js: Chuẩn hóa 100% cấu trúc thẻ 3D Flashcard: MẶT TRƯỚC CHỈ CHỨA từ Tiếng Anh & Nút Nghe Đọc; MẶT SAU CHỨA Phiên âm IPA màu cam nổi bật, Nghĩa Tiếng Việt & Câu ví dụ v70.0.
+[2026-08-19T10:44:18+07:00] index.html: Áp dụng version cache-busting v100.0 nâng cấp hệ thống bắt buộc xóa toàn bộ bộ nhớ đệm cũ trên thiết bị di động và máy tính.
