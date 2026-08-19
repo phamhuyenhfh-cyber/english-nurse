@@ -1261,8 +1261,20 @@ function closeLessonModal() {
 
 function switchTab(tabName) {
   currentTab = tabName;
-  document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.tab === tabName);
+  document.querySelectorAll(".modal-tabs .tab-btn").forEach((btn) => {
+    const isActive = btn.dataset.tab === tabName;
+    btn.classList.toggle("active", isActive);
+    if (isActive) {
+      btn.style.background = "#0d9488";
+      btn.style.color = "#ffffff";
+      btn.style.borderColor = "#0d9488";
+      btn.style.fontWeight = "800";
+    } else {
+      btn.style.background = "#f8fafc";
+      btn.style.color = "#334155";
+      btn.style.borderColor = "#cbd5e1";
+      btn.style.fontWeight = "700";
+    }
   });
   renderModalTabContent();
 }
