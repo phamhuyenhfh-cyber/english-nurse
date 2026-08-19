@@ -121,3 +121,4 @@
 [2026-08-19T09:38:37+07:00] index.html: Thiết kế lại toàn bộ phần Bìa Giới Thiệu (Hero Banner) với ảnh chân dung hình tròn nổi bật bên trái, thẻ thông tin danh xưng và slogan chuẩn 100% theo hình chụp mẫu v29.0.
 [2026-08-19T09:39:15+07:00] app.js: Cập nhật hàm switchMainModule và toggleFounderPopup cho giao diện trang chủ mới.
 [2026-08-19T09:44:38+07:00] index.html: Thẻ meta no-cache và nâng cache-busting v30.0 được áp dụng để xóa bộ nhớ đệm cũ trên trình duyệt.
+[2026-08-19T09:53:27+07:00] index.html & styles.css: Khóa cứng trực tiếp kích thước ảnh avatar 125px !important và khung Midnight Navy Hero Banner v35.0 chống vỡ ảnh trên mọi màn hình.
