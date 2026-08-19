@@ -1609,7 +1609,7 @@ function renderModalTabContent() {
 
     container.innerHTML = html;
   } else if (currentTab === "quiz") {
-    // ✏️ BEAUTIFUL APPLE UI/UX FILL-IN-THE-BLANK QUIZ WITH TEAL/CYAN QUESTION TEXT & ROUNDED SQUARE INPUT BOXES
+    // ✏️ BEAUTIFUL APPLE UI/UX FILL-IN-THE-BLANK QUIZ WITH FROSTED RECTANGULAR PLACEHOLDER BOX
     let html = `<div style="display: flex; flex-direction: column; gap: 1.2rem;">
       <div style="background: linear-gradient(135deg, #07101e 0%, #11223e 100%); color: #ffffff; padding: 1.4rem 1.6rem; border-radius: 20px; border: 1.5px solid #38bdf8; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);">
         <h3 style="color: #38bdf8; margin: 0 0 4px 0; font-size: 1.2rem; font-weight: 900;">✏️ BÀI TẬP ĐIỀN TỪ KIỂM TRA TRÍ NHỚ (${activeDay.quiz ? activeDay.quiz.length : 5} Câu - Ngày ${activeDay.day})</h3>
@@ -1618,8 +1618,9 @@ function renderModalTabContent() {
 
     if (activeDay.quiz) {
       activeDay.quiz.forEach((q, idx) => {
-        // Highlight fill-in-the-blank text in bold cyan blue
-        const formattedSentence = q.sentence.replace("________", `<span style="display: inline-block; padding: 2px 14px; border-bottom: 3px solid #0d9488; color: #0d9488; font-weight: 900;">[ Ô Trống ]</span>`);
+        // Replace blank with a sleek frosted rectangular placeholder box (Hình mờ chữ nhật chuyên nghiệp)
+        const placeholderRect = `<span id="quizBlankRect_${idx}" style="display: inline-block !important; min-width: 140px !important; padding: 4px 16px !important; background: rgba(13, 148, 136, 0.12) !important; border: 2px dashed #0d9488 !important; border-radius: 12px !important; vertical-align: middle !important; margin: 0 6px !important; color: #0d9488 !important; font-weight: 900 !important; text-align: center !important; font-size: 1.05rem !important;">❓ ...</span>`;
+        const formattedSentence = q.sentence.replace("________", placeholderRect);
 
         html += `
           <div class="quiz-question-card" style="background: #ffffff !important; border-radius: 20px !important; border: 1.5px solid #cbd5e1 !important; padding: 1.5rem !important; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important; display: flex !important; flex-direction: column !important; gap: 1rem !important;">
@@ -1629,8 +1630,8 @@ function renderModalTabContent() {
               <span style="font-size: 0.85rem !important; color: #64748b !important; font-weight: 700 !important;">💡 Ngày ${activeDay.day}</span>
             </div>
 
-            <!-- Câu chữ màu xanh theo màu của web (#0f766e) -->
-            <div class="quiz-sentence" style="font-size: 1.2rem !important; font-weight: 800 !important; color: #0f766e !important; line-height: 1.6 !important; background: #f0fdf4 !important; padding: 1.1rem 1.3rem !important; border-radius: 16px !important; border-left: 5px solid #0d9488 !important; border: 1px solid #ccfbf1 !important;">
+            <!-- Câu chữ màu xanh theo màu của web (#0f766e) chứa hình mờ chữ nhật -->
+            <div class="quiz-sentence" style="font-size: 1.2rem !important; font-weight: 800 !important; color: #0f766e !important; line-height: 1.8 !important; background: #f0fdf4 !important; padding: 1.1rem 1.3rem !important; border-radius: 16px !important; border-left: 5px solid #0d9488 !important; border: 1px solid #ccfbf1 !important;">
               ${formattedSentence}
             </div>
 
@@ -1701,6 +1702,7 @@ function checkModalQuizAnswer(idx, correctAnswer) {
   const input = document.getElementById(`modalQuizInput_${idx}`);
   const resultBadge = document.getElementById(`modalQuizResult_${idx}`);
   const resultText = document.getElementById(`modalQuizResultText_${idx}`);
+  const blankRect = document.getElementById(`quizBlankRect_${idx}`);
 
   if (!input || !resultBadge) return;
 
@@ -1723,6 +1725,15 @@ function checkModalQuizAnswer(idx, correctAnswer) {
     resultText.innerHTML = `🎉 CHÍNH XÁC! Giỏi lắm chị Huyền! Đáp án đúng: <strong>"${correctAnswer}"</strong>`;
     input.style.border = "2.5px solid #0d9488";
     input.style.background = "#f0fdf4";
+
+    // Cập nhật ô hình mờ chữ nhật trong câu thành đáp án đúng
+    if (blankRect) {
+      blankRect.innerHTML = `✅ ${correctAnswer}`;
+      blankRect.style.background = "#dcfce7";
+      blankRect.style.border = "2px solid #22c55e";
+      blankRect.style.color = "#15803d";
+    }
+
     speakText(correctAnswer);
   } else {
     // 🔴 CHƯA ĐÚNG NỀN HỒNG NHẠT CHỮ ĐỎ (#ffe4e6, #be123c)

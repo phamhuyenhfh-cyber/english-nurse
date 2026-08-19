@@ -134,3 +134,4 @@
 [2026-08-19T11:00:30+07:00] index.html: Cắt bỏ hoàn toàn các section dư thừa phía dưới trang chủ (Flashcard 3D danh sách dài, Bài tập điền từ 361 câu bên ngoài) và thanh điều hướng thừa; gom toàn bộ 7 module học vào cửa sổ Vào Bài Học gọn gàng v120.0.
 [2026-08-19T11:06:41+07:00] index.html & app.js: Khôi phục thanh điều hướng Glassmorphism Navigation Bar 7 nút và tối ưu đáp ứng chuẩn Responsive Hài hòa 100% giữa Máy tính và Điện thoại di động v130.0.
 [2026-08-19T21:13:07+07:00] index.html & app.js: Thiết kế lại toàn bộ giao diện Bài Tập Điền Từ chuẩn 100% màu sắc chị Huyền yêu cầu: Câu chữ màu xanh web #0f766e, Nút Kiểm Tra Đáp Án nền xanh chữ trắng #0d9488, Kết quả Chưa Đúng nền hồng nhạt chữ đỏ #be123c, Kết quả Đúng nền xanh nhạt chữ xanh #0f766e v150.0.
+[2026-08-19T21:18:11+07:00] index.html & app.js: Nâng cấp biểu tượng Micro phòng ghi âm thành nút tròn siêu to 110px x 110px màu đỏ rực rỡ sang trọng có hiệu ứng phát sáng aura v160.0.
