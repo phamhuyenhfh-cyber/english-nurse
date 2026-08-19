@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC | PHẠM HUYỀN 0936786794</title>
-  <link rel="stylesheet" href="styles.css?v=65.0">
+  <link rel="stylesheet" href="styles.css?v=70.0">
   <style>
     /* EMBEDDED STYLES MATCHING EXACTLY THE REFERENCE IMAGE (WHITE GLASSMOPHIC DAY CARDS) */
     .controls-section {
@@ -347,21 +347,27 @@
           </div>
         </div>
 
-        <!-- 3D Flip Card -->
-        <div id="flashcardWrapper" class="flashcard-3d-wrapper" onclick="flipFlashcard()">
-          <div class="flashcard-inner">
-            <!-- Front Face (English) -->
-            <div class="flashcard-face flashcard-front">
-              <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 8px;">TIẾNG ANH (NHẤN ĐỂ LẬT THẺ)</span>
-              <div id="flashWord" class="flash-word-text">Scrub nurse</div>
-              <div id="flashIpa" class="flash-ipa-text">/skrʌb nɜːs/</div>
-              <button class="audio-btn-pill" style="margin-top: 10px;" onclick="event.stopPropagation(); playCurrentFlashcardAudio()">🔊 Nghe Đọc</button>
+        <!-- 3D Flip Card chuẩn quy chuẩn (Mặt trước: Tiếng Anh - Mặt sau: Phiên âm IPA & Nghĩa Tiếng Việt) -->
+        <div id="flashcardWrapper" class="flashcard-3d-wrapper" onclick="flipFlashcard()" style="max-width: 580px; height: 340px; margin: 1rem auto; perspective: 1000px; cursor: pointer;">
+          <div class="flashcard-inner" style="position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d;">
+            <!-- Front Face (MẶT TRƯỚC: CHỈ CHỨA TỪ TIẾNG ANH MỚI & NÚT NGHE ĐỌC) -->
+            <div class="flashcard-face flashcard-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 28px; padding: 2.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border: 2.5px solid #0d9488; box-shadow: 0 16px 40px rgba(13, 148, 136, 0.15);">
+              <span style="font-size: 0.85rem; font-weight: 800; color: #0d9488; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; background: #ccfbf1; padding: 4px 16px; border-radius: 50px;">MẶT TRƯỚC: TỪ TIẾNG ANH (NHẤN ĐỂ LẬT XEM PHIÊN ÂM & NGHĨA)</span>
+              <div id="flashWord" class="flash-word-text" style="font-size: 2.6rem; font-weight: 900; color: #0f172a; margin: 10px 0;">Scrub nurse</div>
+              <button class="audio-btn-pill" style="margin-top: 14px; background: #0d9488; color: #ffffff; border: none; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);" onclick="event.stopPropagation(); playCurrentFlashcardAudio()">🔊 Nghe Đọc Chuẩn</button>
             </div>
-            <!-- Back Face (Vietnamese Meaning & Example) -->
-            <div class="flashcard-face flashcard-back">
-              <span style="font-size: 0.85rem; font-weight: 700; color: #5eead4; margin-bottom: 8px;">NGHĨA TIẾNG VIỆT & VÍ DỤ</span>
-              <div id="flashMeaning" class="flash-meaning-text">Điều dưỡng dụng cụ phòng mổ</div>
-              <div id="flashExample" class="flash-example-text">"I am a scrub nurse in the operating theatre."</div>
+            <!-- Back Face (MẶT SAU: PHIÊN ÂM IPA + NGHĨA TIẾNG VIỆT & VÍ DỤ) -->
+            <div class="flashcard-face flashcard-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 28px; padding: 2.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #07101e 0%, #11223e 100%); color: #ffffff; transform: rotateY(180deg); border: 2.5px solid #38bdf8; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);">
+              <span style="font-size: 0.85rem; font-weight: 800; color: #38bdf8; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; background: rgba(56, 189, 248, 0.15); padding: 4px 16px; border-radius: 50px; border: 1px solid rgba(56, 189, 248, 0.3);">MẶT SAU: PHIÊN ÂM IPA & NGHĨA TIẾNG VIỆT</span>
+              
+              <!-- PHIÊN ÂM IPA NỔI BẬT Ở MẶT SAU -->
+              <div id="flashIpa" class="flash-ipa-text" style="font-family: monospace; font-size: 1.4rem; font-weight: 800; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 4px 18px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); margin: 6px 0 12px 0;">/skrʌb nɜːs/</div>
+              
+              <!-- NGHĨA TIẾNG VIỆT -->
+              <div id="flashMeaning" class="flash-meaning-text" style="font-size: 1.45rem; font-weight: 900; color: #ffffff; margin-bottom: 8px;">Điều dưỡng dụng cụ phòng mổ</div>
+              
+              <!-- CÂU VÍ DỤ -->
+              <div id="flashExample" class="flash-example-text" style="font-size: 0.95rem; color: #94a3b8; font-style: italic; background: rgba(255, 255, 255, 0.08); padding: 8px 16px; border-radius: 14px;">"I am a scrub nurse in the operating theatre."</div>
             </div>
           </div>
         </div>
@@ -552,7 +558,7 @@
     </button>
   </div>
 
-  <script src="data.js?v=65.0"></script>
-  <script src="app.js?v=65.0"></script>
+  <script src="data.js?v=70.0"></script>
+  <script src="app.js?v=70.0"></script>
 </body>
 </html>
