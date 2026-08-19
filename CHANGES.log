@@ -117,3 +117,6 @@
 [2026-08-19T08:10:26+07:00] index.html, styles.css: Đặt thanh Tiến Độ Học Tập (.progress-bar-card) ngay dưới Banner Hero (.top-welcome-banner) chuẩn 100% theo hình ảnh thực tế địa chỉ D:/Huyen/english-nurse/index.html chị Phạm Huyền vừa gửi v30.0.
 [2026-08-19T08:10:26+07:00] english-nurse.zip: Đóng gói lại tệp nén zip phiên bản v30.0.
 
+[2026-08-19T09:37:26+07:00] huyen_avatar.png: Chèn ảnh chân dung điều dưỡng chuyên nghiệp chính chủ của chị Phạm Huyền vào dự án.
+[2026-08-19T09:38:37+07:00] index.html: Thiết kế lại toàn bộ phần Bìa Giới Thiệu (Hero Banner) với ảnh chân dung hình tròn nổi bật bên trái, thẻ thông tin danh xưng và slogan chuẩn 100% theo hình chụp mẫu v29.0.
+[2026-08-19T09:39:15+07:00] app.js: Cập nhật hàm switchMainModule và toggleFounderPopup cho giao diện trang chủ mới.
