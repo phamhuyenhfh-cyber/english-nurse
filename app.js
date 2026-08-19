@@ -1597,24 +1597,44 @@ function renderModalTabContent() {
 
     container.innerHTML = html;
   } else if (currentTab === "quiz") {
-    // ✏️ CLEAN IXL FILL-IN-THE-BLANK QUIZ
-    let html = `<div>
-      <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">✏️ BÀI TẬP ĐIỀN TỪ KIỂM TRA TRÍ NHỚ (${activeDay.vocab.length} Từ - Ngày ${activeDay.day})</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Gõ từ tiếng Anh còn thiếu vào ô trống và bấm Kiểm Tra!</p>`;
+    // ✏️ BEAUTIFUL APPLE UI/UX FILL-IN-THE-BLANK QUIZ WITH TEAL/CYAN QUESTION TEXT & ROUNDED SQUARE INPUT BOXES
+    let html = `<div style="display: flex; flex-direction: column; gap: 1.2rem;">
+      <div style="background: linear-gradient(135deg, #07101e 0%, #11223e 100%); color: #ffffff; padding: 1.4rem 1.6rem; border-radius: 20px; border: 1.5px solid #38bdf8; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);">
+        <h3 style="color: #38bdf8; margin: 0 0 4px 0; font-size: 1.2rem; font-weight: 900;">✏️ BÀI TẬP ĐIỀN TỪ KIỂM TRA TRÍ NHỚ (${activeDay.quiz ? activeDay.quiz.length : 5} Câu - Ngày ${activeDay.day})</h3>
+        <p style="color: #cbd5e1; font-size: 0.9rem; margin: 0;">Gõ từ Tiếng Anh còn thiếu vào ô vuông bên dưới và bấm nút <strong style="color: #38bdf8;">Kiểm Tra Đáp Án</strong>!</p>
+      </div>`;
 
     if (activeDay.quiz) {
       activeDay.quiz.forEach((q, idx) => {
+        // Highlight fill-in-the-blank text in bold cyan blue
+        const formattedSentence = q.sentence.replace("________", `<span style="display: inline-block; padding: 2px 14px; border-bottom: 3px solid #0d9488; color: #0d9488; font-weight: 900;">[ Ô Trống ]</span>`);
+
         html += `
-          <div class="quiz-question-card" style="margin-bottom: 1.2rem;">
-            <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-dark);">CÂU ${idx + 1} / ${activeDay.quiz.length}</div>
-            <div class="quiz-sentence">${q.sentence.replace("________", "<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>")}</div>
-            <div class="quiz-input-group">
-              <input type="text" id="modalQuizInput_${idx}" class="quiz-input" placeholder="Gõ từ còn thiếu..." onkeyup="if(event.key==='Enter') checkModalQuizAnswer(${idx}, '${escapeQuotes(q.answer)}')">
-              <button class="quiz-check-btn" onclick="checkModalQuizAnswer(${idx}, '${escapeQuotes(q.answer)}')">Kiểm Tra</button>
+          <div class="quiz-question-card" style="background: #ffffff !important; border-radius: 20px !important; border: 1.5px solid #cbd5e1 !important; padding: 1.5rem !important; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important; display: flex !important; flex-direction: column !important; gap: 1rem !important;">
+            <!-- Badge Header -->
+            <div style="display: flex !important; align-items: center !important; justify-content: space-between !important;">
+              <span style="background: #ccfbf1 !important; color: #0f766e !important; font-weight: 800 !important; font-size: 0.82rem !important; padding: 4px 14px !important; border-radius: 50px !important; text-transform: uppercase !important; border: 1px solid #99f6e4 !important;">CÂU ${idx + 1} / ${activeDay.quiz.length}</span>
+              <span style="font-size: 0.85rem !important; color: #64748b !important; font-weight: 700 !important;">💡 Ngày ${activeDay.day}</span>
             </div>
-            <div id="modalQuizResult_${idx}" class="quiz-result-badge">
-              <span id="modalQuizResultText_${idx}"></span>
-              <button class="audio-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="speakText('${escapeQuotes(q.answer)}')">🔊 Nghe Đọc Từ</button>
+
+            <!-- Câu chữ màu xanh theo màu của web (#0f766e) -->
+            <div class="quiz-sentence" style="font-size: 1.2rem !important; font-weight: 800 !important; color: #0f766e !important; line-height: 1.6 !important; background: #f0fdf4 !important; padding: 1.1rem 1.3rem !important; border-radius: 16px !important; border-left: 5px solid #0d9488 !important; border: 1px solid #ccfbf1 !important;">
+              ${formattedSentence}
+            </div>
+
+            <!-- Ô vuông điền từ & Nút Kiểm Tra Đáp Án nền xanh chữ trắng (#0d9488) -->
+            <div class="quiz-input-group" style="display: flex !important; gap: 12px !important; align-items: center !important; flex-wrap: wrap !important;">
+              <input type="text" id="modalQuizInput_${idx}" class="quiz-input" placeholder="Gõ từ còn thiếu tại đây..." onkeyup="if(event.key==='Enter') checkModalQuizAnswer(${idx}, '${escapeQuotes(q.answer)}')" style="flex-grow: 1 !important; max-width: 380px !important; min-width: 200px !important; background: #ffffff !important; color: #0f172a !important; border: 2.5px solid #0d9488 !important; border-radius: 14px !important; padding: 12px 18px !important; font-size: 1.05rem !important; font-weight: 800 !important; outline: none !important; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.12) !important;">
+              
+              <button class="quiz-check-btn" onclick="checkModalQuizAnswer(${idx}, '${escapeQuotes(q.answer)}')" style="background: #0d9488 !important; color: #ffffff !important; border: none !important; border-radius: 14px !important; padding: 12px 26px !important; font-weight: 800 !important; font-size: 0.98rem !important; cursor: pointer !important; box-shadow: 0 6px 18px rgba(13, 148, 136, 0.35) !important; transition: all 0.2s ease !important; display: inline-flex !important; align-items: center !important; gap: 6px !important;">
+                ✓ Kiểm Tra Đáp Án
+              </button>
+            </div>
+
+            <!-- Kết quả kiểm tra (Đúng: Nền xanh nhạt chữ xanh | Chưa Đúng: Nền hồng nhạt chữ đỏ) -->
+            <div id="modalQuizResult_${idx}" class="quiz-result-badge" style="display: none; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; padding: 12px 18px; border-radius: 14px;">
+              <span id="modalQuizResultText_${idx}" style="font-size: 0.98rem !important; font-weight: 800 !important;"></span>
+              <button class="audio-btn" onclick="speakText('${escapeQuotes(q.answer)}')" style="background: #0d9488 !important; color: #ffffff !important; border: none !important; border-radius: 50px !important; padding: 6px 16px !important; font-weight: 800 !important; font-size: 0.85rem !important; cursor: pointer !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3) !important;">🔊 Nghe Đọc Từ</button>
             </div>
           </div>
         `;
@@ -1676,12 +1696,38 @@ function checkModalQuizAnswer(idx, correctAnswer) {
   const target = correctAnswer.trim().toLowerCase();
 
   if (userTyped === target) {
-    resultBadge.className = "quiz-result-badge correct";
+    // 🟢 ĐÚNG THÌ NỀN XANH NHẠT CHỮ XANH (#dcfce7, #0f766e)
+    resultBadge.style.display = "flex";
+    resultBadge.style.alignItems = "center";
+    resultBadge.style.justifyContent = "space-between";
+    resultBadge.style.gap = "12px";
+    resultBadge.style.marginTop = "10px";
+    resultBadge.style.padding = "12px 18px";
+    resultBadge.style.borderRadius = "14px";
+    resultBadge.style.background = "#dcfce7";
+    resultBadge.style.border = "1.5px solid #22c55e";
+    resultBadge.style.color = "#0f766e";
+    resultBadge.style.fontWeight = "800";
     resultText.innerHTML = `🎉 CHÍNH XÁC! Giỏi lắm chị Huyền! Đáp án đúng: <strong>"${correctAnswer}"</strong>`;
+    input.style.border = "2.5px solid #0d9488";
+    input.style.background = "#f0fdf4";
     speakText(correctAnswer);
   } else {
-    resultBadge.className = "quiz-result-badge incorrect";
-    resultText.innerHTML = `❌ CHƯA ĐÚNG! Đáp án đúng là: <strong>"${correctAnswer}"</strong>`;
+    // 🔴 CHƯA ĐÚNG NỀN HỒNG NHẠT CHỮ ĐỎ (#ffe4e6, #be123c)
+    resultBadge.style.display = "flex";
+    resultBadge.style.alignItems = "center";
+    resultBadge.style.justifyContent = "space-between";
+    resultBadge.style.gap = "12px";
+    resultBadge.style.marginTop = "10px";
+    resultBadge.style.padding = "12px 18px";
+    resultBadge.style.borderRadius = "14px";
+    resultBadge.style.background = "#ffe4e6";
+    resultBadge.style.border = "1.5px solid #f43f5e";
+    resultBadge.style.color = "#be123c";
+    resultBadge.style.fontWeight = "800";
+    resultText.innerHTML = `❌ CHƯA ĐÚNG! Đáp án đúng là: <strong>"${correctAnswer}"</strong> (Chị gõ lại thử nhé!)`;
+    input.style.border = "2.5px solid #f43f5e";
+    input.style.background = "#fff1f2";
   }
 }
 
