@@ -1225,8 +1225,12 @@ function updateQuizScoreText(score, total) {
 
 // Modal Lesson Detail & 3D Flashcard & Audio Recorder Integration
 function openLessonModal(day) {
-  const dayData = CURRICULUM_DATA.find((d) => d.day === day);
-  if (!dayData) return;
+  day = Number(day);
+  const dayData = CURRICULUM_DATA.find((d) => Number(d.day) === day);
+  if (!dayData) {
+    console.error("No lesson data found for day:", day);
+    return;
+  }
 
   activeDay = dayData;
   modalFlashcardIndex = 0;
@@ -1236,7 +1240,20 @@ function openLessonModal(day) {
   const modal = document.getElementById("lessonModal");
   if (modal) {
     modal.classList.add("active");
-    modal.style.cssText = "display: flex !important; opacity: 1 !important; pointer-events: auto !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; background: rgba(15, 23, 42, 0.75) !important; z-index: 999999 !important; backdrop-filter: blur(20px) !important; align-items: center !important; justify-content: center !important;";
+    modal.style.setProperty("display", "flex", "important");
+    modal.style.setProperty("opacity", "1", "important");
+    modal.style.setProperty("pointer-events", "auto", "important");
+    modal.style.setProperty("position", "fixed", "important");
+    modal.style.setProperty("top", "0", "important");
+    modal.style.setProperty("left", "0", "important");
+    modal.style.setProperty("right", "0", "important");
+    modal.style.setProperty("bottom", "0", "important");
+    modal.style.setProperty("background", "rgba(15, 23, 42, 0.8)", "important");
+    modal.style.setProperty("z-index", "999999", "important");
+    modal.style.setProperty("backdrop-filter", "blur(20px)", "important");
+    modal.style.setProperty("-webkit-backdrop-filter", "blur(20px)", "important");
+    modal.style.setProperty("align-items", "center", "important");
+    modal.style.setProperty("justify-content", "center", "important");
   }
 
   const titleEl = document.getElementById("modalDayTitle");
@@ -1252,9 +1269,9 @@ function closeLessonModal() {
   const modal = document.getElementById("lessonModal");
   if (modal) {
     modal.classList.remove("active");
-    modal.style.display = "none";
-    modal.style.opacity = "0";
-    modal.style.pointerEvents = "none";
+    modal.style.setProperty("display", "none", "important");
+    modal.style.setProperty("opacity", "0", "important");
+    modal.style.setProperty("pointer-events", "none", "important");
   }
   if (window.speechSynth) speechSynth.cancel();
 }
