@@ -620,8 +620,13 @@ async function toggleMicRecording() {
       mediaRecorder.start(100);
       isRecording = true;
 
-      if (micBtn) micBtn.classList.add("recording");
-      if (statusText) statusText.textContent = "🔴 Đang Ghi Âm... (Bấm nút để DỪNG)";
+      if (micBtn) {
+        micBtn.classList.add("recording");
+        micBtn.style.setProperty("background", "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)", "important");
+        micBtn.style.setProperty("box-shadow", "0 0 0 16px rgba(239, 68, 68, 0.4), 0 12px 36px rgba(185, 28, 28, 0.6)", "important");
+        micBtn.style.setProperty("transform", "scale(1.08)", "important");
+      }
+      if (statusText) statusText.textContent = "🔴 ĐANG GHI ÂM... (Bấm nút Micro Đỏ để DỪNG GHI ÂM)";
 
       if (speechRecognition) {
         try {
@@ -654,8 +659,14 @@ async function toggleMicRecording() {
     }
 
     isRecording = false;
-    if (micBtn) micBtn.classList.remove("recording");
-    if (statusText) statusText.textContent = "✅ Ghi âm hoàn tất! Hãy bấm nút ▶️ bên dưới để nghe lại ⬇️";
+
+    if (micBtn) {
+      micBtn.classList.remove("recording");
+      micBtn.style.setProperty("background", "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)", "important");
+      micBtn.style.setProperty("box-shadow", "0 12px 36px rgba(239, 68, 68, 0.45), 0 0 0 8px rgba(239, 68, 68, 0.18)", "important");
+      micBtn.style.setProperty("transform", "scale(1)", "important");
+    }
+    if (statusText) statusText.textContent = "🎙️ Bấm vào nút Micro Màu Đỏ siêu to ở trên để Bắt Đầu Ghi Âm!";
   }
 }
 
@@ -1519,10 +1530,11 @@ function renderModalTabContent() {
           </div>
         </div>
 
-        <!-- Recording Mic Box -->
-        <div class="recorder-mic-box" style="margin-top: 1rem;">
-          <button id="modalBigMicBtn" class="big-mic-btn" onclick="toggleMicRecording()">🎙️</button>
-          <div id="modalRecordingStatusText" class="recording-status-text">Bấm vào Micro để Bắt Đầu Ghi Âm</div>
+        <!-- Recording Mic Box (Nút Micro Màu Đỏ Siêu To 110px) -->
+        <div class="recorder-mic-box" style="margin-top: 1.5rem !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 1rem !important; background: #fff1f2 !important; padding: 2rem 1.5rem !important; border-radius: 24px !important; border: 2px solid #fecdd3 !important; text-align: center !important;">
+          <button id="modalBigMicBtn" class="big-mic-btn" onclick="toggleMicRecording()" style="width: 110px !important; height: 110px !important; min-width: 110px !important; min-height: 110px !important; border-radius: 50% !important; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; color: #ffffff !important; border: 4px solid #ffffff !important; font-size: 3.2rem !important; cursor: pointer !important; box-shadow: 0 12px 36px rgba(239, 68, 68, 0.45), 0 0 0 8px rgba(239, 68, 68, 0.18) !important; transition: all 0.25s ease !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; margin: 0 auto !important; outline: none !important;">🎙️</button>
+          
+          <div id="modalRecordingStatusText" class="recording-status-text" style="font-size: 1.05rem !important; font-weight: 800 !important; color: #be123c !important; margin-top: 4px !important;">🎙️ Bấm vào nút Micro Màu Đỏ siêu to ở trên để Bắt Đầu Ghi Âm!</div>
 
           <!-- Recorded Audio Player -->
           <div id="modalAudioPlaybackContainer" style="display: none; width: 100%; text-align: center; margin-top: 1rem;">
