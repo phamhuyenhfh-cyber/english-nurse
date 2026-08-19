@@ -813,11 +813,18 @@ function renderDaysGrid() {
 
     const unitObj = UNITS_DATA.find((u) => u.id === item.unitId) || {};
 
+    card.style.cursor = "pointer";
+    card.onclick = (e) => {
+      if (e.target.tagName.toLowerCase() !== "input") {
+        openLessonModal(item.day);
+      }
+    };
+
     card.innerHTML = `
       <div>
         <div style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 0.75rem !important;">
           <span class="day-tag-badge" style="background: #ccfbf1 !important; color: #0f766e !important; font-weight: 800 !important; font-size: 0.78rem !important; padding: 5px 14px !important; border-radius: 50px !important; letter-spacing: 0.05em !important; text-transform: uppercase !important; display: inline-block !important;">NGÀY ${item.day} ${isMilestone ? "🏆" : ""}</span>
-          <label title="Đánh dấu hoàn thành" style="cursor: pointer !important; display: flex !important; align-items: center !important;">
+          <label title="Đánh dấu hoàn thành" onclick="event.stopPropagation()" style="cursor: pointer !important; display: flex !important; align-items: center !important;">
             <input type="checkbox" ${isCompleted ? "checked" : ""} onchange="toggleDayComplete(${item.day}, this.checked)" class="card-checkbox-custom" style="width: 22px !important; height: 22px !important; border-radius: 6px !important; border: 2px solid #cbd5e1 !important; accent-color: #0d9488 !important; cursor: pointer !important;">
           </label>
         </div>
@@ -826,7 +833,7 @@ function renderDaysGrid() {
       </div>
       <div class="card-footer-row" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; padding-top: 0.8rem !important; border-top: 1px solid #f1f5f9 !important;">
         <span class="card-unit-text" style="font-size: 0.85rem !important; font-weight: 700 !important; color: #64748b !important; display: flex !important; align-items: center !important; gap: 6px !important;">🩺 Unit ${item.unitId}</span>
-        <button class="card-open-btn" onclick="openLessonModal(${item.day})" style="background: #ffffff !important; color: #0d9488 !important; border: 1.5px solid #0d9488 !important; padding: 7px 18px !important; border-radius: 50px !important; font-weight: 800 !important; font-size: 0.88rem !important; cursor: pointer !important; transition: all 0.2s ease !important;">Vào Bài Học ➔</button>
+        <button class="card-open-btn" onclick="event.stopPropagation(); openLessonModal(${item.day})" style="background: #ffffff !important; color: #0d9488 !important; border: 1.5px solid #0d9488 !important; padding: 7px 18px !important; border-radius: 50px !important; font-weight: 800 !important; font-size: 0.88rem !important; cursor: pointer !important; transition: all 0.2s ease !important;">Vào Bài Học ➔</button>
       </div>
     `;
 
@@ -1227,18 +1234,29 @@ function openLessonModal(day) {
   currentTab = "vocab"; // Open Vocab & IPA tab by default inside Lesson Modal
 
   const modal = document.getElementById("lessonModal");
-  modal.classList.add("active");
+  if (modal) {
+    modal.classList.add("active");
+    modal.style.cssText = "display: flex !important; opacity: 1 !important; pointer-events: auto !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; background: rgba(15, 23, 42, 0.75) !important; z-index: 999999 !important; backdrop-filter: blur(20px) !important; align-items: center !important; justify-content: center !important;";
+  }
 
-  document.getElementById("modalDayTitle").textContent = dayData.title;
-  document.getElementById("modalDayGoal").textContent = dayData.goal;
+  const titleEl = document.getElementById("modalDayTitle");
+  if (titleEl) titleEl.textContent = dayData.title;
+
+  const goalEl = document.getElementById("modalDayGoal");
+  if (goalEl) goalEl.textContent = dayData.goal;
 
   switchTab("vocab");
 }
 
 function closeLessonModal() {
   const modal = document.getElementById("lessonModal");
-  modal.classList.remove("active");
-  speechSynth.cancel();
+  if (modal) {
+    modal.classList.remove("active");
+    modal.style.display = "none";
+    modal.style.opacity = "0";
+    modal.style.pointerEvents = "none";
+  }
+  if (window.speechSynth) speechSynth.cancel();
 }
 
 function switchTab(tabName) {
