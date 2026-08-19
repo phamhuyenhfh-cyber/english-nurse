@@ -136,3 +136,4 @@
 [2026-08-19T21:13:07+07:00] index.html & app.js: Thiết kế lại toàn bộ giao diện Bài Tập Điền Từ chuẩn 100% màu sắc chị Huyền yêu cầu: Câu chữ màu xanh web #0f766e, Nút Kiểm Tra Đáp Án nền xanh chữ trắng #0d9488, Kết quả Chưa Đúng nền hồng nhạt chữ đỏ #be123c, Kết quả Đúng nền xanh nhạt chữ xanh #0f766e v150.0.
 [2026-08-19T21:18:11+07:00] index.html & app.js: Nâng cấp biểu tượng Micro phòng ghi âm thành nút tròn siêu to 110px x 110px màu đỏ rực rỡ sang trọng có hiệu ứng phát sáng aura v160.0.
 [2026-08-19T21:22:31+07:00] index.html & app.js: Loại bỏ hoàn toàn chữ [ Ô Trống ] thô, thay thế bằng Ô hình mờ chữ nhật bo góc viền nét đứt màu xanh mờ ❓ ... sang trọng chuẩn Cambridge/IELTS và tự động điền đáp án đúng khi bấm Kiểm Tra v170.0.
+[2026-08-19T21:51:34+07:00] index.html & app.js: Cập nhật quy trình bài tập trắc nghiệm: Khi chọn phương án chỉ highlight đánh dấu, khi bấm nút '✓ NỘP BÀI KIỂM TRA TRẮC NGHIỆM' hệ thống mới bắt đầu chấm Đúng/Sai v190.0.
