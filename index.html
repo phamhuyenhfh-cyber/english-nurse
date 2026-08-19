@@ -7,9 +7,9 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>NURSING ENGLISH – HỌC NHANH, NHỚ LÂU, DÙNG ĐƯỢC | PHẠM HUYỀN 0936786794</title>
-  <link rel="stylesheet" href="styles.css?v=45.0">
+  <link rel="stylesheet" href="styles.css?v=50.0">
   <style>
-    /* EMBEDDED FALLBACK CSS FOR IXL FROSTED GLASS CARDS & CONTROLS */
+    /* EMBEDDED STYLES MATCHING EXACTLY THE REFERENCE IMAGE (WHITE GLASSMOPHIC DAY CARDS) */
     .controls-section {
       display: flex !important;
       flex-wrap: wrap !important;
@@ -67,29 +67,117 @@
       cursor: pointer !important;
       box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3) !important;
     }
+
+    /* 🔲 GRID SYSTEM 3 CARDS PER ROW */
     .days-grid {
       display: grid !important;
-      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)) !important;
-      gap: 1.4rem !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 1.5rem !important;
     }
+
+    @media (max-width: 992px) {
+      .days-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .days-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* 🔲 DAY CARD EXACT MATCH (WHITE FROSTED GLASS SQUARE CARD) */
     .day-card {
-      background: rgba(255, 255, 255, 0.9) !important;
-      backdrop-filter: blur(25px) !important;
-      -webkit-backdrop-filter: blur(25px) !important;
-      border-radius: 24px !important;
+      background: #ffffff !important;
+      border-radius: 20px !important;
       padding: 1.5rem !important;
-      border: 1.5px solid rgba(226, 232, 240, 0.9) !important;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+      border: 1.5px solid #e2e8f0 !important;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04) !important;
       display: flex !important;
       flex-direction: column !important;
       justify-content: space-between !important;
-      min-height: 250px !important;
+      min-height: 220px !important;
       transition: all 0.3s ease !important;
+      position: relative !important;
     }
+
     .day-card:hover {
-      transform: translateY(-6px) scale(1.015) !important;
-      border-color: #2563eb !important;
-      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.16) !important;
+      transform: translateY(-5px) !important;
+      box-shadow: 0 16px 36px rgba(13, 148, 136, 0.12) !important;
+      border-color: #0d9488 !important;
+    }
+
+    .day-tag-badge {
+      background: #ccfbf1 !important;
+      color: #0f766e !important;
+      font-weight: 800 !important;
+      font-size: 0.78rem !important;
+      padding: 5px 14px !important;
+      border-radius: 50px !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+      display: inline-block !important;
+    }
+
+    .card-checkbox-custom {
+      width: 22px !important;
+      height: 22px !important;
+      border-radius: 6px !important;
+      border: 2px solid #cbd5e1 !important;
+      accent-color: #0d9488 !important;
+      cursor: pointer !important;
+    }
+
+    .card-title-text {
+      font-size: 1.1rem !important;
+      font-weight: 800 !important;
+      color: #0f172a !important;
+      line-height: 1.35 !important;
+      margin-top: 1rem !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .card-goal-text {
+      font-size: 0.88rem !important;
+      color: #64748b !important;
+      line-height: 1.45 !important;
+      margin-bottom: 1.5rem !important;
+    }
+
+    .card-footer-row {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      margin-top: auto !important;
+      padding-top: 0.8rem !important;
+    }
+
+    .card-unit-text {
+      font-size: 0.85rem !important;
+      font-weight: 700 !important;
+      color: #64748b !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+    .card-open-btn {
+      background: #ffffff !important;
+      color: #0d9488 !important;
+      border: 1.5px solid #0d9488 !important;
+      padding: 7px 18px !important;
+      border-radius: 50px !important;
+      font-weight: 800 !important;
+      font-size: 0.88rem !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .card-open-btn:hover {
+      background: #0d9488 !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3) !important;
     }
   </style>
 </head>
@@ -446,7 +534,7 @@
     </button>
   </div>
 
-  <script src="data.js?v=45.0"></script>
-  <script src="app.js?v=45.0"></script>
+  <script src="data.js?v=50.0"></script>
+  <script src="app.js?v=50.0"></script>
 </body>
 </html>

@@ -801,32 +801,32 @@ function renderDaysGrid() {
 
     const card = document.createElement("div");
     card.className = `day-card ${isCompleted ? "completed" : ""} ${isMilestone ? "milestone-card" : ""}`;
-    card.style.cssText = "background: rgba(255, 255, 255, 0.9) !important; backdrop-filter: blur(25px) !important; -webkit-backdrop-filter: blur(25px) !important; border-radius: 24px !important; border: 1.5px solid rgba(226, 232, 240, 0.9) !important; padding: 1.5rem !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; min-height: 250px !important; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important; transition: all 0.3s ease !important; position: relative !important; margin-bottom: 0;";
+    card.style.cssText = "background: #ffffff !important; border-radius: 20px !important; padding: 1.5rem !important; border: 1.5px solid #e2e8f0 !important; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04) !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; min-height: 220px !important; transition: all 0.3s ease !important; position: relative !important;";
 
     if (isCompleted) {
-      card.style.borderColor = "#22c55e";
-      card.style.background = "linear-gradient(135deg, rgba(240, 253, 244, 0.92) 0%, rgba(255, 255, 255, 0.95) 100%)";
+      card.style.borderColor = "#10b981";
+      card.style.background = "#f0fdf4";
     } else if (isMilestone) {
       card.style.borderColor = "#f59e0b";
-      card.style.background = "linear-gradient(135deg, rgba(254, 243, 199, 0.85) 0%, rgba(255, 255, 255, 0.95) 100%)";
+      card.style.background = "#fffbeb";
     }
 
     const unitObj = UNITS_DATA.find((u) => u.id === item.unitId) || {};
 
     card.innerHTML = `
       <div>
-        <div class="day-card-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 0.75rem !important;">
-          <span class="day-tag" style="font-size: 0.78rem !important; font-weight: 800 !important; letter-spacing: 0.05em !important; padding: 4px 12px !important; border-radius: 8px !important; background: #dbeafe !important; color: #1d4ed8 !important; text-transform: uppercase !important;">NGÀY ${item.day} ${isMilestone ? "🏆" : ""}</span>
-          <label class="checkbox-wrapper" title="Đánh dấu hoàn thành" style="cursor: pointer !important; font-size: 1.2rem !important; display: flex !important; align-items: center !important; gap: 4px !important;">
-            <input type="checkbox" ${isCompleted ? "checked" : ""} onchange="toggleDayComplete(${item.day}, this.checked)" style="width: 20px !important; height: 20px !important; accent-color: #2563eb !important; cursor: pointer !important;">
+        <div style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 0.75rem !important;">
+          <span class="day-tag-badge" style="background: #ccfbf1 !important; color: #0f766e !important; font-weight: 800 !important; font-size: 0.78rem !important; padding: 5px 14px !important; border-radius: 50px !important; letter-spacing: 0.05em !important; text-transform: uppercase !important; display: inline-block !important;">NGÀY ${item.day} ${isMilestone ? "🏆" : ""}</span>
+          <label title="Đánh dấu hoàn thành" style="cursor: pointer !important; display: flex !important; align-items: center !important;">
+            <input type="checkbox" ${isCompleted ? "checked" : ""} onchange="toggleDayComplete(${item.day}, this.checked)" class="card-checkbox-custom" style="width: 22px !important; height: 22px !important; border-radius: 6px !important; border: 2px solid #cbd5e1 !important; accent-color: #0d9488 !important; cursor: pointer !important;">
           </label>
         </div>
-        <div class="day-title" style="font-size: 1.08rem !important; font-weight: 800 !important; color: #132644 !important; margin-bottom: 0.4rem !important; line-height: 1.35 !important;">${item.title}</div>
-        <div class="day-goal" style="font-size: 0.88rem !important; color: #64748b !important; line-height: 1.45 !important; margin-bottom: 1.2rem !important;">${item.goal}</div>
+        <div class="card-title-text" style="font-size: 1.1rem !important; font-weight: 800 !important; color: #0f172a !important; line-height: 1.35 !important; margin-top: 0.8rem !important; margin-bottom: 0.5rem !important;">${item.title}</div>
+        <div class="card-goal-text" style="font-size: 0.88rem !important; color: #64748b !important; line-height: 1.45 !important; margin-bottom: 1.2rem !important;">${item.goal}</div>
       </div>
-      <div class="day-card-footer" style="display: flex !important; justify-content: space-between !important; align-items: center !important; padding-top: 0.8rem !important; border-top: 1px solid #e2e8f0 !important; margin-top: auto !important;">
-        <span class="unit-label" style="font-size: 0.8rem !important; font-weight: 700 !important; color: #64748b !important;">${unitObj.icon || "📚"} Unit ${item.unitId}</span>
-        <button class="open-lesson-btn" onclick="openLessonModal(${item.day})" style="background: linear-gradient(135deg, #0d9488 0%, #0f4c5c 100%) !important; color: #ffffff !important; border: none !important; padding: 8px 20px !important; border-radius: 50px !important; font-weight: 800 !important; font-size: 0.88rem !important; cursor: pointer !important; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35) !important; transition: all 0.2s ease !important;">Vào Bài Học ➔</button>
+      <div class="card-footer-row" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; padding-top: 0.8rem !important; border-top: 1px solid #f1f5f9 !important;">
+        <span class="card-unit-text" style="font-size: 0.85rem !important; font-weight: 700 !important; color: #64748b !important; display: flex !important; align-items: center !important; gap: 6px !important;">🩺 Unit ${item.unitId}</span>
+        <button class="card-open-btn" onclick="openLessonModal(${item.day})" style="background: #ffffff !important; color: #0d9488 !important; border: 1.5px solid #0d9488 !important; padding: 7px 18px !important; border-radius: 50px !important; font-weight: 800 !important; font-size: 0.88rem !important; cursor: pointer !important; transition: all 0.2s ease !important;">Vào Bài Học ➔</button>
       </div>
     `;
 
