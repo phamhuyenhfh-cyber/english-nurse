@@ -801,23 +801,32 @@ function renderDaysGrid() {
 
     const card = document.createElement("div");
     card.className = `day-card ${isCompleted ? "completed" : ""} ${isMilestone ? "milestone-card" : ""}`;
+    card.style.cssText = "background: rgba(255, 255, 255, 0.9) !important; backdrop-filter: blur(25px) !important; -webkit-backdrop-filter: blur(25px) !important; border-radius: 24px !important; border: 1.5px solid rgba(226, 232, 240, 0.9) !important; padding: 1.5rem !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; min-height: 250px !important; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important; transition: all 0.3s ease !important; position: relative !important; margin-bottom: 0;";
+
+    if (isCompleted) {
+      card.style.borderColor = "#22c55e";
+      card.style.background = "linear-gradient(135deg, rgba(240, 253, 244, 0.92) 0%, rgba(255, 255, 255, 0.95) 100%)";
+    } else if (isMilestone) {
+      card.style.borderColor = "#f59e0b";
+      card.style.background = "linear-gradient(135deg, rgba(254, 243, 199, 0.85) 0%, rgba(255, 255, 255, 0.95) 100%)";
+    }
 
     const unitObj = UNITS_DATA.find((u) => u.id === item.unitId) || {};
 
     card.innerHTML = `
       <div>
-        <div class="day-card-header">
-          <span class="day-tag">NGÀY ${item.day} ${isMilestone ? "🏆" : ""}</span>
-          <label class="checkbox-wrapper" title="Đánh dấu hoàn thành">
-            <input type="checkbox" ${isCompleted ? "checked" : ""} onchange="toggleDayComplete(${item.day}, this.checked)">
+        <div class="day-card-header" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 0.75rem !important;">
+          <span class="day-tag" style="font-size: 0.78rem !important; font-weight: 800 !important; letter-spacing: 0.05em !important; padding: 4px 12px !important; border-radius: 8px !important; background: #dbeafe !important; color: #1d4ed8 !important; text-transform: uppercase !important;">NGÀY ${item.day} ${isMilestone ? "🏆" : ""}</span>
+          <label class="checkbox-wrapper" title="Đánh dấu hoàn thành" style="cursor: pointer !important; font-size: 1.2rem !important; display: flex !important; align-items: center !important; gap: 4px !important;">
+            <input type="checkbox" ${isCompleted ? "checked" : ""} onchange="toggleDayComplete(${item.day}, this.checked)" style="width: 20px !important; height: 20px !important; accent-color: #2563eb !important; cursor: pointer !important;">
           </label>
         </div>
-        <div class="day-title">${item.title}</div>
-        <div class="day-goal">${item.goal}</div>
+        <div class="day-title" style="font-size: 1.08rem !important; font-weight: 800 !important; color: #132644 !important; margin-bottom: 0.4rem !important; line-height: 1.35 !important;">${item.title}</div>
+        <div class="day-goal" style="font-size: 0.88rem !important; color: #64748b !important; line-height: 1.45 !important; margin-bottom: 1.2rem !important;">${item.goal}</div>
       </div>
-      <div class="day-card-footer">
-        <span class="unit-label">${unitObj.icon || "📚"} Unit ${item.unitId}</span>
-        <button class="open-lesson-btn" onclick="openLessonModal(${item.day})">Vào Bài Học ➔</button>
+      <div class="day-card-footer" style="display: flex !important; justify-content: space-between !important; align-items: center !important; padding-top: 0.8rem !important; border-top: 1px solid #e2e8f0 !important; margin-top: auto !important;">
+        <span class="unit-label" style="font-size: 0.8rem !important; font-weight: 700 !important; color: #64748b !important;">${unitObj.icon || "📚"} Unit ${item.unitId}</span>
+        <button class="open-lesson-btn" onclick="openLessonModal(${item.day})" style="background: linear-gradient(135deg, #0d9488 0%, #0f4c5c 100%) !important; color: #ffffff !important; border: none !important; padding: 8px 20px !important; border-radius: 50px !important; font-weight: 800 !important; font-size: 0.88rem !important; cursor: pointer !important; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35) !important; transition: all 0.2s ease !important;">Vào Bài Học ➔</button>
       </div>
     `;
 
