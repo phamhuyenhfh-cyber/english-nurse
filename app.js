@@ -265,20 +265,105 @@ function testSelectedVoice() {
   speakText(sampleSentence);
 }
 
-// Native Text-to-Speech Engine with Selected Native English Voice
+// 🔊 TRIPLE-LAYER UNIVERSAL MOBILE AUDIO ENGINE (WEB SPEECH API + HTML5 FALLBACK + MOBILE UNLOCK)
+let audioUnlocked = false;
+let speechWatchdogTimer = null;
+
+function unlockMobileAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+
+  if (speechSynth) {
+    try {
+      speechSynth.resume();
+      speechSynth.cancel();
+    } catch (e) {}
+  }
+}
+
+// Global touch/click event listener to unlock mobile audio on first tap
+document.addEventListener("touchstart", unlockMobileAudio, { passive: true });
+document.addEventListener("click", unlockMobileAudio, { passive: true });
+
+function speakTextFallback(text) {
+  try {
+    const encodedText = encodeURIComponent(text);
+    const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}`;
+
+    let audio = document.getElementById("universalAudioFallbackPlayer");
+    if (!audio) {
+      audio = document.createElement("audio");
+      audio.id = "universalAudioFallbackPlayer";
+      audio.style.display = "none";
+      document.body.appendChild(audio);
+    }
+
+    audio.src = ttsUrl;
+    audio.playbackRate = slowMode ? 0.8 : 1.0;
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.warn("HTML5 Audio playback fallback notice:", err);
+      });
+    }
+  } catch (err) {
+    console.error("Audio fallback error:", err);
+  }
+}
+
 function speakText(text) {
-  if (!speechSynth) return;
-  speechSynth.cancel();
+  if (!text) return;
+  unlockMobileAudio();
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = selectedVoice ? selectedVoice.lang : "en-US";
-
-  if (selectedVoice) {
-    utterance.voice = selectedVoice;
+  // Clear previous watchdog timer if any
+  if (speechWatchdogTimer) {
+    clearTimeout(speechWatchdogTimer);
+    speechWatchdogTimer = null;
   }
 
-  utterance.rate = slowMode ? 0.75 : 0.95;
-  speechSynth.speak(utterance);
+  if (!speechSynth) {
+    speakTextFallback(text);
+    return;
+  }
+
+  try {
+    speechSynth.cancel();
+
+    let hasStartedSpeaking = false;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = selectedVoice ? selectedVoice.lang : "en-US";
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+
+    utterance.rate = slowMode ? 0.75 : 0.95;
+
+    utterance.onstart = () => {
+      hasStartedSpeaking = true;
+      if (speechWatchdogTimer) clearTimeout(speechWatchdogTimer);
+    };
+
+    utterance.onerror = (e) => {
+      console.warn("WebSpeech API error on mobile, switching to HTML5 Audio fallback:", e);
+      speakTextFallback(text);
+    };
+
+    speechSynth.speak(utterance);
+
+    // Watchdog timer: If WebSpeech API fails to start within 750ms (common on mobile silent mode / uninitialized voices), fallback to HTML5 Audio
+    speechWatchdogTimer = setTimeout(() => {
+      if (!hasStartedSpeaking) {
+        console.warn("WebSpeech API watchdog timeout, using HTML5 Audio stream fallback...");
+        speakTextFallback(text);
+      }
+    }, 750);
+
+  } catch (err) {
+    console.error("speakText error, using fallback:", err);
+    speakTextFallback(text);
+  }
 }
 
 // Populate Day Options Dropdowns for Flashcard, Quiz & Recorder
