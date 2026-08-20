@@ -265,9 +265,10 @@ function testSelectedVoice() {
   speakText(sampleSentence);
 }
 
-// 🔊 TRIPLE-LAYER UNIVERSAL MOBILE AUDIO ENGINE (WEB SPEECH API + HTML5 FALLBACK + MOBILE UNLOCK)
+// 🔊 TRIPLE-LAYER UNIVERSAL MOBILE AUDIO ENGINE (WEB SPEECH API + MULTI-SERVER MP3 FALLBACK FOR ZALO WEBVIEW)
 let audioUnlocked = false;
 let speechWatchdogTimer = null;
+const isZaloBrowser = /Zalo/i.test(navigator.userAgent);
 
 function unlockMobileAudio() {
   if (audioUnlocked) return;
@@ -288,23 +289,53 @@ document.addEventListener("click", unlockMobileAudio, { passive: true });
 function speakTextFallback(text) {
   try {
     const encodedText = encodeURIComponent(text);
-    const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}`;
+    // Multi-server MP3 TTS Endpoints with no-referrer for Zalo WebView & Xiaomi/Android
+    const primaryUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodedText}`;
+    const secondaryUrl = `https://dict.youdao.com/dictvoice?audio=${encodedText}&type=2`;
+    const googleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}`;
 
     let audio = document.getElementById("universalAudioFallbackPlayer");
     if (!audio) {
       audio = document.createElement("audio");
       audio.id = "universalAudioFallbackPlayer";
+      audio.setAttribute("referrerpolicy", "no-referrer");
       audio.style.display = "none";
       document.body.appendChild(audio);
     }
 
-    audio.src = ttsUrl;
+    audio.setAttribute("referrerpolicy", "no-referrer");
     audio.playbackRate = slowMode ? 0.8 : 1.0;
+    audio.src = primaryUrl;
+
+    let fallbackStage = 0;
+
+    audio.onerror = () => {
+      if (fallbackStage === 0) {
+        fallbackStage = 1;
+        audio.src = secondaryUrl;
+        audio.play().catch(() => {
+          fallbackStage = 2;
+          audio.src = googleUrl;
+          audio.play().catch(e => console.warn("All audio fallbacks exhausted:", e));
+        });
+      } else if (fallbackStage === 1) {
+        fallbackStage = 2;
+        audio.src = googleUrl;
+        audio.play().catch(e => console.warn("Google TTS fallback notice:", e));
+      }
+    };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
-        console.warn("HTML5 Audio playback fallback notice:", err);
+        console.warn("Primary TTS stream notice, switching to secondary:", err);
+        fallbackStage = 1;
+        audio.src = secondaryUrl;
+        audio.play().catch(() => {
+          fallbackStage = 2;
+          audio.src = googleUrl;
+          audio.play().catch(e => console.warn("Google TTS fallback notice:", e));
+        });
       });
     }
   } catch (err) {
@@ -322,7 +353,8 @@ function speakText(text) {
     speechWatchdogTimer = null;
   }
 
-  if (!speechSynth) {
+  // If opened inside Zalo WebView or if speechSynth is unavailable, use Multi-Server MP3 Fallback directly
+  if (isZaloBrowser || !speechSynth) {
     speakTextFallback(text);
     return;
   }
@@ -346,19 +378,19 @@ function speakText(text) {
     };
 
     utterance.onerror = (e) => {
-      console.warn("WebSpeech API error on mobile, switching to HTML5 Audio fallback:", e);
+      console.warn("WebSpeech API error on mobile, switching to MP3 Audio fallback:", e);
       speakTextFallback(text);
     };
 
     speechSynth.speak(utterance);
 
-    // Watchdog timer: If WebSpeech API fails to start within 750ms (common on mobile silent mode / uninitialized voices), fallback to HTML5 Audio
+    // Watchdog timer: If WebSpeech API fails to start within 650ms, fallback to MP3 Cloud Audio Stream
     speechWatchdogTimer = setTimeout(() => {
       if (!hasStartedSpeaking) {
-        console.warn("WebSpeech API watchdog timeout, using HTML5 Audio stream fallback...");
+        console.warn("WebSpeech API watchdog timeout, using MP3 Cloud Audio fallback...");
         speakTextFallback(text);
       }
-    }, 750);
+    }, 650);
 
   } catch (err) {
     console.error("speakText error, using fallback:", err);

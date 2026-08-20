@@ -140,3 +140,4 @@
 [2026-08-19T21:59:35+07:00] index.html: Bổ sung PWA Mobile Web App Meta Tags cho iPhone & Android giúp chị Huyền đưa ứng dụng ra Màn hình chính Điện thoại dạng App 1 chạm không lo mất thông tin v200.0.
 [2026-08-19T22:06:50+07:00] index.html: Thay thế hình ảnh chân dung và slogan ở phần chân trang web bằng Thẻ Lời Chúc Vui Học rực rỡ vui tươi '🎈 VUI ĐỂ HỌC – HỌC ĐỂ DÙNG – DÙNG ĐỂ GIỎI!' v210.0.
 [2026-08-19T22:10:30+07:00] index.html: Cắt bỏ hoàn toàn khối widget góc dưới màn hình (floating-founder-widget) theo đúng hình ảnh chụp của chị Phạm Huyền v220.0.
+[2026-08-20T09:15:37+07:00] index.html & app.js: Nâng cấp Hệ thống Âm thanh 3 Lớp (WebSpeech API + HTML5 Audio Stream Fallback + Mobile Unlock) giải quyết triệt me sự cố điện thoại im lặng/không có giọng đọc v230.0.
